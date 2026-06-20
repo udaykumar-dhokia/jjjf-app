@@ -1,0 +1,11 @@
+// This is the base Prisma schema file containing the datasource and generator definitions.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}

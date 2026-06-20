@@ -1,0 +1,65 @@
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RsvpStatus {
+  YES
+  NO
+}
+
+enum NewsStatus {
+  DRAFT
+  APPROVED
+}
+
+model Event {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  description    String
+  eventDate      DateTime
+  eventTime      String
+  locationName   String
+  locationMapUrl String?
+  photoUrls      String[]
+  status         EventStatus @default(PENDING)
+  createdBy      String      @db.ObjectId
+  
+  rsvps          RSVP[]
+  galleryItems   Gallery[]
+  
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model RSVP {
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  eventId          String     @db.ObjectId
+  event            Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId           String     @db.ObjectId
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  attending        RsvpStatus
+  numberOfAdults   Int        @default(1)
+  numberOfChildren Int        @default(0)
+  waMessageSent    Boolean    @default(false)
+  
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@unique([eventId, userId])
+}
+
+model News {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  content        String
+  imageUrl       String?
+  publishedById  String     @db.ObjectId
+  publishedBy    User       @relation(fields: [publishedById], references: [id])
+  status         NewsStatus @default(APPROVED)
+  
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}

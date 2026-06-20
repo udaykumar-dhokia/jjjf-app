@@ -1,0 +1,126 @@
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum OccupationType {
+  BUSINESS_OWNER
+  JOB_PROFESSIONAL
+  OTHER
+}
+
+enum Role {
+  SUPER_ADMIN
+  SUB_ADMIN
+  STATE_ADMIN
+  MEMBER
+}
+
+enum ProfileStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  BLOCKED
+}
+
+enum RelationshipType {
+  SELF
+  SPOUSE
+  SON
+  DAUGHTER
+  GRANDSON
+  SISTER
+  BROTHER
+  OTHER
+}
+
+model User {
+  id                      String           @id @default(auto()) @map("_id") @db.ObjectId
+  memberId                String?          @unique
+  firstName               String
+  fatherName              String
+  motherName              String?
+  gotra                   String
+  spouseName              String?
+  husbandNameWithSurname  String?
+  sasuralGotra            String?
+  gender                  Gender
+  maritalStatus           MaritalStatus
+  dateOfBirth             DateTime
+  bloodGroup              String?
+  photoUrl                String?
+  email                   String?
+  education               String?
+  occupationType          OccupationType
+  occupationDetails       OccupationDetails?
+  gaon                    String
+  nativeDistrict          String
+  nativeState             String
+  currentAddress          String?
+  currentCity             String
+  currentState            String
+  pinCode                 String?
+  phoneNumber             String           @unique
+  whatsappNumber          String?
+  isPhoneNumberVisible    Boolean
+  
+  familyId                String           @db.ObjectId
+  family                  Family           @relation("FamilyMembers", fields: [familyId], references: [id])
+  isHeadOfFamily          Boolean          @default(false)
+  relationshipToHead      RelationshipType
+  
+  role                    Role             @default(MEMBER)
+  status                  ProfileStatus    @default(PENDING_APPROVAL)
+  assignedStates          String[]
+  
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+
+  phoneNumberRequests     String[]         @db.ObjectId
+
+  matrimonialProfile      MatrimonialProfile?
+  businesses              BusinessListing[]
+  jobs                    JobBoard[]
+  rsvps                   RSVP[]
+  newsPosted              News[]
+  shokSandeshApproved     ShokSandesh[]    @relation("ApprovedShokSandesh")
+  galleryUploaded         Gallery[]
+  familiesHeaded          Family[]         @relation("FamilyHead")
+}
+
+type OccupationDetails {
+  businessName    String?
+  category        String?
+  address         String?
+  contact         String?
+  
+  companyName     String?
+  designation     String?
+  industry        String?
+  city            String?
+  
+  description     String?
+}
+
+model Family {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  headOfFamilyId String   @db.ObjectId
+  headOfFamily   User     @relation("FamilyHead", fields: [headOfFamilyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  
+  familyPhotoUrl String?
+  addedByUserId  String   @db.ObjectId
+  
+  members        User[]   @relation("FamilyMembers")
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

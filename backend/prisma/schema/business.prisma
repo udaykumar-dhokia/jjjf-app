@@ -1,0 +1,47 @@
+enum ListingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum JobType {
+  VACANCY_AVAILABLE
+  JOB_REQUIRED
+}
+
+model BusinessListing {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  ownerId       String        @db.ObjectId
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  businessName  String
+  category      String
+  description   String?
+  logoUrl       String?
+  contactNumber String
+  address       String
+  city          String
+  state         String
+  status        ListingStatus @default(PENDING)
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model JobBoard {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  postedById     String        @db.ObjectId
+  postedBy       User          @relation(fields: [postedById], references: [id], onDelete: Cascade)
+  
+  type           JobType
+  roleTitle      String
+  industry       String
+  contactDetails String
+  city           String
+  salaryRange    String?
+  description    String
+  status         ListingStatus @default(PENDING)
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}

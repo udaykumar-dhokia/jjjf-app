@@ -1,0 +1,25 @@
+enum DemiseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ShokSandesh {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  deceasedName     String
+  age              Int
+  nativeVillage    String
+  deceasedPhotoUrl String?
+  dateDemised      DateTime
+  funeralDetails   String
+  survivingFamily  String
+  contactPerson    String
+  contactPhone     String
+  status           DemiseStatus @default(PENDING)
+  
+  approvedById     String?      @db.ObjectId
+  approvedBy       User?        @relation("ApprovedShokSandesh", fields: [approvedById], references: [id])
+  
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}

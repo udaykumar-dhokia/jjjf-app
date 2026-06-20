@@ -1,0 +1,33 @@
+model Pachkhan {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  lyricsText String
+  audioUrl   String
+  
+  createdAt  DateTime @default(now())
+}
+
+model TirthGuide {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  tirthName        String
+  description      String
+  mainPhotoUrl     String
+  additionalPhotos String[]
+  latitude         Float
+  longitude        Float
+  address          String
+  
+  createdAt        DateTime @default(now())
+}
+
+model Panchang {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  date            DateTime @unique
+  tithi           String
+  sunriseTime     String
+  sunsetTime      String
+  locationName    String
+  specialOccasion String?
+  
+  createdAt       DateTime @default(now())
+}
