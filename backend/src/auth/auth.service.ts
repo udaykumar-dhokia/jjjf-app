@@ -53,6 +53,7 @@ export class AuthService {
     
     if (!user) {
       isNewUser = true;
+
       user = await prisma.user.create({
         data: {
           email,

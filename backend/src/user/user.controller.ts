@@ -2,6 +2,7 @@ import { Controller, Get, Put, Delete, Body, UseGuards, Request, Param } from '@
 import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from './user.service.js';
 import { CompleteProfileDto } from './dto/complete-profile.dto.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 @ApiTags('user')
@@ -39,10 +40,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   @ApiParam({ name: 'id', description: 'User ID' })
-  @ApiBody({ description: 'Partial user data to update' })
+  @ApiBody({ type: UpdateUserDto })
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: 200, description: 'Updated user' })
-  async update(@Param('id') id: string, @Body() updateData: any) {
+  async update(@Param('id') id: string, @Body() updateData: UpdateUserDto) {
     return this.userService.update(id, updateData);
   }
 
