@@ -7,6 +7,7 @@ import { EmailModule } from './email/email.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { RedisModule } from './redis/redis.module.js';
 import { UserModule } from './user/user.module.js';
+import { DirectoryModule } from './directory/directory.module.js';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from './user/user.module.js';
     AuthModule,
     RedisModule,
     UserModule,
+    DirectoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
