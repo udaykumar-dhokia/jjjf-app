@@ -66,6 +66,27 @@ class AppTheme {
         ),
       ),
 
+      // Configure default input (TextField) styling
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.transparent, // Better for bottom-border only fields
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+        hintStyle: GoogleFonts.inter(color: textLight),
+        labelStyle: GoogleFonts.inter(color: textDark),
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: primaryPurple, width: 2),
+        ),
+        errorBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+      ),
+
       // AppBar styling
       appBarTheme: AppBarTheme(
         backgroundColor: primaryPurple,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../main.dart';
+import '../../auth/screens/login_screen.dart';
 
 class OnboardingData {
   final String title;
@@ -29,20 +30,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<OnboardingData> _pages = [
     OnboardingData(
       title: "Unite & Grow\nTogether",
-      description:
-          "Become part of an inspiring global network of Jain professionals and visionaries.",
+      description: "Become part of an inspiring global network\nof Jain professionals and visionaries.",
       imagePath: 'assets/images/onboarding1.jpg',
     ),
     OnboardingData(
       title: "Unlock New\nHorizons",
-      description:
-          "Explore powerful avenues for career advancement, enterprise expansion, and exclusive gatherings.",
+      description: "Explore powerful avenues for career advancement,\nenterprise expansion, and exclusive gatherings.",
       imagePath: 'assets/images/onboarding2.jpg',
     ),
     OnboardingData(
       title: "Always in the\nLoop",
-      description:
-          "Receive personalized insights, relevant news, and curated connections tailored just for you.",
+      description: "Receive personalized insights, relevant news,\nand curated connections tailored just for you.",
       imagePath: 'assets/images/onboarding3.jpg',
     ),
   ];
@@ -53,7 +51,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (!mounted) return;
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
     );
   }
@@ -220,7 +218,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: Icon(Icons.image, size: 100, color: Colors.black12),
+                    child: HugeIcon(icon: HugeIcons.strokeRoundedImage01, size: 100, color: Colors.black12),
                   ),
                 );
               },

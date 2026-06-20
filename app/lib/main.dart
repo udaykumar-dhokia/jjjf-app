@@ -9,16 +9,21 @@ import 'core/widgets/custom_app_bar.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
+import 'features/auth/screens/login_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
+  // Synchronously check user local state
   const storage = FlutterSecureStorage();
   final String? hasSeenOnboarding = await storage.read(
     key: 'hasSeenOnboarding',
   );
+  final String? accessToken = await storage.read(key: 'accessToken');
+
   final bool showOnboarding = hasSeenOnboarding != 'true';
+  final bool isAuthenticated = accessToken != null;
 
   runApp(
     MultiProvider(
@@ -26,15 +31,23 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: JaloreJainSanghApp(showOnboarding: showOnboarding),
+      child: JaloreJainSanghApp(
+        showOnboarding: showOnboarding,
+        isAuthenticated: isAuthenticated,
+      ),
     ),
   );
 }
 
 class JaloreJainSanghApp extends StatelessWidget {
   final bool showOnboarding;
+  final bool isAuthenticated;
 
-  const JaloreJainSanghApp({super.key, required this.showOnboarding});
+  const JaloreJainSanghApp({
+    super.key,
+    required this.showOnboarding,
+    required this.isAuthenticated,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +58,9 @@ class JaloreJainSanghApp extends StatelessWidget {
       builder: (context, child) {
         return GradientBackground(child: child!);
       },
-      home: showOnboarding ? const OnboardingScreen() : const HomeScreen(),
+      home: showOnboarding
+          ? const OnboardingScreen()
+          : (isAuthenticated ? const HomeScreen() : const LoginScreen()),
     );
   }
 }
