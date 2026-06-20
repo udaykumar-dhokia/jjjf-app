@@ -14,7 +14,11 @@ void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
-      const JaloreJainSanghApp(showOnboarding: true, isAuthenticated: false),
+      const JaloreJainSanghApp(
+        showOnboarding: true,
+        isAuthenticated: false,
+        isProfileComplete: false,
+      ),
     );
 
     // Verify that our counter starts at 0.

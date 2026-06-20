@@ -10,20 +10,24 @@ import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 import 'features/auth/screens/login_screen.dart';
+import 'features/profile/screens/complete_profile_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  // Synchronously check user local state
   const storage = FlutterSecureStorage();
   final String? hasSeenOnboarding = await storage.read(
     key: 'hasSeenOnboarding',
   );
   final String? accessToken = await storage.read(key: 'accessToken');
+  final String? isProfileCompleteStr = await storage.read(
+    key: 'isProfileComplete',
+  );
 
   final bool showOnboarding = hasSeenOnboarding != 'true';
   final bool isAuthenticated = accessToken != null;
+  final bool isProfileComplete = isProfileCompleteStr == 'true';
 
   runApp(
     MultiProvider(
@@ -34,6 +38,7 @@ Future<void> main() async {
       child: JaloreJainSanghApp(
         showOnboarding: showOnboarding,
         isAuthenticated: isAuthenticated,
+        isProfileComplete: isProfileComplete,
       ),
     ),
   );
@@ -42,11 +47,13 @@ Future<void> main() async {
 class JaloreJainSanghApp extends StatelessWidget {
   final bool showOnboarding;
   final bool isAuthenticated;
+  final bool isProfileComplete;
 
   const JaloreJainSanghApp({
     super.key,
     required this.showOnboarding,
     required this.isAuthenticated,
+    required this.isProfileComplete,
   });
 
   @override
@@ -60,7 +67,11 @@ class JaloreJainSanghApp extends StatelessWidget {
       },
       home: showOnboarding
           ? const OnboardingScreen()
-          : (isAuthenticated ? const HomeScreen() : const LoginScreen()),
+          : (isAuthenticated
+                ? (isProfileComplete
+                      ? const HomeScreen()
+                      : const CompleteProfileScreen())
+                : const LoginScreen()),
     );
   }
 }

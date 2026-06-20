@@ -6,17 +6,18 @@ class ApiClient {
   final Dio _dio;
   final FlutterSecureStorage _storage;
 
-  // Singleton pattern so we don't recreate Dio instances across the app
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
 
   ApiClient._internal()
-      : _dio = Dio(BaseOptions(
+    : _dio = Dio(
+        BaseOptions(
           baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
           connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
-        )),
-        _storage = const FlutterSecureStorage() {
+        ),
+      ),
+      _storage = const FlutterSecureStorage() {
     _initializeInterceptors();
   }
 

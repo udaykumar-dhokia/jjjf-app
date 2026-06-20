@@ -15,12 +15,16 @@ class AuthApi {
 
     final accessToken = response.data['accessToken'];
     final refreshToken = response.data['refreshToken'];
+    final isProfileComplete = response.data['isProfileComplete'];
 
     if (accessToken != null) {
       await _client.storage.write(key: 'accessToken', value: accessToken);
     }
     if (refreshToken != null) {
       await _client.storage.write(key: 'refreshToken', value: refreshToken);
+    }
+    if (isProfileComplete != null) {
+      await _client.storage.write(key: 'isProfileComplete', value: isProfileComplete.toString());
     }
 
     return response.data;

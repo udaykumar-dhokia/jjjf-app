@@ -4,7 +4,7 @@ import '../services/user_api.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserApi _userApi = UserApi();
-  
+
   UserModel? _userProfile;
   bool _isLoading = false;
   String? _error;
@@ -29,7 +29,7 @@ class UserProvider extends ChangeNotifier {
   Future<bool> completeProfile(Map<String, dynamic> data) async {
     _setLoading(true);
     try {
-      _userProfile = await _userApi.completeProfile(data);
+      await _userApi.completeProfile(data);
       _error = null;
       notifyListeners();
       return true;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
+  final String? initialValue;
   final String? hintText;
   final String? labelText;
   final Widget? prefixIcon;
@@ -17,6 +18,7 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     this.controller,
+    this.initialValue,
     this.hintText,
     this.labelText,
     this.prefixIcon,
@@ -34,6 +36,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      initialValue: initialValue,
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,

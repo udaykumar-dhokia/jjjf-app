@@ -90,7 +90,7 @@ export class AuthService {
     }
 
     const tokens = await this.tokenUtil.generateTokens(user.id, user.email || '', user.role, user.isProfileComplete);
-    return { ...tokens, isNewUser };
+    return { ...tokens, isNewUser, isProfileComplete: user.isProfileComplete };
   }
 
   /**

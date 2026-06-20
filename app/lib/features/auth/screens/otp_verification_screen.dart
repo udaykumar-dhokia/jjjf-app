@@ -6,6 +6,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../main.dart';
 import '../../../providers/auth_provider.dart';
+import '../../profile/screens/complete_profile_screen.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String email;
@@ -42,10 +43,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     final success = await authProvider.verifyOtp(widget.email, otp);
 
     if (success && mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-        (route) => false,
-      );
+      if (authProvider.isNewUser || !authProvider.isProfileComplete) {
+        // Must complete profile!
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const CompleteProfileScreen()),
+          (route) => false,
+        );
+      } else {
+        // Normal Login
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+      }
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -4,7 +4,7 @@ import 'core/api_client.dart';
 class UserApi {
   final ApiClient _client = ApiClient();
 
-  Future<UserModel> completeProfile(
+  Future<void> completeProfile(
     Map<String, dynamic> completeProfileData,
   ) async {
     final response = await _client.dio.put(
@@ -21,8 +21,9 @@ class UserApi {
     if (refreshToken != null) {
       await _client.storage.write(key: 'refreshToken', value: refreshToken);
     }
-
-    return UserModel.fromJson(response.data['user']);
+    
+    // Once successfully completed, set flag to true so next boot goes straight to Home
+    await _client.storage.write(key: 'isProfileComplete', value: 'true');
   }
 
   Future<UserModel> getUserProfile(String userId) async {

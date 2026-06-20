@@ -8,10 +8,14 @@ class AuthProvider extends ChangeNotifier {
 
   bool _isAuthenticated = false;
   bool _isLoading = false;
+  bool _isNewUser = false;
+  bool _isProfileComplete = false;
   String? _error;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
+  bool get isNewUser => _isNewUser;
+  bool get isProfileComplete => _isProfileComplete;
   String? get error => _error;
 
   AuthProvider() {
@@ -20,8 +24,10 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _checkExistingToken() async {
     final token = await _storage.read(key: 'accessToken');
+    final profileStatus = await _storage.read(key: 'isProfileComplete');
     if (token != null) {
       _isAuthenticated = true;
+      _isProfileComplete = profileStatus == 'true';
       notifyListeners();
     }
   }
@@ -32,6 +38,7 @@ class AuthProvider extends ChangeNotifier {
       await _authApi.sendOtp(email);
       _error = null;
     } catch (e) {
+      print("Send OTP Error: $e");
       _error = "Failed to send OTP. Please try again.";
     } finally {
       _setLoading(false);
@@ -41,8 +48,10 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> verifyOtp(String email, String otp) async {
     _setLoading(true);
     try {
-      await _authApi.verifyOtp(email, otp);
+      final response = await _authApi.verifyOtp(email, otp);
       _isAuthenticated = true;
+      _isNewUser = response['isNewUser'] == true;
+      _isProfileComplete = response['isProfileComplete'] == true;
       _error = null;
       notifyListeners();
       return true;
