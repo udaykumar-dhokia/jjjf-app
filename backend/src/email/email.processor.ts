@@ -3,7 +3,7 @@ import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import { SendEmailPayload } from './email.service';
+import { SendEmailPayload } from './email.service.js';
 
 @Processor('email')
 export class EmailProcessor extends WorkerHost {
@@ -23,6 +23,15 @@ export class EmailProcessor extends WorkerHost {
     });
   }
 
+  /**
+   * Processes an email job from the BullMQ queue.
+   *
+   * @param job - The BullMQ job containing the email payload.
+   * @returns An object indicating success and the message ID when the email
+   *   was sent. If the send fails, the error is logged and re‑thrown so that
+   *   BullMQ can handle retries according to the job options defined in
+   *   {@link EmailService.sendEmailQueue}.
+   */
   async process(job: Job<SendEmailPayload, any, string>): Promise<any> {
     this.logger.log(`Processing email job ${job.id} of type ${job.name}...`);
     this.logger.log(`Sending email to ${job.data.to} with subject "${job.data.subject}"`);

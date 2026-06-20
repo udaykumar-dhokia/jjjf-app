@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.js'
-export type * from './prismaNamespace.js'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -49,6 +49,7 @@ export const AnyNull = runtime.objectEnumValues.instances.AnyNull
 
 
 export const ModelName = {
+  RefreshToken: 'RefreshToken',
   BusinessListing: 'BusinessListing',
   JobBoard: 'JobBoard',
   ShokSandesh: 'ShokSandesh',
@@ -69,6 +70,17 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
 /*
  * Enums
  */
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
 
 export const BusinessListingScalarFieldEnum = {
   id: 'id',
@@ -263,6 +275,7 @@ export const UserScalarFieldEnum = {
   bloodGroup: 'bloodGroup',
   photoUrl: 'photoUrl',
   email: 'email',
+  isEmailVerified: 'isEmailVerified',
   education: 'education',
   occupationType: 'occupationType',
   gaon: 'gaon',
@@ -275,6 +288,7 @@ export const UserScalarFieldEnum = {
   phoneNumber: 'phoneNumber',
   whatsappNumber: 'whatsappNumber',
   isPhoneNumberVisible: 'isPhoneNumberVisible',
+  isProfileComplete: 'isProfileComplete',
   familyId: 'familyId',
   isHeadOfFamily: 'isHeadOfFamily',
   relationshipToHead: 'relationshipToHead',

@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model BusinessListing
@@ -489,10 +489,6 @@ export type BusinessListingOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
   unset?: boolean
@@ -500,10 +496,6 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type EnumListingStatusFieldUpdateOperationsInput = {
   set?: $Enums.ListingStatus
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
 }
 
 export type BusinessListingCreateNestedManyWithoutOwnerInput = {

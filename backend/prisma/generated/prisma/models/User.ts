@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model User
@@ -40,6 +40,7 @@ export type UserMinAggregateOutputType = {
   bloodGroup: string | null
   photoUrl: string | null
   email: string | null
+  isEmailVerified: boolean | null
   education: string | null
   occupationType: $Enums.OccupationType | null
   gaon: string | null
@@ -52,6 +53,7 @@ export type UserMinAggregateOutputType = {
   phoneNumber: string | null
   whatsappNumber: string | null
   isPhoneNumberVisible: boolean | null
+  isProfileComplete: boolean | null
   familyId: string | null
   isHeadOfFamily: boolean | null
   relationshipToHead: $Enums.RelationshipType | null
@@ -77,6 +79,7 @@ export type UserMaxAggregateOutputType = {
   bloodGroup: string | null
   photoUrl: string | null
   email: string | null
+  isEmailVerified: boolean | null
   education: string | null
   occupationType: $Enums.OccupationType | null
   gaon: string | null
@@ -89,6 +92,7 @@ export type UserMaxAggregateOutputType = {
   phoneNumber: string | null
   whatsappNumber: string | null
   isPhoneNumberVisible: boolean | null
+  isProfileComplete: boolean | null
   familyId: string | null
   isHeadOfFamily: boolean | null
   relationshipToHead: $Enums.RelationshipType | null
@@ -114,6 +118,7 @@ export type UserCountAggregateOutputType = {
   bloodGroup: number
   photoUrl: number
   email: number
+  isEmailVerified: number
   education: number
   occupationType: number
   gaon: number
@@ -126,6 +131,7 @@ export type UserCountAggregateOutputType = {
   phoneNumber: number
   whatsappNumber: number
   isPhoneNumberVisible: number
+  isProfileComplete: number
   familyId: number
   isHeadOfFamily: number
   relationshipToHead: number
@@ -155,6 +161,7 @@ export type UserMinAggregateInputType = {
   bloodGroup?: true
   photoUrl?: true
   email?: true
+  isEmailVerified?: true
   education?: true
   occupationType?: true
   gaon?: true
@@ -167,6 +174,7 @@ export type UserMinAggregateInputType = {
   phoneNumber?: true
   whatsappNumber?: true
   isPhoneNumberVisible?: true
+  isProfileComplete?: true
   familyId?: true
   isHeadOfFamily?: true
   relationshipToHead?: true
@@ -192,6 +200,7 @@ export type UserMaxAggregateInputType = {
   bloodGroup?: true
   photoUrl?: true
   email?: true
+  isEmailVerified?: true
   education?: true
   occupationType?: true
   gaon?: true
@@ -204,6 +213,7 @@ export type UserMaxAggregateInputType = {
   phoneNumber?: true
   whatsappNumber?: true
   isPhoneNumberVisible?: true
+  isProfileComplete?: true
   familyId?: true
   isHeadOfFamily?: true
   relationshipToHead?: true
@@ -229,6 +239,7 @@ export type UserCountAggregateInputType = {
   bloodGroup?: true
   photoUrl?: true
   email?: true
+  isEmailVerified?: true
   education?: true
   occupationType?: true
   gaon?: true
@@ -241,6 +252,7 @@ export type UserCountAggregateInputType = {
   phoneNumber?: true
   whatsappNumber?: true
   isPhoneNumberVisible?: true
+  isProfileComplete?: true
   familyId?: true
   isHeadOfFamily?: true
   relationshipToHead?: true
@@ -340,7 +352,8 @@ export type UserGroupByOutputType = {
   dateOfBirth: Date
   bloodGroup: string | null
   photoUrl: string | null
-  email: string | null
+  email: string
+  isEmailVerified: boolean
   education: string | null
   occupationType: $Enums.OccupationType
   gaon: string
@@ -353,6 +366,7 @@ export type UserGroupByOutputType = {
   phoneNumber: string
   whatsappNumber: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete: boolean
   familyId: string
   isHeadOfFamily: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -400,7 +414,8 @@ export type UserWhereInput = {
   dateOfBirth?: Prisma.DateTimeFilter<"User"> | Date | string
   bloodGroup?: Prisma.StringNullableFilter<"User"> | string | null
   photoUrl?: Prisma.StringNullableFilter<"User"> | string | null
-  email?: Prisma.StringNullableFilter<"User"> | string | null
+  email?: Prisma.StringFilter<"User"> | string
+  isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
   education?: Prisma.StringNullableFilter<"User"> | string | null
   occupationType?: Prisma.EnumOccupationTypeFilter<"User"> | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCompositeFilter, Prisma.OccupationDetailsObjectEqualityInput> | null
@@ -414,6 +429,7 @@ export type UserWhereInput = {
   phoneNumber?: Prisma.StringFilter<"User"> | string
   whatsappNumber?: Prisma.StringNullableFilter<"User"> | string | null
   isPhoneNumberVisible?: Prisma.BoolFilter<"User"> | boolean
+  isProfileComplete?: Prisma.BoolFilter<"User"> | boolean
   familyId?: Prisma.StringFilter<"User"> | string
   isHeadOfFamily?: Prisma.BoolFilter<"User"> | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFilter<"User"> | $Enums.RelationshipType
@@ -432,6 +448,7 @@ export type UserWhereInput = {
   shokSandeshApproved?: Prisma.ShokSandeshListRelationFilter
   galleryUploaded?: Prisma.GalleryListRelationFilter
   familiesHeaded?: Prisma.FamilyListRelationFilter
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -450,6 +467,7 @@ export type UserOrderByWithRelationInput = {
   bloodGroup?: Prisma.SortOrder
   photoUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
   education?: Prisma.SortOrder
   occupationType?: Prisma.SortOrder
   occupationDetails?: Prisma.OccupationDetailsOrderByInput
@@ -463,6 +481,7 @@ export type UserOrderByWithRelationInput = {
   phoneNumber?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   isPhoneNumberVisible?: Prisma.SortOrder
+  isProfileComplete?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   isHeadOfFamily?: Prisma.SortOrder
   relationshipToHead?: Prisma.SortOrder
@@ -481,11 +500,13 @@ export type UserOrderByWithRelationInput = {
   shokSandeshApproved?: Prisma.ShokSandeshOrderByRelationAggregateInput
   galleryUploaded?: Prisma.GalleryOrderByRelationAggregateInput
   familiesHeaded?: Prisma.FamilyOrderByRelationAggregateInput
+  refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   memberId?: string
+  email?: string
   phoneNumber?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
@@ -502,7 +523,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   dateOfBirth?: Prisma.DateTimeFilter<"User"> | Date | string
   bloodGroup?: Prisma.StringNullableFilter<"User"> | string | null
   photoUrl?: Prisma.StringNullableFilter<"User"> | string | null
-  email?: Prisma.StringNullableFilter<"User"> | string | null
+  isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
   education?: Prisma.StringNullableFilter<"User"> | string | null
   occupationType?: Prisma.EnumOccupationTypeFilter<"User"> | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCompositeFilter, Prisma.OccupationDetailsObjectEqualityInput> | null
@@ -515,6 +536,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pinCode?: Prisma.StringNullableFilter<"User"> | string | null
   whatsappNumber?: Prisma.StringNullableFilter<"User"> | string | null
   isPhoneNumberVisible?: Prisma.BoolFilter<"User"> | boolean
+  isProfileComplete?: Prisma.BoolFilter<"User"> | boolean
   familyId?: Prisma.StringFilter<"User"> | string
   isHeadOfFamily?: Prisma.BoolFilter<"User"> | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFilter<"User"> | $Enums.RelationshipType
@@ -533,7 +555,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   shokSandeshApproved?: Prisma.ShokSandeshListRelationFilter
   galleryUploaded?: Prisma.GalleryListRelationFilter
   familiesHeaded?: Prisma.FamilyListRelationFilter
-}, "id" | "memberId" | "phoneNumber">
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
+}, "id" | "memberId" | "email" | "phoneNumber">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -551,6 +574,7 @@ export type UserOrderByWithAggregationInput = {
   bloodGroup?: Prisma.SortOrder
   photoUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
   education?: Prisma.SortOrder
   occupationType?: Prisma.SortOrder
   gaon?: Prisma.SortOrder
@@ -563,6 +587,7 @@ export type UserOrderByWithAggregationInput = {
   phoneNumber?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   isPhoneNumberVisible?: Prisma.SortOrder
+  isProfileComplete?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   isHeadOfFamily?: Prisma.SortOrder
   relationshipToHead?: Prisma.SortOrder
@@ -595,7 +620,8 @@ export type UserScalarWhereWithAggregatesInput = {
   dateOfBirth?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   bloodGroup?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   photoUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  email?: Prisma.StringWithAggregatesFilter<"User"> | string
+  isEmailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   education?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   occupationType?: Prisma.EnumOccupationTypeWithAggregatesFilter<"User"> | $Enums.OccupationType
   gaon?: Prisma.StringWithAggregatesFilter<"User"> | string
@@ -608,6 +634,7 @@ export type UserScalarWhereWithAggregatesInput = {
   phoneNumber?: Prisma.StringWithAggregatesFilter<"User"> | string
   whatsappNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isPhoneNumberVisible?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  isProfileComplete?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   familyId?: Prisma.StringWithAggregatesFilter<"User"> | string
   isHeadOfFamily?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeWithAggregatesFilter<"User"> | $Enums.RelationshipType
@@ -634,7 +661,8 @@ export type UserCreateInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -648,6 +676,7 @@ export type UserCreateInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -665,6 +694,7 @@ export type UserCreateInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -682,7 +712,8 @@ export type UserUncheckedCreateInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -696,6 +727,7 @@ export type UserUncheckedCreateInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -713,6 +745,7 @@ export type UserUncheckedCreateInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -729,7 +762,8 @@ export type UserUpdateInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -743,6 +777,7 @@ export type UserUpdateInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -760,6 +795,7 @@ export type UserUpdateInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -776,7 +812,8 @@ export type UserUncheckedUpdateInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -790,6 +827,7 @@ export type UserUncheckedUpdateInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -807,6 +845,7 @@ export type UserUncheckedUpdateInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -824,7 +863,8 @@ export type UserCreateManyInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -838,6 +878,7 @@ export type UserCreateManyInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -863,7 +904,8 @@ export type UserUpdateManyMutationInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -877,6 +919,7 @@ export type UserUpdateManyMutationInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -901,7 +944,8 @@ export type UserUncheckedUpdateManyInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -915,6 +959,7 @@ export type UserUncheckedUpdateManyInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -964,6 +1009,7 @@ export type UserCountOrderByAggregateInput = {
   bloodGroup?: Prisma.SortOrder
   photoUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
   education?: Prisma.SortOrder
   occupationType?: Prisma.SortOrder
   gaon?: Prisma.SortOrder
@@ -976,6 +1022,7 @@ export type UserCountOrderByAggregateInput = {
   phoneNumber?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   isPhoneNumberVisible?: Prisma.SortOrder
+  isProfileComplete?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   isHeadOfFamily?: Prisma.SortOrder
   relationshipToHead?: Prisma.SortOrder
@@ -1003,6 +1050,7 @@ export type UserMaxOrderByAggregateInput = {
   bloodGroup?: Prisma.SortOrder
   photoUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
   education?: Prisma.SortOrder
   occupationType?: Prisma.SortOrder
   gaon?: Prisma.SortOrder
@@ -1015,6 +1063,7 @@ export type UserMaxOrderByAggregateInput = {
   phoneNumber?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   isPhoneNumberVisible?: Prisma.SortOrder
+  isProfileComplete?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   isHeadOfFamily?: Prisma.SortOrder
   relationshipToHead?: Prisma.SortOrder
@@ -1040,6 +1089,7 @@ export type UserMinOrderByAggregateInput = {
   bloodGroup?: Prisma.SortOrder
   photoUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
   education?: Prisma.SortOrder
   occupationType?: Prisma.SortOrder
   gaon?: Prisma.SortOrder
@@ -1052,6 +1102,7 @@ export type UserMinOrderByAggregateInput = {
   phoneNumber?: Prisma.SortOrder
   whatsappNumber?: Prisma.SortOrder
   isPhoneNumberVisible?: Prisma.SortOrder
+  isProfileComplete?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   isHeadOfFamily?: Prisma.SortOrder
   relationshipToHead?: Prisma.SortOrder
@@ -1069,6 +1120,20 @@ export type UserListRelationFilter = {
 
 export type UserOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type UserCreateNestedOneWithoutRefreshTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefreshTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRefreshTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefreshTokensInput
+  upsert?: Prisma.UserUpsertWithoutRefreshTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.UserUpdateWithoutRefreshTokensInput>, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
 }
 
 export type UserCreateNestedOneWithoutBusinessesInput = {
@@ -1281,6 +1346,220 @@ export type UserUncheckedUpdateManyWithoutFamilyNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateWithoutRefreshTokensInput = {
+  id?: string
+  memberId?: string | null
+  firstName: string
+  fatherName: string
+  motherName?: string | null
+  gotra: string
+  spouseName?: string | null
+  husbandNameWithSurname?: string | null
+  sasuralGotra?: string | null
+  gender: $Enums.Gender
+  maritalStatus: $Enums.MaritalStatus
+  dateOfBirth: Date | string
+  bloodGroup?: string | null
+  photoUrl?: string | null
+  email: string
+  isEmailVerified?: boolean
+  education?: string | null
+  occupationType: $Enums.OccupationType
+  occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
+  gaon: string
+  nativeDistrict: string
+  nativeState: string
+  currentAddress?: string | null
+  currentCity: string
+  currentState: string
+  pinCode?: string | null
+  phoneNumber: string
+  whatsappNumber?: string | null
+  isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
+  isHeadOfFamily?: boolean
+  relationshipToHead: $Enums.RelationshipType
+  role?: $Enums.Role
+  status?: $Enums.ProfileStatus
+  assignedStates?: Prisma.UserCreateassignedStatesInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phoneNumberRequests?: Prisma.UserCreatephoneNumberRequestsInput | string[]
+  family: Prisma.FamilyCreateNestedOneWithoutMembersInput
+  matrimonialProfile?: Prisma.MatrimonialProfileCreateNestedOneWithoutUserInput
+  businesses?: Prisma.BusinessListingCreateNestedManyWithoutOwnerInput
+  jobs?: Prisma.JobBoardCreateNestedManyWithoutPostedByInput
+  rsvps?: Prisma.RSVPCreateNestedManyWithoutUserInput
+  newsPosted?: Prisma.NewsCreateNestedManyWithoutPublishedByInput
+  shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
+  galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
+  familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+}
+
+export type UserUncheckedCreateWithoutRefreshTokensInput = {
+  id?: string
+  memberId?: string | null
+  firstName: string
+  fatherName: string
+  motherName?: string | null
+  gotra: string
+  spouseName?: string | null
+  husbandNameWithSurname?: string | null
+  sasuralGotra?: string | null
+  gender: $Enums.Gender
+  maritalStatus: $Enums.MaritalStatus
+  dateOfBirth: Date | string
+  bloodGroup?: string | null
+  photoUrl?: string | null
+  email: string
+  isEmailVerified?: boolean
+  education?: string | null
+  occupationType: $Enums.OccupationType
+  occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
+  gaon: string
+  nativeDistrict: string
+  nativeState: string
+  currentAddress?: string | null
+  currentCity: string
+  currentState: string
+  pinCode?: string | null
+  phoneNumber: string
+  whatsappNumber?: string | null
+  isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
+  familyId: string
+  isHeadOfFamily?: boolean
+  relationshipToHead: $Enums.RelationshipType
+  role?: $Enums.Role
+  status?: $Enums.ProfileStatus
+  assignedStates?: Prisma.UserCreateassignedStatesInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phoneNumberRequests?: Prisma.UserCreatephoneNumberRequestsInput | string[]
+  matrimonialProfile?: Prisma.MatrimonialProfileUncheckedCreateNestedOneWithoutUserInput
+  businesses?: Prisma.BusinessListingUncheckedCreateNestedManyWithoutOwnerInput
+  jobs?: Prisma.JobBoardUncheckedCreateNestedManyWithoutPostedByInput
+  rsvps?: Prisma.RSVPUncheckedCreateNestedManyWithoutUserInput
+  newsPosted?: Prisma.NewsUncheckedCreateNestedManyWithoutPublishedByInput
+  shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
+  galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
+  familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+}
+
+export type UserCreateOrConnectWithoutRefreshTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+}
+
+export type UserUpsertWithoutRefreshTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRefreshTokensInput, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRefreshTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRefreshTokensInput, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type UserUpdateWithoutRefreshTokensInput = {
+  memberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  fatherName?: Prisma.StringFieldUpdateOperationsInput | string
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gotra?: Prisma.StringFieldUpdateOperationsInput | string
+  spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  husbandNameWithSurname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sasuralGotra?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  maritalStatus?: Prisma.EnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
+  occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
+  gaon?: Prisma.StringFieldUpdateOperationsInput | string
+  nativeDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  nativeState?: Prisma.StringFieldUpdateOperationsInput | string
+  currentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentCity?: Prisma.StringFieldUpdateOperationsInput | string
+  currentState?: Prisma.StringFieldUpdateOperationsInput | string
+  pinCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
+  assignedStates?: Prisma.UserUpdateassignedStatesInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phoneNumberRequests?: Prisma.UserUpdatephoneNumberRequestsInput | string[]
+  family?: Prisma.FamilyUpdateOneRequiredWithoutMembersNestedInput
+  matrimonialProfile?: Prisma.MatrimonialProfileUpdateOneWithoutUserNestedInput
+  businesses?: Prisma.BusinessListingUpdateManyWithoutOwnerNestedInput
+  jobs?: Prisma.JobBoardUpdateManyWithoutPostedByNestedInput
+  rsvps?: Prisma.RSVPUpdateManyWithoutUserNestedInput
+  newsPosted?: Prisma.NewsUpdateManyWithoutPublishedByNestedInput
+  shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
+  galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
+  familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRefreshTokensInput = {
+  memberId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  fatherName?: Prisma.StringFieldUpdateOperationsInput | string
+  motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gotra?: Prisma.StringFieldUpdateOperationsInput | string
+  spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  husbandNameWithSurname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sasuralGotra?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  maritalStatus?: Prisma.EnumMaritalStatusFieldUpdateOperationsInput | $Enums.MaritalStatus
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
+  occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
+  gaon?: Prisma.StringFieldUpdateOperationsInput | string
+  nativeDistrict?: Prisma.StringFieldUpdateOperationsInput | string
+  nativeState?: Prisma.StringFieldUpdateOperationsInput | string
+  currentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentCity?: Prisma.StringFieldUpdateOperationsInput | string
+  currentState?: Prisma.StringFieldUpdateOperationsInput | string
+  pinCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  familyId?: Prisma.StringFieldUpdateOperationsInput | string
+  isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
+  assignedStates?: Prisma.UserUpdateassignedStatesInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phoneNumberRequests?: Prisma.UserUpdatephoneNumberRequestsInput | string[]
+  matrimonialProfile?: Prisma.MatrimonialProfileUncheckedUpdateOneWithoutUserNestedInput
+  businesses?: Prisma.BusinessListingUncheckedUpdateManyWithoutOwnerNestedInput
+  jobs?: Prisma.JobBoardUncheckedUpdateManyWithoutPostedByNestedInput
+  rsvps?: Prisma.RSVPUncheckedUpdateManyWithoutUserNestedInput
+  newsPosted?: Prisma.NewsUncheckedUpdateManyWithoutPublishedByNestedInput
+  shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
+  galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
+  familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+}
+
 export type UserCreateWithoutBusinessesInput = {
   id?: string
   memberId?: string | null
@@ -1296,7 +1575,8 @@ export type UserCreateWithoutBusinessesInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1310,6 +1590,7 @@ export type UserCreateWithoutBusinessesInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -1326,6 +1607,7 @@ export type UserCreateWithoutBusinessesInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBusinessesInput = {
@@ -1343,7 +1625,8 @@ export type UserUncheckedCreateWithoutBusinessesInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1357,6 +1640,7 @@ export type UserUncheckedCreateWithoutBusinessesInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -1373,6 +1657,7 @@ export type UserUncheckedCreateWithoutBusinessesInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBusinessesInput = {
@@ -1405,7 +1690,8 @@ export type UserUpdateWithoutBusinessesInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1419,6 +1705,7 @@ export type UserUpdateWithoutBusinessesInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -1435,6 +1722,7 @@ export type UserUpdateWithoutBusinessesInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBusinessesInput = {
@@ -1451,7 +1739,8 @@ export type UserUncheckedUpdateWithoutBusinessesInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1465,6 +1754,7 @@ export type UserUncheckedUpdateWithoutBusinessesInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -1481,6 +1771,7 @@ export type UserUncheckedUpdateWithoutBusinessesInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutJobsInput = {
@@ -1498,7 +1789,8 @@ export type UserCreateWithoutJobsInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1512,6 +1804,7 @@ export type UserCreateWithoutJobsInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -1528,6 +1821,7 @@ export type UserCreateWithoutJobsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutJobsInput = {
@@ -1545,7 +1839,8 @@ export type UserUncheckedCreateWithoutJobsInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1559,6 +1854,7 @@ export type UserUncheckedCreateWithoutJobsInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -1575,6 +1871,7 @@ export type UserUncheckedCreateWithoutJobsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutJobsInput = {
@@ -1607,7 +1904,8 @@ export type UserUpdateWithoutJobsInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1621,6 +1919,7 @@ export type UserUpdateWithoutJobsInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -1637,6 +1936,7 @@ export type UserUpdateWithoutJobsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutJobsInput = {
@@ -1653,7 +1953,8 @@ export type UserUncheckedUpdateWithoutJobsInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1667,6 +1968,7 @@ export type UserUncheckedUpdateWithoutJobsInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -1683,6 +1985,7 @@ export type UserUncheckedUpdateWithoutJobsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutShokSandeshApprovedInput = {
@@ -1700,7 +2003,8 @@ export type UserCreateWithoutShokSandeshApprovedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1714,6 +2018,7 @@ export type UserCreateWithoutShokSandeshApprovedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -1730,6 +2035,7 @@ export type UserCreateWithoutShokSandeshApprovedInput = {
   newsPosted?: Prisma.NewsCreateNestedManyWithoutPublishedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutShokSandeshApprovedInput = {
@@ -1747,7 +2053,8 @@ export type UserUncheckedCreateWithoutShokSandeshApprovedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1761,6 +2068,7 @@ export type UserUncheckedCreateWithoutShokSandeshApprovedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -1777,6 +2085,7 @@ export type UserUncheckedCreateWithoutShokSandeshApprovedInput = {
   newsPosted?: Prisma.NewsUncheckedCreateNestedManyWithoutPublishedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutShokSandeshApprovedInput = {
@@ -1809,7 +2118,8 @@ export type UserUpdateWithoutShokSandeshApprovedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1823,6 +2133,7 @@ export type UserUpdateWithoutShokSandeshApprovedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -1839,6 +2150,7 @@ export type UserUpdateWithoutShokSandeshApprovedInput = {
   newsPosted?: Prisma.NewsUpdateManyWithoutPublishedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutShokSandeshApprovedInput = {
@@ -1855,7 +2167,8 @@ export type UserUncheckedUpdateWithoutShokSandeshApprovedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1869,6 +2182,7 @@ export type UserUncheckedUpdateWithoutShokSandeshApprovedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -1885,6 +2199,7 @@ export type UserUncheckedUpdateWithoutShokSandeshApprovedInput = {
   newsPosted?: Prisma.NewsUncheckedUpdateManyWithoutPublishedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRsvpsInput = {
@@ -1902,7 +2217,8 @@ export type UserCreateWithoutRsvpsInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1916,6 +2232,7 @@ export type UserCreateWithoutRsvpsInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -1932,6 +2249,7 @@ export type UserCreateWithoutRsvpsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRsvpsInput = {
@@ -1949,7 +2267,8 @@ export type UserUncheckedCreateWithoutRsvpsInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -1963,6 +2282,7 @@ export type UserUncheckedCreateWithoutRsvpsInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -1979,6 +2299,7 @@ export type UserUncheckedCreateWithoutRsvpsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRsvpsInput = {
@@ -2011,7 +2332,8 @@ export type UserUpdateWithoutRsvpsInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2025,6 +2347,7 @@ export type UserUpdateWithoutRsvpsInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -2041,6 +2364,7 @@ export type UserUpdateWithoutRsvpsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRsvpsInput = {
@@ -2057,7 +2381,8 @@ export type UserUncheckedUpdateWithoutRsvpsInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2071,6 +2396,7 @@ export type UserUncheckedUpdateWithoutRsvpsInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -2087,6 +2413,7 @@ export type UserUncheckedUpdateWithoutRsvpsInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNewsPostedInput = {
@@ -2104,7 +2431,8 @@ export type UserCreateWithoutNewsPostedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2118,6 +2446,7 @@ export type UserCreateWithoutNewsPostedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -2134,6 +2463,7 @@ export type UserCreateWithoutNewsPostedInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNewsPostedInput = {
@@ -2151,7 +2481,8 @@ export type UserUncheckedCreateWithoutNewsPostedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2165,6 +2496,7 @@ export type UserUncheckedCreateWithoutNewsPostedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -2181,6 +2513,7 @@ export type UserUncheckedCreateWithoutNewsPostedInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNewsPostedInput = {
@@ -2213,7 +2546,8 @@ export type UserUpdateWithoutNewsPostedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2227,6 +2561,7 @@ export type UserUpdateWithoutNewsPostedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -2243,6 +2578,7 @@ export type UserUpdateWithoutNewsPostedInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNewsPostedInput = {
@@ -2259,7 +2595,8 @@ export type UserUncheckedUpdateWithoutNewsPostedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2273,6 +2610,7 @@ export type UserUncheckedUpdateWithoutNewsPostedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -2289,6 +2627,7 @@ export type UserUncheckedUpdateWithoutNewsPostedInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGalleryUploadedInput = {
@@ -2306,7 +2645,8 @@ export type UserCreateWithoutGalleryUploadedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2320,6 +2660,7 @@ export type UserCreateWithoutGalleryUploadedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -2336,6 +2677,7 @@ export type UserCreateWithoutGalleryUploadedInput = {
   newsPosted?: Prisma.NewsCreateNestedManyWithoutPublishedByInput
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGalleryUploadedInput = {
@@ -2353,7 +2695,8 @@ export type UserUncheckedCreateWithoutGalleryUploadedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2367,6 +2710,7 @@ export type UserUncheckedCreateWithoutGalleryUploadedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -2383,6 +2727,7 @@ export type UserUncheckedCreateWithoutGalleryUploadedInput = {
   newsPosted?: Prisma.NewsUncheckedCreateNestedManyWithoutPublishedByInput
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGalleryUploadedInput = {
@@ -2415,7 +2760,8 @@ export type UserUpdateWithoutGalleryUploadedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2429,6 +2775,7 @@ export type UserUpdateWithoutGalleryUploadedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -2445,6 +2792,7 @@ export type UserUpdateWithoutGalleryUploadedInput = {
   newsPosted?: Prisma.NewsUpdateManyWithoutPublishedByNestedInput
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGalleryUploadedInput = {
@@ -2461,7 +2809,8 @@ export type UserUncheckedUpdateWithoutGalleryUploadedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2475,6 +2824,7 @@ export type UserUncheckedUpdateWithoutGalleryUploadedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -2491,6 +2841,7 @@ export type UserUncheckedUpdateWithoutGalleryUploadedInput = {
   newsPosted?: Prisma.NewsUncheckedUpdateManyWithoutPublishedByNestedInput
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMatrimonialProfileInput = {
@@ -2508,7 +2859,8 @@ export type UserCreateWithoutMatrimonialProfileInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2522,6 +2874,7 @@ export type UserCreateWithoutMatrimonialProfileInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -2538,6 +2891,7 @@ export type UserCreateWithoutMatrimonialProfileInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMatrimonialProfileInput = {
@@ -2555,7 +2909,8 @@ export type UserUncheckedCreateWithoutMatrimonialProfileInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2569,6 +2924,7 @@ export type UserUncheckedCreateWithoutMatrimonialProfileInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -2585,6 +2941,7 @@ export type UserUncheckedCreateWithoutMatrimonialProfileInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMatrimonialProfileInput = {
@@ -2617,7 +2974,8 @@ export type UserUpdateWithoutMatrimonialProfileInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2631,6 +2989,7 @@ export type UserUpdateWithoutMatrimonialProfileInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -2647,6 +3006,7 @@ export type UserUpdateWithoutMatrimonialProfileInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMatrimonialProfileInput = {
@@ -2663,7 +3023,8 @@ export type UserUncheckedUpdateWithoutMatrimonialProfileInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2677,6 +3038,7 @@ export type UserUncheckedUpdateWithoutMatrimonialProfileInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -2693,6 +3055,7 @@ export type UserUncheckedUpdateWithoutMatrimonialProfileInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFamiliesHeadedInput = {
@@ -2710,7 +3073,8 @@ export type UserCreateWithoutFamiliesHeadedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2724,6 +3088,7 @@ export type UserCreateWithoutFamiliesHeadedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -2740,6 +3105,7 @@ export type UserCreateWithoutFamiliesHeadedInput = {
   newsPosted?: Prisma.NewsCreateNestedManyWithoutPublishedByInput
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFamiliesHeadedInput = {
@@ -2757,7 +3123,8 @@ export type UserUncheckedCreateWithoutFamiliesHeadedInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2771,6 +3138,7 @@ export type UserUncheckedCreateWithoutFamiliesHeadedInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   familyId: string
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
@@ -2787,6 +3155,7 @@ export type UserUncheckedCreateWithoutFamiliesHeadedInput = {
   newsPosted?: Prisma.NewsUncheckedCreateNestedManyWithoutPublishedByInput
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFamiliesHeadedInput = {
@@ -2809,7 +3178,8 @@ export type UserCreateWithoutFamilyInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2823,6 +3193,7 @@ export type UserCreateWithoutFamilyInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -2839,6 +3210,7 @@ export type UserCreateWithoutFamilyInput = {
   shokSandeshApproved?: Prisma.ShokSandeshCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFamilyInput = {
@@ -2856,7 +3228,8 @@ export type UserUncheckedCreateWithoutFamilyInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2870,6 +3243,7 @@ export type UserUncheckedCreateWithoutFamilyInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -2886,6 +3260,7 @@ export type UserUncheckedCreateWithoutFamilyInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedCreateNestedManyWithoutApprovedByInput
   galleryUploaded?: Prisma.GalleryUncheckedCreateNestedManyWithoutUploadedByInput
   familiesHeaded?: Prisma.FamilyUncheckedCreateNestedManyWithoutHeadOfFamilyInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFamilyInput = {
@@ -2922,7 +3297,8 @@ export type UserUpdateWithoutFamiliesHeadedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2936,6 +3312,7 @@ export type UserUpdateWithoutFamiliesHeadedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -2952,6 +3329,7 @@ export type UserUpdateWithoutFamiliesHeadedInput = {
   newsPosted?: Prisma.NewsUpdateManyWithoutPublishedByNestedInput
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFamiliesHeadedInput = {
@@ -2968,7 +3346,8 @@ export type UserUncheckedUpdateWithoutFamiliesHeadedInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -2982,6 +3361,7 @@ export type UserUncheckedUpdateWithoutFamiliesHeadedInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   familyId?: Prisma.StringFieldUpdateOperationsInput | string
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
@@ -2998,6 +3378,7 @@ export type UserUncheckedUpdateWithoutFamiliesHeadedInput = {
   newsPosted?: Prisma.NewsUncheckedUpdateManyWithoutPublishedByNestedInput
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutFamilyInput = {
@@ -3034,7 +3415,8 @@ export type UserScalarWhereInput = {
   dateOfBirth?: Prisma.DateTimeFilter<"User"> | Date | string
   bloodGroup?: Prisma.StringNullableFilter<"User"> | string | null
   photoUrl?: Prisma.StringNullableFilter<"User"> | string | null
-  email?: Prisma.StringNullableFilter<"User"> | string | null
+  email?: Prisma.StringFilter<"User"> | string
+  isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
   education?: Prisma.StringNullableFilter<"User"> | string | null
   occupationType?: Prisma.EnumOccupationTypeFilter<"User"> | $Enums.OccupationType
   gaon?: Prisma.StringFilter<"User"> | string
@@ -3047,6 +3429,7 @@ export type UserScalarWhereInput = {
   phoneNumber?: Prisma.StringFilter<"User"> | string
   whatsappNumber?: Prisma.StringNullableFilter<"User"> | string | null
   isPhoneNumberVisible?: Prisma.BoolFilter<"User"> | boolean
+  isProfileComplete?: Prisma.BoolFilter<"User"> | boolean
   familyId?: Prisma.StringFilter<"User"> | string
   isHeadOfFamily?: Prisma.BoolFilter<"User"> | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFilter<"User"> | $Enums.RelationshipType
@@ -3073,7 +3456,8 @@ export type UserCreateManyFamilyInput = {
   dateOfBirth: Date | string
   bloodGroup?: string | null
   photoUrl?: string | null
-  email?: string | null
+  email: string
+  isEmailVerified?: boolean
   education?: string | null
   occupationType: $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableCreateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -3087,6 +3471,7 @@ export type UserCreateManyFamilyInput = {
   phoneNumber: string
   whatsappNumber?: string | null
   isPhoneNumberVisible: boolean
+  isProfileComplete?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead: $Enums.RelationshipType
   role?: $Enums.Role
@@ -3111,7 +3496,8 @@ export type UserUpdateWithoutFamilyInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -3125,6 +3511,7 @@ export type UserUpdateWithoutFamilyInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -3141,6 +3528,7 @@ export type UserUpdateWithoutFamilyInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFamilyInput = {
@@ -3157,7 +3545,8 @@ export type UserUncheckedUpdateWithoutFamilyInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -3171,6 +3560,7 @@ export type UserUncheckedUpdateWithoutFamilyInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -3187,6 +3577,7 @@ export type UserUncheckedUpdateWithoutFamilyInput = {
   shokSandeshApproved?: Prisma.ShokSandeshUncheckedUpdateManyWithoutApprovedByNestedInput
   galleryUploaded?: Prisma.GalleryUncheckedUpdateManyWithoutUploadedByNestedInput
   familiesHeaded?: Prisma.FamilyUncheckedUpdateManyWithoutHeadOfFamilyNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutFamilyInput = {
@@ -3203,7 +3594,8 @@ export type UserUncheckedUpdateManyWithoutFamilyInput = {
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bloodGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupationType?: Prisma.EnumOccupationTypeFieldUpdateOperationsInput | $Enums.OccupationType
   occupationDetails?: Prisma.XOR<Prisma.OccupationDetailsNullableUpdateEnvelopeInput, Prisma.OccupationDetailsCreateInput> | null
@@ -3217,6 +3609,7 @@ export type UserUncheckedUpdateManyWithoutFamilyInput = {
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string
   whatsappNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPhoneNumberVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isProfileComplete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isHeadOfFamily?: Prisma.BoolFieldUpdateOperationsInput | boolean
   relationshipToHead?: Prisma.EnumRelationshipTypeFieldUpdateOperationsInput | $Enums.RelationshipType
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -3240,6 +3633,7 @@ export type UserCountOutputType = {
   shokSandeshApproved: number
   galleryUploaded: number
   familiesHeaded: number
+  refreshTokens: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3250,6 +3644,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   shokSandeshApproved?: boolean | UserCountOutputTypeCountShokSandeshApprovedArgs
   galleryUploaded?: boolean | UserCountOutputTypeCountGalleryUploadedArgs
   familiesHeaded?: boolean | UserCountOutputTypeCountFamiliesHeadedArgs
+  refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
 }
 
 /**
@@ -3311,6 +3706,13 @@ export type UserCountOutputTypeCountFamiliesHeadedArgs<ExtArgs extends runtime.T
   where?: Prisma.FamilyWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefreshTokenWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3328,6 +3730,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   bloodGroup?: boolean
   photoUrl?: boolean
   email?: boolean
+  isEmailVerified?: boolean
   education?: boolean
   occupationType?: boolean
   occupationDetails?: boolean | Prisma.OccupationDetailsDefaultArgs<ExtArgs>
@@ -3341,6 +3744,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   phoneNumber?: boolean
   whatsappNumber?: boolean
   isPhoneNumberVisible?: boolean
+  isProfileComplete?: boolean
   familyId?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead?: boolean
@@ -3359,6 +3763,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   shokSandeshApproved?: boolean | Prisma.User$shokSandeshApprovedArgs<ExtArgs>
   galleryUploaded?: boolean | Prisma.User$galleryUploadedArgs<ExtArgs>
   familiesHeaded?: boolean | Prisma.User$familiesHeadedArgs<ExtArgs>
+  refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3380,6 +3785,7 @@ export type UserSelectScalar = {
   bloodGroup?: boolean
   photoUrl?: boolean
   email?: boolean
+  isEmailVerified?: boolean
   education?: boolean
   occupationType?: boolean
   gaon?: boolean
@@ -3392,6 +3798,7 @@ export type UserSelectScalar = {
   phoneNumber?: boolean
   whatsappNumber?: boolean
   isPhoneNumberVisible?: boolean
+  isProfileComplete?: boolean
   familyId?: boolean
   isHeadOfFamily?: boolean
   relationshipToHead?: boolean
@@ -3403,7 +3810,7 @@ export type UserSelectScalar = {
   phoneNumberRequests?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "memberId" | "firstName" | "fatherName" | "motherName" | "gotra" | "spouseName" | "husbandNameWithSurname" | "sasuralGotra" | "gender" | "maritalStatus" | "dateOfBirth" | "bloodGroup" | "photoUrl" | "email" | "education" | "occupationType" | "occupationDetails" | "gaon" | "nativeDistrict" | "nativeState" | "currentAddress" | "currentCity" | "currentState" | "pinCode" | "phoneNumber" | "whatsappNumber" | "isPhoneNumberVisible" | "familyId" | "isHeadOfFamily" | "relationshipToHead" | "role" | "status" | "assignedStates" | "createdAt" | "updatedAt" | "phoneNumberRequests", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "memberId" | "firstName" | "fatherName" | "motherName" | "gotra" | "spouseName" | "husbandNameWithSurname" | "sasuralGotra" | "gender" | "maritalStatus" | "dateOfBirth" | "bloodGroup" | "photoUrl" | "email" | "isEmailVerified" | "education" | "occupationType" | "occupationDetails" | "gaon" | "nativeDistrict" | "nativeState" | "currentAddress" | "currentCity" | "currentState" | "pinCode" | "phoneNumber" | "whatsappNumber" | "isPhoneNumberVisible" | "isProfileComplete" | "familyId" | "isHeadOfFamily" | "relationshipToHead" | "role" | "status" | "assignedStates" | "createdAt" | "updatedAt" | "phoneNumberRequests", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
   matrimonialProfile?: boolean | Prisma.User$matrimonialProfileArgs<ExtArgs>
@@ -3414,6 +3821,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   shokSandeshApproved?: boolean | Prisma.User$shokSandeshApprovedArgs<ExtArgs>
   galleryUploaded?: boolean | Prisma.User$galleryUploadedArgs<ExtArgs>
   familiesHeaded?: boolean | Prisma.User$familiesHeadedArgs<ExtArgs>
+  refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -3429,6 +3837,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     shokSandeshApproved: Prisma.$ShokSandeshPayload<ExtArgs>[]
     galleryUploaded: Prisma.$GalleryPayload<ExtArgs>[]
     familiesHeaded: Prisma.$FamilyPayload<ExtArgs>[]
+    refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3445,7 +3854,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     dateOfBirth: Date
     bloodGroup: string | null
     photoUrl: string | null
-    email: string | null
+    email: string
+    isEmailVerified: boolean
     education: string | null
     occupationType: $Enums.OccupationType
     gaon: string
@@ -3458,6 +3868,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     phoneNumber: string
     whatsappNumber: string | null
     isPhoneNumberVisible: boolean
+    isProfileComplete: boolean
     familyId: string
     isHeadOfFamily: boolean
     relationshipToHead: $Enums.RelationshipType
@@ -3841,6 +4252,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   shokSandeshApproved<T extends Prisma.User$shokSandeshApprovedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$shokSandeshApprovedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShokSandeshPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   galleryUploaded<T extends Prisma.User$galleryUploadedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$galleryUploadedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GalleryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   familiesHeaded<T extends Prisma.User$familiesHeadedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$familiesHeadedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FamilyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3885,6 +4297,7 @@ export interface UserFieldRefs {
   readonly bloodGroup: Prisma.FieldRef<"User", 'String'>
   readonly photoUrl: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly isEmailVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly education: Prisma.FieldRef<"User", 'String'>
   readonly occupationType: Prisma.FieldRef<"User", 'OccupationType'>
   readonly gaon: Prisma.FieldRef<"User", 'String'>
@@ -3897,6 +4310,7 @@ export interface UserFieldRefs {
   readonly phoneNumber: Prisma.FieldRef<"User", 'String'>
   readonly whatsappNumber: Prisma.FieldRef<"User", 'String'>
   readonly isPhoneNumberVisible: Prisma.FieldRef<"User", 'Boolean'>
+  readonly isProfileComplete: Prisma.FieldRef<"User", 'Boolean'>
   readonly familyId: Prisma.FieldRef<"User", 'String'>
   readonly isHeadOfFamily: Prisma.FieldRef<"User", 'Boolean'>
   readonly relationshipToHead: Prisma.FieldRef<"User", 'RelationshipType'>
@@ -4460,6 +4874,30 @@ export type User$familiesHeadedArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.FamilyScalarFieldEnum | Prisma.FamilyScalarFieldEnum[]
+}
+
+/**
+ * User.refreshTokens
+ */
+export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RefreshToken
+   */
+  select?: Prisma.RefreshTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RefreshToken
+   */
+  omit?: Prisma.RefreshTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RefreshTokenInclude<ExtArgs> | null
+  where?: Prisma.RefreshTokenWhereInput
+  orderBy?: Prisma.RefreshTokenOrderByWithRelationInput | Prisma.RefreshTokenOrderByWithRelationInput[]
+  cursor?: Prisma.RefreshTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
 }
 
 /**
