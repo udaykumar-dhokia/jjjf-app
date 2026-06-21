@@ -58,6 +58,24 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updatePhoneVisibility(bool isVisible) async {
+    if (_userProfile == null) return;
+    
+    // Optimistic UI update
+    final oldValue = _userProfile!.isPhoneNumberVisible;
+    _userProfile = _userProfile!.copyWith(isPhoneNumberVisible: isVisible);
+    notifyListeners();
+
+    try {
+      await _userApi.updateMyProfile({'isPhoneNumberVisible': isVisible});
+    } catch (e) {
+      // Revert if failed
+      _userProfile = _userProfile!.copyWith(isPhoneNumberVisible: oldValue);
+      _error = "Failed to update visibility setting.";
+      notifyListeners();
+    }
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

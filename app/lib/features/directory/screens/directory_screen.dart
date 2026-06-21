@@ -1,11 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_text_field.dart';
 import '../../../providers/directory_provider.dart';
 import '../../../models/user_model.dart';
+import '../widgets/directory_filter_sheet.dart';
 import 'contact_detail_screen.dart';
 
 class DirectoryScreen extends StatefulWidget {
@@ -53,43 +56,62 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: const CustomAppBar(
-          title: 'Directory',
-          foregroundColor: AppTheme.primaryPurple,
-        ),
+        appBar: const CustomAppBar(title: 'Directory'),
         body: Column(
           children: [
-            // Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
                 vertical: 8.0,
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+              child: CustomTextField(
+                controller: _searchController,
+                onChanged: provider.setSearchQuery,
+                hintText: 'Search by Name, Gotra, or City...',
+                prefixIcon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedSearch01,
+                  color: AppTheme.primaryPurple,
+                  size: 20,
                 ),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: provider.setSearchQuery,
-                  decoration: const InputDecoration(
-                    hintText: 'Search by Name, Gotra, or City...',
-                    prefixIcon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedSearch01,
-                      color: AppTheme.primaryPurple,
-                      size: 20,
+                suffixIcon: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedFilterHorizontal,
+                        color: provider.activeFilter.isEmpty
+                            ? Colors.black54
+                            : AppTheme.primaryPurple,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => Padding(
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).padding.top + 20,
+                            ),
+                            child: const DirectoryFilterSheet(),
+                          ),
+                        );
+                      },
                     ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 14),
-                  ),
+                    if (!provider.activeFilter.isEmpty)
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -100,7 +122,7 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
             Expanded(
               child: provider.isLoading
                   ? const Center(
-                      child: CircularProgressIndicator(
+                      child: CupertinoActivityIndicator(
                         color: AppTheme.primaryPurple,
                       ),
                     )
@@ -133,6 +155,7 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
     final sortedKeys = grouped.keys.toList()..sort();
 
     return ListView.builder(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 100),
       itemCount: sortedKeys.length,
       itemBuilder: (context, index) {

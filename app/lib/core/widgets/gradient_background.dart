@@ -22,7 +22,7 @@ class GradientBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppTheme.primaryPurple.withOpacity(0.15),
+                    AppTheme.primaryPurple.withOpacity(0.05),
                     Colors.transparent,
                   ],
                   stops: const [0.1, 1.0],
@@ -40,7 +40,7 @@ class GradientBackground extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AppTheme.secondaryYellow.withOpacity(0.15),
+                    AppTheme.secondaryYellow.withOpacity(0.05),
                     Colors.transparent,
                   ],
                   stops: const [0.1, 1.0],

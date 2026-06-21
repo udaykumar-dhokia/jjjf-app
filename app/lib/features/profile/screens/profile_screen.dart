@@ -1,3 +1,4 @@
+import 'package:app/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -106,6 +107,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showSettingsBottomSheet(
+    BuildContext context,
+    UserModel user,
+    UserProvider provider,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext ctx) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Settings',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const Divider(color: Colors.black12, height: 1),
+              const SizedBox(height: 16),
+              SwitchListTile(
+                title: const Text(
+                  'Show Phone Number in Directory',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: const Text(
+                  'Allow other members to see your phone number.',
+                  style: TextStyle(color: Colors.black54, fontSize: 13),
+                ),
+                activeColor: AppTheme.primaryPurple,
+                value: user.isPhoneNumberVisible,
+                onChanged: (bool value) {
+                  provider.updatePhoneVisibility(value);
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = context.watch<UserProvider>();
@@ -119,6 +169,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: 'My Profile',
           actions: user != null
               ? [
+                  IconButton(
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedSettings01,
+                      color: AppTheme.primaryPurple,
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      _showSettingsBottomSheet(context, user, userProvider);
+                    },
+                  ),
                   IconButton(
                     icon: const HugeIcon(
                       icon: HugeIcons.strokeRoundedEdit02,
@@ -150,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       userProvider.error!,
-                      style: const TextStyle(color: Colors.red),
+                      style: const TextStyle(color: AppTheme.textLight),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
@@ -391,19 +451,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                             icon: HugeIcon(
                               icon: HugeIcons.strokeRoundedLogout01,
-                              color: Colors.red,
+                              color: AppTheme.textLight,
                             ),
                             label: const Text(
                               'Logout',
                               style: TextStyle(
-                                color: Colors.red,
+                                color: AppTheme.textLight,
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 10),
-                              side: const BorderSide(color: Colors.red),
+                              side: const BorderSide(color: AppTheme.textLight),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),

@@ -4,6 +4,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../models/user_model.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactDetailScreen extends StatelessWidget {
   final UserModel contact;
@@ -106,21 +107,12 @@ class ContactDetailScreen extends StatelessWidget {
           ),
         ),
         body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               const SizedBox(height: 16),
-              // --- Avatar Header ---
               Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryPurple.withOpacity(0.2),
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle),
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.white,
@@ -165,12 +157,16 @@ class ContactDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // --- Personal Information ---
               _buildSectionCard('Personal Information', [
                 _buildInfoRow(
                   HugeIcons.strokeRoundedUser,
                   'Gender',
                   contact.gender,
+                ),
+                _buildInfoRow(
+                  HugeIcons.strokeRoundedCalendar01,
+                  'Date of Birth',
+                  '${contact.dateOfBirth.day}/${contact.dateOfBirth.month}/${contact.dateOfBirth.year}',
                 ),
                 if (contact.bloodGroup != null &&
                     contact.bloodGroup!.isNotEmpty)
@@ -180,13 +176,45 @@ class ContactDetailScreen extends StatelessWidget {
                     contact.bloodGroup!,
                   ),
                 _buildInfoRow(
+                  HugeIcons.strokeRoundedFavourite,
+                  'Marital Status',
+                  contact.maritalStatus,
+                ),
+                _buildInfoRow(
                   HugeIcons.strokeRoundedBookOpen01,
                   'Gotra',
                   contact.gotra,
                 ),
+                if (contact.motherName != null &&
+                    contact.motherName!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedUserLove01,
+                    'Mother Name',
+                    contact.motherName!,
+                  ),
+                if (contact.spouseName != null &&
+                    contact.spouseName!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedHeartAdd,
+                    'Spouse Name',
+                    contact.spouseName!,
+                  ),
+                if (contact.husbandNameWithSurname != null &&
+                    contact.husbandNameWithSurname!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedHeartAdd,
+                    'Husband Name',
+                    contact.husbandNameWithSurname!,
+                  ),
+                if (contact.sasuralGotra != null &&
+                    contact.sasuralGotra!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedBookOpen02,
+                    'Sasural Gotra',
+                    contact.sasuralGotra!,
+                  ),
               ]),
 
-              // --- Contact Details ---
               _buildSectionCard('Contact Details', [
                 if (contact.isPhoneNumberVisible)
                   _buildInfoRow(
@@ -194,26 +222,55 @@ class ContactDetailScreen extends StatelessWidget {
                     'Phone Number',
                     contact.phoneNumber,
                   ),
+                if (contact.whatsappNumber != null &&
+                    contact.whatsappNumber!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedMessage02,
+                    'WhatsApp',
+                    contact.whatsappNumber!,
+                  ),
+                _buildInfoRow(
+                  HugeIcons.strokeRoundedMail01,
+                  'Email',
+                  contact.email,
+                ),
+                if (contact.currentAddress != null &&
+                    contact.currentAddress!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedLocation01,
+                    'Current Address',
+                    contact.currentAddress!,
+                  ),
                 _buildInfoRow(
                   HugeIcons.strokeRoundedCity01,
-                  'Current City',
-                  contact.currentCity,
+                  'Current City/State',
+                  '${contact.currentCity}, ${contact.currentState}',
                 ),
+                if (contact.pinCode != null && contact.pinCode!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedLocation03,
+                    'Pincode',
+                    contact.pinCode!,
+                  ),
                 _buildInfoRow(
                   HugeIcons.strokeRoundedMapPin,
                   'Native Village',
                   contact.gaon,
                 ),
-                if (contact.nativeDistrict.isNotEmpty)
-                  _buildInfoRow(
-                    HugeIcons.strokeRoundedMapPin,
-                    'Native District',
-                    contact.nativeDistrict,
-                  ),
+                _buildInfoRow(
+                  HugeIcons.strokeRoundedMapPin,
+                  'Native Location',
+                  '${contact.nativeDistrict}, ${contact.nativeState}',
+                ),
               ]),
 
-              // --- Occupation & Education ---
-              _buildSectionCard('Occupation', [
+              _buildSectionCard('Occupation & Education', [
+                if (contact.education != null && contact.education!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedMortarboard01,
+                    'Education',
+                    contact.education!,
+                  ),
                 _buildInfoRow(
                   HugeIcons.strokeRoundedBriefcase02,
                   'Occupation Type',
@@ -254,12 +311,123 @@ class ContactDetailScreen extends StatelessWidget {
                     'Industry',
                     contact.occupationDetails!.industry!,
                   ),
+                if (contact.occupationDetails?.address != null &&
+                    contact.occupationDetails!.address!.isNotEmpty)
+                  _buildInfoRow(
+                    HugeIcons.strokeRoundedLocation04,
+                    'Work Address',
+                    '${contact.occupationDetails!.address!}${contact.occupationDetails?.city != null ? ', ${contact.occupationDetails!.city}' : ''}',
+                  ),
+              ]),
+
+              // --- Family Information ---
+              _buildSectionCard('Family Information', [
+                _buildInfoRow(
+                  HugeIcons.strokeRoundedHome01,
+                  'Role in Family',
+                  contact.relationshipToHead,
+                ),
+                _buildInfoRow(
+                  HugeIcons.strokeRoundedUserGroup,
+                  'Head of Family',
+                  contact.isHeadOfFamily ? 'Yes' : 'No',
+                ),
               ]),
 
               const SizedBox(height: 32),
             ],
           ),
         ),
+        bottomNavigationBar:
+            (contact.isPhoneNumberVisible && contact.phoneNumber.isNotEmpty)
+            ? Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            final Uri url = Uri.parse(
+                              'tel:${contact.phoneNumber}',
+                            );
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            }
+                          },
+                          icon: const HugeIcon(
+                            icon: HugeIcons.strokeRoundedCall02,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            'Call',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryPurple,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            final String waPhone = contact.phoneNumber
+                                .replaceAll(RegExp(r'\D'), '');
+                            final String finalPhone = waPhone.length == 10
+                                ? '91$waPhone'
+                                : waPhone;
+                            final Uri url = Uri.parse(
+                              'https://wa.me/$finalPhone',
+                            );
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            }
+                          },
+                          icon: const HugeIcon(
+                            icon: HugeIcons.strokeRoundedWhatsapp,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            'WhatsApp',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF25D366),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : null,
       ),
     );
   }

@@ -54,6 +54,14 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('directory/metadata')
+  @ApiOperation({ summary: 'Retrieve unique available filter fields' })
+  @ApiResponse({ status: 200, description: 'Metadata for filtering directory' })
+  async getDirectoryMetadata() {
+    return this.userService.getDirectoryMetadata();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiOperation({ summary: 'Get user by ID' })

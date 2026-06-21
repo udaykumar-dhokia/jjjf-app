@@ -45,4 +45,14 @@ class UserApi {
     final List<dynamic> data = response.data;
     return data.map((json) => UserModel.fromJson(json)).toList();
   }
+
+  Future<Map<String, List<String>>> getDirectoryMetadata() async {
+    final response = await _client.dio.get('/user/directory/metadata');
+    final Map<String, dynamic> data = response.data;
+    return {
+      'gotras': List<String>.from(data['gotras'] ?? []),
+      'cities': List<String>.from(data['cities'] ?? []),
+      'states': List<String>.from(data['states'] ?? []),
+    };
+  }
 }

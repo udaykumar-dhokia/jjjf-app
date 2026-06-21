@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -44,7 +45,7 @@ class CustomTextField extends StatelessWidget {
       readOnly: readOnly,
       maxLines: maxLines,
       onTap: onTap,
-      style: const TextStyle(fontSize: 16, color: Colors.black87),
+      style: GoogleFonts.inter(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,

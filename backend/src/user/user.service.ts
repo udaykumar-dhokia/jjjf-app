@@ -63,9 +63,11 @@ export class UserService {
         fatherName: true,
         gotra: true,
         gender: true,
+        maritalStatus: true,
         phoneNumber: true,
         isPhoneNumberVisible: true,
         currentCity: true,
+        currentState: true,
         bloodGroup: true,
         occupationType: true,
         occupationDetails: true,
@@ -73,6 +75,35 @@ export class UserService {
         nativeDistrict: true,
       }
     });
+  }
+
+  /**
+   * Retrieves unique metadata (gotras, cities, states) for filtering the directory.
+   */
+  async getDirectoryMetadata() {
+    const [gotras, cities, states] = await Promise.all([
+      prisma.user.findMany({
+        where: { status: 'APPROVED', gotra: { not: '' } },
+        distinct: ['gotra'],
+        select: { gotra: true },
+      }),
+      prisma.user.findMany({
+        where: { status: 'APPROVED', currentCity: { not: '' } },
+        distinct: ['currentCity'],
+        select: { currentCity: true },
+      }),
+      prisma.user.findMany({
+        where: { status: 'APPROVED', currentState: { not: '' } },
+        distinct: ['currentState'],
+        select: { currentState: true },
+      }),
+    ]);
+
+    return {
+      gotras: gotras.map(g => g.gotra).sort(),
+      cities: cities.map(c => c.currentCity).sort(),
+      states: states.map(s => s.currentState).sort(),
+    };
   }
 
   /**
