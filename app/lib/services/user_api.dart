@@ -30,4 +30,13 @@ class UserApi {
     final response = await _client.dio.get('/user/$userId');
     return UserModel.fromJson(response.data);
   }
+
+  Future<UserModel> getMyProfile() async {
+    final response = await _client.dio.get('/user/profile/me');
+    return UserModel.fromJson(response.data);
+  }
+
+  Future<void> updateMyProfile(Map<String, dynamic> updateData) async {
+    await _client.dio.put('/user/profile/me', data: updateData);
+  }
 }

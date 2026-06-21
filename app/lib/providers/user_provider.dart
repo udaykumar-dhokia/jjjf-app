@@ -26,6 +26,18 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchMyProfile() async {
+    _setLoading(true);
+    try {
+      _userProfile = await _userApi.getMyProfile();
+      _error = null;
+    } catch (e) {
+      _error = "Failed to load your profile.";
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<bool> completeProfile(Map<String, dynamic> data) async {
     _setLoading(true);
     try {

@@ -21,6 +21,23 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('profile/me')
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'Current user details' })
+  async getMyProfile(@Request() req) {
+    return this.userService.findOne(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('profile/me')
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, description: 'Current user updated' })
+  async updateMyProfile(@Request() req, @Body() updateData: UpdateUserDto) {
+    return this.userService.update(req.user.userId, updateData);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Retrieve all users' })
   @ApiResponse({ status: 200, description: 'List of users' })

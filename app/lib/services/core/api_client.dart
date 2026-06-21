@@ -35,8 +35,46 @@ class ApiClient {
           }
           return handler.next(options);
         },
-        onError: (DioException e, handler) {
-          // Handle 401 Unauthorized globally (e.g., refresh token logic goes here)
+        onError: (DioException e, handler) async {
+          // Handle 401 Unauthorized globally
+          if (e.response?.statusCode == 401) {
+            final refreshToken = await _storage.read(key: 'refreshToken');
+            if (refreshToken != null) {
+              try {
+                // Call refresh endpoint directly using a new Dio instance to avoid interceptor loop
+                final dioRefresh = Dio(BaseOptions(
+                  baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
+                ));
+                
+                final refreshResponse = await dioRefresh.post(
+                  '/auth/refresh',
+                  data: {'refreshToken': refreshToken},
+                );
+
+                final newAccessToken = refreshResponse.data['accessToken'];
+                final newRefreshToken = refreshResponse.data['refreshToken'];
+
+                if (newAccessToken != null) {
+                  await _storage.write(key: 'accessToken', value: newAccessToken);
+                }
+                if (newRefreshToken != null) {
+                  await _storage.write(key: 'refreshToken', value: newRefreshToken);
+                }
+
+                // Retry the original request with the new token
+                final options = e.requestOptions;
+                options.headers['Authorization'] = 'Bearer $newAccessToken';
+                final retryResponse = await _dio.fetch(options);
+                return handler.resolve(retryResponse);
+              } catch (refreshError) {
+                // Refresh token expired or invalid, clear storage
+                await _storage.delete(key: 'accessToken');
+                await _storage.delete(key: 'refreshToken');
+                // Could emit a global logout event here
+                return handler.next(e);
+              }
+            }
+          }
           return handler.next(e);
         },
       ),

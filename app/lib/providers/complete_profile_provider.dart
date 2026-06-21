@@ -1,3 +1,4 @@
+import 'package:app/models/user_model.dart';
 import 'package:flutter/material.dart';
 import '../services/user_api.dart';
 
@@ -51,6 +52,55 @@ class CompleteProfileProvider extends ChangeNotifier {
   // Loading State
   bool isLoading = false;
   String? error;
+
+  bool isUpdateMode = false;
+
+  void initFromUser(UserModel user) {
+    isUpdateMode = true;
+
+    firstName = user.firstName;
+    fatherName = user.fatherName;
+    motherName = user.motherName ?? '';
+    gotra = user.gotra;
+    gender = user.gender;
+    dateOfBirth = user.dateOfBirth;
+    bloodGroup = user.bloodGroup;
+    maritalStatus = user.maritalStatus;
+
+    if (user.maritalStatus == 'MARRIED') {
+      spouseName = user.spouseName ?? '';
+      if (user.gender == 'FEMALE') {
+        husbandNameWithSurname = user.husbandNameWithSurname ?? '';
+        sasuralGotra = user.sasuralGotra ?? '';
+      }
+    }
+
+    phoneNumber = user.phoneNumber;
+    whatsappNumber = user.whatsappNumber ?? '';
+    gaon = user.gaon;
+    nativeDistrict = user.nativeDistrict;
+    nativeState = user.nativeState;
+    currentCity = user.currentCity;
+    currentState = user.currentState;
+    currentAddress = user.currentAddress ?? '';
+    pinCode = user.pinCode ?? '';
+
+    occupationType = user.occupationType;
+    if (occupationType == 'BUSINESS_OWNER' && user.occupationDetails != null) {
+      businessName = user.occupationDetails!.businessName ?? '';
+      businessCategory = user.occupationDetails!.category ?? '';
+      businessAddress = user.occupationDetails!.address ?? '';
+      businessContact = user.occupationDetails!.contact ?? '';
+    } else if (occupationType == 'JOB_PROFESSIONAL' &&
+        user.occupationDetails != null) {
+      companyName = user.occupationDetails!.companyName ?? '';
+      designation = user.occupationDetails!.designation ?? '';
+      industry = user.occupationDetails!.industry ?? '';
+      jobCity = user.occupationDetails!.city ?? '';
+    } else if (occupationType == 'OTHER' && user.occupationDetails != null) {
+      occupationDescription = user.occupationDetails!.description ?? '';
+    }
+  }
 
   void updateField(VoidCallback update) {
     update();
@@ -118,7 +168,11 @@ class CompleteProfileProvider extends ChangeNotifier {
         'relationshipToHead': 'SELF',
       };
 
-      await _userApi.completeProfile(payload);
+      if (isUpdateMode) {
+        await _userApi.updateMyProfile(payload);
+      } else {
+        await _userApi.completeProfile(payload);
+      }
 
       isLoading = false;
       notifyListeners();
@@ -131,7 +185,7 @@ class CompleteProfileProvider extends ChangeNotifier {
         final dynamic dioError = e;
         print('Response Data: ${dioError.response?.data}');
       } catch (_) {}
-      
+
       error = "Failed to submit profile. Please check your connection.";
       isLoading = false;
       notifyListeners();
