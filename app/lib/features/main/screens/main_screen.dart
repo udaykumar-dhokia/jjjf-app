@@ -124,8 +124,7 @@ class _MainScreenState extends State<MainScreen> {
         resizeToAvoidBottomInset: true,
         stateManagement: true,
         hideNavigationBarWhenKeyboardAppears: true,
-        padding: const EdgeInsets.only(top: 8),
-        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
         backgroundColor: Colors.white.withOpacity(0.95),
         decoration: NavBarDecoration(
           borderRadius: BorderRadius.circular(0.0),

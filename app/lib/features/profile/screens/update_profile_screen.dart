@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
@@ -183,7 +184,7 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
               Expanded(
                 child: PageView(
                   controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   onPageChanged: (index) {
                     setState(() {
                       _currentPage = index;
@@ -212,9 +213,8 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
                   ? const SizedBox(
                       height: 24,
                       width: 24,
-                      child: CircularProgressIndicator(
+                      child: CupertinoActivityIndicator.partiallyRevealed(
                         color: Colors.white,
-                        strokeWidth: 2,
                       ),
                     )
                   : Text(

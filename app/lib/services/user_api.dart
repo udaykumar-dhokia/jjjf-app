@@ -39,4 +39,10 @@ class UserApi {
   Future<void> updateMyProfile(Map<String, dynamic> updateData) async {
     await _client.dio.put('/user/profile/me', data: updateData);
   }
+
+  Future<List<UserModel>> getDirectory() async {
+    final response = await _client.dio.get('/user/directory/approved');
+    final List<dynamic> data = response.data;
+    return data.map((json) => UserModel.fromJson(json)).toList();
+  }
 }

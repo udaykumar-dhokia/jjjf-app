@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -138,7 +139,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         body: userProvider.isLoading
             ? const Center(
-                child: CircularProgressIndicator(color: AppTheme.primaryPurple),
+                child: CupertinoActivityIndicator.partiallyRevealed(
+                  color: AppTheme.primaryPurple,
+                ),
               )
             : userProvider.error != null
             ? Center(
@@ -172,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: user.status == 'PENDING_APPROVAL'
-                              ? Border.all(color: Colors.orange, width: 3)
+                              ? Border.all(color: Colors.orange, width: 2)
                               : null,
                         ),
                         child: CircleAvatar(
@@ -395,19 +398,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
                             style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                               side: const BorderSide(color: Colors.red),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(50),
                               ),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),

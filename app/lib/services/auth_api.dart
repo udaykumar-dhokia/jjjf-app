@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/api_client.dart';
 
 class AuthApi {
@@ -34,9 +36,13 @@ class AuthApi {
     final refreshToken = await _client.storage.read(key: 'refreshToken');
     if (refreshToken != null) {
       try {
-        await _client.dio.post(
+        final dioLogout = Dio(BaseOptions(
+          baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
+        ));
+        await dioLogout.post(
           '/auth/logout',
           data: {'refreshToken': refreshToken},
+          options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
         );
       } catch (e) {
         // Ignore errors if token is already invalidated
@@ -44,5 +50,6 @@ class AuthApi {
     }
     await _client.storage.delete(key: 'accessToken');
     await _client.storage.delete(key: 'refreshToken');
+    await _client.storage.delete(key: 'isProfileComplete');
   }
 }

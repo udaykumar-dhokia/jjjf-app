@@ -45,6 +45,37 @@ export class UserService {
   }
 
   /**
+   * Retrieves the contact directory, containing only APPROVED users.
+   * Sorted alphabetically by first name.
+   */
+  async getApprovedDirectory() {
+    return prisma.user.findMany({
+      where: {
+        status: 'APPROVED',
+      },
+      orderBy: {
+        firstName: 'asc',
+      },
+      select: {
+        id: true,
+        memberId: true,
+        firstName: true,
+        fatherName: true,
+        gotra: true,
+        gender: true,
+        phoneNumber: true,
+        isPhoneNumberVisible: true,
+        currentCity: true,
+        bloodGroup: true,
+        occupationType: true,
+        occupationDetails: true,
+        gaon: true,
+        nativeDistrict: true,
+      }
+    });
+  }
+
+  /**
    * Retrieves a single user by ID.
    * @param id - The user ID.
    * @returns The user record.

@@ -1,3 +1,5 @@
+import 'package:app/providers/complete_profile_provider.dart';
+import 'package:app/providers/directory_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -34,6 +36,8 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => CompleteProfileProvider()),
+        ChangeNotifierProvider(create: (_) => DirectoryProvider()),
       ],
       child: JaloreJainSanghApp(
         showOnboarding: showOnboarding,

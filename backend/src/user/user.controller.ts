@@ -46,6 +46,14 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('directory/approved')
+  @ApiOperation({ summary: 'Retrieve the approved contact directory' })
+  @ApiResponse({ status: 200, description: 'List of approved users' })
+  async getDirectory() {
+    return this.userService.getApprovedDirectory();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiOperation({ summary: 'Get user by ID' })
