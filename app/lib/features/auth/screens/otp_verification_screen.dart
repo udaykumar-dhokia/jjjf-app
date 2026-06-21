@@ -1,10 +1,10 @@
+import 'package:app/features/main/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pinput/pinput.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../main.dart';
 import '../../../providers/auth_provider.dart';
 import '../../profile/screens/complete_profile_screen.dart';
 
@@ -52,7 +52,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       } else {
         // Normal Login
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const MainScreen()),
           (route) => false,
         );
       }

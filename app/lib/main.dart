@@ -5,12 +5,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/widgets/gradient_background.dart';
-import 'core/widgets/custom_app_bar.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/profile/screens/complete_profile_screen.dart';
+import 'features/main/screens/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,53 +69,9 @@ class JaloreJainSanghApp extends StatelessWidget {
           ? const OnboardingScreen()
           : (isAuthenticated
                 ? (isProfileComplete
-                      ? const HomeScreen()
+                      ? const MainScreen()
                       : const CompleteProfileScreen())
                 : const LoginScreen()),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
-
-    return Scaffold(
-      appBar: const CustomAppBar(title: 'Jalore Jain Sangh'),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome to the Community!',
-              style: Theme.of(context).textTheme.displaySmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Your highly modular architecture is ready.',
-              style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                if (authProvider.isAuthenticated) {
-                  authProvider.logout();
-                } else {
-                  // TODO: Navigate to Login Screen
-                }
-              },
-              child: Text(
-                authProvider.isAuthenticated ? 'Logout' : 'Go to Login',
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

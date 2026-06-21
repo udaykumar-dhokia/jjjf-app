@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../providers/complete_profile_provider.dart';
-import '../../../main.dart';
 import '../widgets/step_personal_details.dart';
 import '../widgets/step_contact_address.dart';
 import '../widgets/step_occupation.dart';
+import '../../main/screens/main_screen.dart';
 
 class CompleteProfileScreen extends StatelessWidget {
   const CompleteProfileScreen({super.key});
@@ -80,7 +80,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
 
     if (success && mounted) {
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainScreen()),
         (route) => false,
       );
     } else if (mounted) {
