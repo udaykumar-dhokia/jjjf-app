@@ -110,6 +110,49 @@ export class NewsService {
   }
 
   /**
+   * Retrieves a paginated list of approved news posts by a specific user.
+   *
+   * @param userId - The user ID to filter by.
+   * @param filterDto - DTO containing pagination, search, and sorting options.
+   * @returns An object containing the news data array and pagination metadata.
+   */
+  async findAllByUser(userId: string, filterDto: NewsFilterDto) {
+    const { limit = 10, offset = 0, search, sortBy, sortOrder } = filterDto;
+
+    const where: Prisma.NewsWhereInput = {
+      userId,
+      status: 'APPROVED',
+    };
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const totalCount = await prisma.news.count({ where });
+
+    const news = await prisma.news.findMany({
+      where,
+      skip: Number(offset) || 0,
+      take: Number(limit) || 10,
+      orderBy: {
+        [sortBy || 'createdAt']: sortOrder || 'desc',
+      },
+    });
+
+    return {
+      data: news,
+      meta: {
+        total: totalCount,
+        limit: Number(limit) || 10,
+        offset: Number(offset) || 0,
+      }
+    };
+  }
+
+  /**
    * Retrieves a single news post by its ID.
    *
    * @param id - The identifier of the news post.

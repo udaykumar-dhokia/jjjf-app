@@ -28,7 +28,6 @@ class ApiClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Automatically inject the JWT token into every request
           final token = await _storage.read(key: 'accessToken');
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
@@ -41,11 +40,13 @@ class ApiClient {
             final refreshToken = await _storage.read(key: 'refreshToken');
             if (refreshToken != null) {
               try {
-                // Call refresh endpoint directly using a new Dio instance to avoid interceptor loop
-                final dioRefresh = Dio(BaseOptions(
-                  baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
-                ));
-                
+                final dioRefresh = Dio(
+                  BaseOptions(
+                    baseUrl:
+                        dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
+                  ),
+                );
+
                 final refreshResponse = await dioRefresh.post(
                   '/auth/refresh',
                   data: {'refreshToken': refreshToken},
@@ -55,22 +56,30 @@ class ApiClient {
                 final newRefreshToken = refreshResponse.data['refreshToken'];
 
                 if (newAccessToken != null) {
-                  await _storage.write(key: 'accessToken', value: newAccessToken);
+                  await _storage.write(
+                    key: 'accessToken',
+                    value: newAccessToken,
+                  );
                 }
                 if (newRefreshToken != null) {
-                  await _storage.write(key: 'refreshToken', value: newRefreshToken);
+                  await _storage.write(
+                    key: 'refreshToken',
+                    value: newRefreshToken,
+                  );
                 }
 
-                // Retry the original request with the new token
                 final options = e.requestOptions;
                 options.headers['Authorization'] = 'Bearer $newAccessToken';
+
+                if (options.data is FormData) {
+                  options.data = (options.data as FormData).clone();
+                }
+
                 final retryResponse = await _dio.fetch(options);
                 return handler.resolve(retryResponse);
               } catch (refreshError) {
-                // Refresh token expired or invalid, clear storage
                 await _storage.delete(key: 'accessToken');
                 await _storage.delete(key: 'refreshToken');
-                // Could emit a global logout event here
                 return handler.next(e);
               }
             }

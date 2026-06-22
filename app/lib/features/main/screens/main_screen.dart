@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/user_provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../home/screens/home_screen.dart';
@@ -23,6 +25,9 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _controller = PersistentTabController(initialIndex: 0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserProvider>().fetchMyProfile();
+    });
   }
 
   @override

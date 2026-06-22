@@ -46,6 +46,13 @@ export class NewsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Get all news posts by a specific user' })
+  findAllByUser(@Param('userId') userId: string, @Query() filterDto: NewsFilterDto) {
+    return this.newsService.findAllByUser(userId, filterDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific news post by ID' })
   findOne(@Param('id') id: string) {
