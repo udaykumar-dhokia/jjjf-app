@@ -178,7 +178,7 @@ class _ReadNewsScreenState extends State<ReadNewsScreen> {
                     ),
                     child: ClipOval(
                       child: Image.network(
-                        'https://api.dicebear.com/10.x/glass/png?seed=${widget.news.userName}',
+                        widget.news.userPhotoUrl ?? 'https://api.dicebear.com/10.x/glass/png?seed=${widget.news.userName}',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
                             const HugeIcon(

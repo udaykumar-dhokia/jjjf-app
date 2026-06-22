@@ -138,9 +138,11 @@ class _NewsCardState extends State<NewsCard> {
           CircleAvatar(
             radius: 20,
             backgroundColor: AppTheme.primaryPurple.withValues(alpha: 0.1),
-            backgroundImage: NetworkImage(
-              'https://api.dicebear.com/10.x/glass/png?seed=${widget.news.userName}',
-            ),
+            backgroundImage: widget.news.userPhotoUrl != null
+                ? NetworkImage(widget.news.userPhotoUrl!) as ImageProvider
+                : NetworkImage(
+                    'https://api.dicebear.com/10.x/glass/png?seed=${widget.news.userName}',
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(

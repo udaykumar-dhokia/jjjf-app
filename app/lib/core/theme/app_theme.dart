@@ -119,7 +119,7 @@ class AppTheme {
         foregroundColor: Colors.white,
         centerTitle: true,
         systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Colors.white,
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
         ),

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/user_api.dart';
@@ -73,6 +74,40 @@ class UserProvider extends ChangeNotifier {
       _userProfile = _userProfile!.copyWith(isPhoneNumberVisible: oldValue);
       _error = "Failed to update visibility setting.";
       notifyListeners();
+    }
+  }
+
+  Future<bool> uploadProfileImage(File imageFile) async {
+    _setLoading(true);
+    try {
+      final updatedUser = await _userApi.uploadProfileImage(imageFile);
+      _userProfile = updatedUser;
+      _error = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = "Failed to upload profile image.";
+      notifyListeners();
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<bool> removeProfileImage() async {
+    _setLoading(true);
+    try {
+      final updatedUser = await _userApi.removeProfileImage();
+      _userProfile = updatedUser;
+      _error = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = "Failed to remove profile image.";
+      notifyListeners();
+      return false;
+    } finally {
+      _setLoading(false);
     }
   }
 

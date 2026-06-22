@@ -21,7 +21,7 @@ Future<void> main() async {
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: Colors.white,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ),
@@ -74,27 +74,27 @@ class JaloreJainSanghApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
-      child: MaterialApp(
-        title: 'Jalore Jain Sangh',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        builder: (context, child) {
-          return GradientBackground(child: child!);
-        },
-        home: showOnboarding
-            ? const OnboardingScreen()
-            : (isAuthenticated
-                  ? (isProfileComplete
-                        ? const MainScreen()
-                        : const CompleteProfileScreen())
-                  : const LoginScreen()),
-      ),
+    return MaterialApp(
+      title: 'Jalore Jain Sangh',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      builder: (context, child) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
+          child: GradientBackground(child: child!),
+        );
+      },
+      home: showOnboarding
+          ? const OnboardingScreen()
+          : (isAuthenticated
+                ? (isProfileComplete
+                      ? const MainScreen()
+                      : const CompleteProfileScreen())
+                : const LoginScreen()),
     );
   }
 }

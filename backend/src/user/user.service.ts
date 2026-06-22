@@ -2,12 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { CompleteProfileDto } from './dto/complete-profile.dto.js';
 import { TokenUtilService } from '../auth/utils/token.util.js';
+import { CloudinaryService } from '../cloudinary/cloudinary.service.js';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UserService {
-  constructor(private readonly tokenUtil: TokenUtilService) {}
+  constructor(
+    private readonly tokenUtil: TokenUtilService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   /**
    * Completes a user's profile and issues fresh JWT tokens.
@@ -73,6 +77,7 @@ export class UserService {
         occupationDetails: true,
         gaon: true,
         nativeDistrict: true,
+        photoUrl: true,
       }
     });
   }
@@ -144,5 +149,99 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     return prisma.user.delete({ where: { id } });
+  }
+
+  /**
+   * Uploads a profile image for a user. Replaces the existing image if one exists.
+   * @param userId - The user ID.
+   * @param file - The image file to upload.
+   * @returns The updated user record containing the new photoUrl.
+   */
+  async uploadProfileImage(userId: string, file: Express.Multer.File) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.photoUrl) {
+      const publicId = this.extractPublicId(user.photoUrl);
+      if (publicId) {
+        try {
+          await this.cloudinaryService.deleteImage(publicId);
+        } catch (e) {
+          console.error(`Failed to delete old profile image ${publicId} from Cloudinary`, e);
+        }
+      }
+    }
+
+    const result = await this.cloudinaryService.uploadImage(file);
+    
+    return prisma.user.update({
+      where: { id: userId },
+      data: { photoUrl: result.secure_url },
+    });
+  }
+
+  /**
+   * Removes the profile image for a user.
+   * @param userId - The user ID.
+   * @returns The updated user record.
+   */
+  async removeProfileImage(userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.photoUrl) {
+      const publicId = this.extractPublicId(user.photoUrl);
+      if (publicId) {
+        try {
+          await this.cloudinaryService.deleteImage(publicId);
+        } catch (e) {
+          console.error(`Failed to delete profile image ${publicId} from Cloudinary`, e);
+        }
+      }
+    }
+
+    return prisma.user.update({
+      where: { id: userId },
+      data: { photoUrl: null },
+    });
+  }
+
+  /**
+   * Extracts the Cloudinary public ID from a given image URL.
+   * @param url - The full Cloudinary URL of the image.
+   * @returns The extracted public ID, or null if not valid.
+   */
+  private extractPublicId(url: string): string | null {
+    try {
+      const parts = url.split('/');
+      const filenameWithExtension = parts.pop();
+      if (!filenameWithExtension) return null;
+      const filenameParts = filenameWithExtension.split('.');
+      filenameParts.pop(); // Remove extension
+      const filename = filenameParts.join('.');
+
+      // If the image is inside folders, we need to extract the folder path too
+      const uploadIndex = parts.findIndex(p => p === 'upload');
+      if (uploadIndex === -1 || uploadIndex === parts.length - 1) {
+        return filename;
+      }
+      
+      // Skip the version part (e.g., v1718018320)
+      const folderParts = parts.slice(uploadIndex + 1);
+      if (folderParts.length > 0 && folderParts[0].startsWith('v') && !isNaN(parseInt(folderParts[0].substring(1)))) {
+        folderParts.shift();
+      }
+
+      if (folderParts.length > 0) {
+        return `${folderParts.join('/')}/${filename}`;
+      }
+      return filename;
+    } catch (e) {
+      return null;
+    }
   }
 }

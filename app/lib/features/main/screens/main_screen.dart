@@ -38,7 +38,13 @@ class _MainScreenState extends State<MainScreen> {
 
   List<Widget> _buildScreens() {
     return [
-      SafeArea(child: const HomeScreen()),
+      SafeArea(
+        child: HomeScreen(
+          onNavigateTab: (index) {
+            _controller.jumpToTab(index);
+          },
+        ),
+      ),
       SafeArea(child: const NewsScreen()),
       SafeArea(child: const DirectoryScreen()),
       SafeArea(child: const BusinessesScreen()),
@@ -46,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
+  List<PersistentBottomNavBarItem> _navBarsItems(BuildContext context) {
     return [
       PersistentBottomNavBarItem(
         icon: const HugeIcon(
@@ -101,19 +107,58 @@ class _MainScreenState extends State<MainScreen> {
         inactiveColorPrimary: Colors.black45,
       ),
       PersistentBottomNavBarItem(
-        icon: const HugeIcon(
-          icon: HugeIcons.strokeRoundedUser,
-          color: AppTheme.primaryPurple,
-        ),
-        inactiveIcon: const HugeIcon(
-          icon: HugeIcons.strokeRoundedUser,
-          color: Colors.black45,
-        ),
+        icon: _buildProfileIcon(context, true),
+        inactiveIcon: _buildProfileIcon(context, false),
         title: "Profile",
         activeColorPrimary: AppTheme.primaryPurple,
         inactiveColorPrimary: Colors.black45,
       ),
     ];
+  }
+
+  Widget _buildProfileIcon(BuildContext context, bool isActive) {
+    final userProvider = context.watch<UserProvider>();
+    final userProfile = userProvider.userProfile;
+
+    if (userProfile == null) {
+      return HugeIcon(
+        icon: HugeIcons.strokeRoundedUser,
+        color: isActive ? AppTheme.primaryPurple : Colors.black45,
+      );
+    }
+
+    final imageUrl =
+        (userProfile.photoUrl != null && userProfile.photoUrl!.isNotEmpty)
+        ? userProfile.photoUrl!
+        : 'https://api.dicebear.com/7.x/avataaars/png?seed=${userProfile.firstName}';
+
+    return Container(
+      width: 32,
+      height: 32,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isActive ? AppTheme.primaryPurple : Colors.transparent,
+          width: 2,
+        ),
+      ),
+      child: ClipOval(
+        child: Image.network(
+          imageUrl,
+          width: 24,
+          height: 24,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return HugeIcon(
+              icon: HugeIcons.strokeRoundedUser,
+              color: isActive ? AppTheme.primaryPurple : Colors.black45,
+              size: 20,
+            );
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -124,7 +169,7 @@ class _MainScreenState extends State<MainScreen> {
         context,
         controller: _controller,
         screens: _buildScreens(),
-        items: _navBarsItems(),
+        items: _navBarsItems(context),
         handleAndroidBackButtonPress: true,
         resizeToAvoidBottomInset: true,
         stateManagement: true,

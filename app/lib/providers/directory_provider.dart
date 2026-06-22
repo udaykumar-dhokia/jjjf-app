@@ -89,6 +89,7 @@ class DirectoryProvider extends ChangeNotifier {
   }
 
   void setSearchQuery(String query) {
+    if (_searchQuery == query) return;
     _searchQuery = query;
     _applyFilter();
   }

@@ -19,7 +19,9 @@ class DirectoryScreen extends StatefulWidget {
 }
 
 class _DirectoryScreenState extends State<DirectoryScreen> {
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  bool _isSearchExpanded = false;
 
   @override
   void initState() {
@@ -56,64 +58,93 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: const CustomAppBar(title: 'Directory'),
+        appBar: CustomAppBar(
+          title: 'Directory',
+          actions: [
+            IconButton(
+              icon: HugeIcon(
+                icon: HugeIcons.strokeRoundedSearch01,
+                color: _isSearchExpanded
+                    ? AppTheme.primaryPurple
+                    : Colors.black87,
+                size: 24,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isSearchExpanded = !_isSearchExpanded;
+                  if (!_isSearchExpanded) {
+                    _searchController.clear();
+                    context.read<DirectoryProvider>().setSearchQuery('');
+                  }
+                });
+              },
+            ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedFilterHorizontal,
+                    color: provider.activeFilter.isEmpty
+                        ? Colors.black87
+                        : AppTheme.primaryPurple,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => Padding(
+                        padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).padding.top + 20,
+                        ),
+                        child: const DirectoryFilterSheet(),
+                      ),
+                    );
+                  },
+                ),
+                if (!provider.activeFilter.isEmpty)
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              child: CustomTextField(
-                controller: _searchController,
-                onChanged: provider.setSearchQuery,
-                hintText: 'Search by Name, Gotra, or City...',
-                prefixIcon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedSearch01,
-                  color: AppTheme.primaryPurple,
-                  size: 20,
-                ),
-                suffixIcon: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IconButton(
-                      icon: HugeIcon(
-                        icon: HugeIcons.strokeRoundedFilterHorizontal,
-                        color: provider.activeFilter.isEmpty
-                            ? Colors.black54
-                            : AppTheme.primaryPurple,
-                        size: 24,
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _isSearchExpanded
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
                       ),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => Padding(
-                            padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).padding.top + 20,
-                            ),
-                            child: const DirectoryFilterSheet(),
-                          ),
-                        );
-                      },
-                    ),
-                    if (!provider.activeFilter.isEmpty)
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
+                      child: CustomTextField(
+                        controller: _searchController,
+                        onChanged: provider.setSearchQuery,
+                        hintText: 'Search by Name, Gotra, or City...',
+                        prefixIcon: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedSearch01,
+                          color: AppTheme.primaryPurple,
+                          size: 20,
                         ),
                       ),
-                  ],
-                ),
-              ),
+                    )
+                  : const SizedBox.shrink(),
             ),
 
             const SizedBox(height: 8),
@@ -203,9 +234,11 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                           backgroundColor: AppTheme.primaryPurple.withOpacity(
                             0.1,
                           ),
-                          backgroundImage: NetworkImage(
-                            'https://api.dicebear.com/10.x/glass/png?seed=${contact.firstName}',
-                          ),
+                          backgroundImage: contact.photoUrl != null
+                              ? NetworkImage(contact.photoUrl!) as ImageProvider
+                              : NetworkImage(
+                                  'https://api.dicebear.com/10.x/glass/png?seed=${contact.firstName}',
+                                ),
                         ),
                         title: Text(
                           '${contact.firstName} ${contact.fatherName} ${contact.gotra}'

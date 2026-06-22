@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:app/models/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +23,125 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final ImagePicker _picker = ImagePicker();
+  bool _isUploadingProfilePic = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().fetchMyProfile();
     });
+  }
+
+  void _showImagePickerOptions(BuildContext context, UserProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedCamera01,
+                  color: AppTheme.primaryPurple,
+                ),
+                title: const Text('Take a photo'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImage(ImageSource.camera, provider);
+                },
+              ),
+              ListTile(
+                leading: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedImage01,
+                  color: AppTheme.primaryPurple,
+                ),
+                title: const Text('Choose from gallery'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImage(ImageSource.gallery, provider);
+                },
+              ),
+              if (provider.userProfile?.photoUrl != null)
+                ListTile(
+                  leading: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedDelete01,
+                    color: Colors.red,
+                  ),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _removeImage(provider);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source, UserProvider provider) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 70,
+      );
+      if (image != null) {
+        setState(() => _isUploadingProfilePic = true);
+        final success = await provider.uploadProfileImage(File(image.path));
+        setState(() => _isUploadingProfilePic = false);
+
+        if (success && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile picture updated successfully'),
+            ),
+          );
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                provider.error ?? 'Failed to update profile picture',
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Error selecting image')));
+      }
+    }
+  }
+
+  Future<void> _removeImage(UserProvider provider) async {
+    setState(() => _isUploadingProfilePic = true);
+    final success = await provider.removeProfileImage();
+    setState(() => _isUploadingProfilePic = false);
+
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile picture removed successfully')),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(provider.error ?? 'Failed to remove profile picture'),
+        ),
+      );
+    }
   }
 
   Widget _buildInfoRow(dynamic icon, String label, String value) {
@@ -174,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: const HugeIcon(
                       icon: HugeIcons.strokeRoundedSettings01,
                       color: AppTheme.primaryPurple,
-                      size: 24,
+                      size: 20,
                     ),
                     onPressed: () {
                       _showSettingsBottomSheet(context, user, userProvider);
@@ -184,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: const HugeIcon(
                       icon: HugeIcons.strokeRoundedEdit02,
                       color: AppTheme.primaryPurple,
-                      size: 24,
+                      size: 20,
                     ),
                     onPressed: () {
                       Navigator.of(context, rootNavigator: true).push(
@@ -239,14 +354,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: user.status == 'PENDING_APPROVAL'
-                                      ? Border.all(color: Colors.orange, width: 2)
+                                      ? Border.all(
+                                          color: Colors.orange,
+                                          width: 2,
+                                        )
                                       : null,
                                 ),
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: NetworkImage(
-                                    'https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}',
+                                child: GestureDetector(
+                                  onTap: () => _showImagePickerOptions(
+                                    context,
+                                    userProvider,
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: user.photoUrl != null
+                                            ? NetworkImage(user.photoUrl!)
+                                                  as ImageProvider
+                                            : NetworkImage(
+                                                'https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}',
+                                              ),
+                                      ),
+                                      if (_isUploadingProfilePic)
+                                        Container(
+                                          width: 100,
+                                          height: 100,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black45,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child:
+                                              const CupertinoActivityIndicator(
+                                                color: Colors.white,
+                                              ),
+                                        ),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.primaryPurple,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: const HugeIcon(
+                                            icon:
+                                                HugeIcons.strokeRoundedCamera01,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -378,7 +544,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   'Current City/State',
                                   '${user.currentCity}, ${user.currentState}',
                                 ),
-                                if (user.pinCode != null && user.pinCode!.isNotEmpty)
+                                if (user.pinCode != null &&
+                                    user.pinCode!.isNotEmpty)
                                   _buildInfoRow(
                                     HugeIcons.strokeRoundedLocation03,
                                     'Pincode',
@@ -409,36 +576,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   'Occupation Type',
                                   user.occupationType,
                                 ),
-                                if (user.occupationDetails?.companyName != null &&
-                                    user.occupationDetails!.companyName!.isNotEmpty)
+                                if (user.occupationDetails?.companyName !=
+                                        null &&
+                                    user
+                                        .occupationDetails!
+                                        .companyName!
+                                        .isNotEmpty)
                                   _buildInfoRow(
                                     HugeIcons.strokeRoundedBuilding03,
                                     'Company',
                                     user.occupationDetails!.companyName!,
                                   ),
-                                if (user.occupationDetails?.designation != null &&
-                                    user.occupationDetails!.designation!.isNotEmpty)
+                                if (user.occupationDetails?.designation !=
+                                        null &&
+                                    user
+                                        .occupationDetails!
+                                        .designation!
+                                        .isNotEmpty)
                                   _buildInfoRow(
                                     HugeIcons.strokeRoundedUser,
                                     'Designation',
                                     user.occupationDetails!.designation!,
                                   ),
-                                if (user.occupationDetails?.businessName != null &&
-                                    user.occupationDetails!.businessName!.isNotEmpty)
+                                if (user.occupationDetails?.businessName !=
+                                        null &&
+                                    user
+                                        .occupationDetails!
+                                        .businessName!
+                                        .isNotEmpty)
                                   _buildInfoRow(
                                     HugeIcons.strokeRoundedStore01,
                                     'Business Name',
                                     user.occupationDetails!.businessName!,
                                   ),
                                 if (user.occupationDetails?.category != null &&
-                                    user.occupationDetails!.category!.isNotEmpty)
+                                    user
+                                        .occupationDetails!
+                                        .category!
+                                        .isNotEmpty)
                                   _buildInfoRow(
                                     HugeIcons.strokeRoundedTag01,
                                     'Business Category',
                                     user.occupationDetails!.category!,
                                   ),
                                 if (user.occupationDetails?.industry != null &&
-                                    user.occupationDetails!.industry!.isNotEmpty)
+                                    user
+                                        .occupationDetails!
+                                        .industry!
+                                        .isNotEmpty)
                                   _buildInfoRow(
                                     HugeIcons.strokeRoundedFactory,
                                     'Industry',
@@ -474,7 +659,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(height: 32),
 
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0,
+                                ),
                                 child: SizedBox(
                                   width: double.infinity,
                                   height: 50,
@@ -495,8 +682,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      side: const BorderSide(color: AppTheme.textLight),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                      ),
+                                      side: const BorderSide(
+                                        color: AppTheme.textLight,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),

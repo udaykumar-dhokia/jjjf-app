@@ -97,10 +97,23 @@ export class NewsService {
       orderBy: {
         [sortBy || 'createdAt']: sortOrder || 'desc',
       },
+      include: {
+        user: {
+          select: { photoUrl: true },
+        },
+      },
+    });
+
+    const mappedNews = news.map(item => {
+      const { user, ...rest } = item;
+      return {
+        ...rest,
+        userPhotoUrl: user?.photoUrl || null,
+      };
     });
 
     return {
-      data: news,
+      data: mappedNews,
       meta: {
         total: totalCount,
         limit: Number(limit) || 10,
@@ -140,10 +153,23 @@ export class NewsService {
       orderBy: {
         [sortBy || 'createdAt']: sortOrder || 'desc',
       },
+      include: {
+        user: {
+          select: { photoUrl: true },
+        },
+      },
+    });
+
+    const mappedNews = news.map(item => {
+      const { user, ...rest } = item;
+      return {
+        ...rest,
+        userPhotoUrl: user?.photoUrl || null,
+      };
     });
 
     return {
-      data: news,
+      data: mappedNews,
       meta: {
         total: totalCount,
         limit: Number(limit) || 10,

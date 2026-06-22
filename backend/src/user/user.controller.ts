@@ -1,5 +1,6 @@
-import { Controller, Get, Put, Delete, Body, UseGuards, Request, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Put, Patch, Delete, Body, UseGuards, Request, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { UserService } from './user.service.js';
 import { CompleteProfileDto } from './dto/complete-profile.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -9,7 +10,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 @ApiBearerAuth()
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @UseGuards(JwtAuthGuard)
   @Put('profile')
@@ -35,6 +36,46 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Current user updated' })
   async updateMyProfile(@Request() req, @Body() updateData: UpdateUserDto) {
     return this.userService.update(req.user.userId, updateData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile/image')
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload profile image' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Profile image uploaded' })
+  async uploadProfileImage(
+    @Request() req,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|webp)' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.userService.uploadProfileImage(req.user.userId, file);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('profile/image')
+  @ApiOperation({ summary: 'Remove profile image' })
+  @ApiResponse({ status: 200, description: 'Profile image removed' })
+  async removeProfileImage(@Request() req) {
+    return this.userService.removeProfileImage(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)

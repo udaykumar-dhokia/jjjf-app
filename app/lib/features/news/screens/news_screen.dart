@@ -20,6 +20,7 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  bool _isSearchExpanded = false;
 
   @override
   void initState() {
@@ -51,7 +52,27 @@ class _NewsScreenState extends State<NewsScreen> {
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: const CustomAppBar(title: 'Community News'),
+        appBar: CustomAppBar(
+          title: 'Community News',
+          actions: [
+            IconButton(
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedSearch01,
+                color: Colors.black87,
+                size: 24,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isSearchExpanded = !_isSearchExpanded;
+                  if (!_isSearchExpanded) {
+                    _searchController.clear();
+                    context.read<NewsProvider>().setSearchQuery('');
+                  }
+                });
+              },
+            ),
+          ],
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(
@@ -69,21 +90,28 @@ class _NewsScreenState extends State<NewsScreen> {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              child: CustomTextField(
-                controller: _searchController,
-                onChanged: provider.setSearchQuery,
-                hintText: 'Search news...',
-                prefixIcon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedSearch01,
-                  color: AppTheme.primaryPurple,
-                  size: 20,
-                ),
-              ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _isSearchExpanded
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: CustomTextField(
+                        controller: _searchController,
+                        onChanged: provider.setSearchQuery,
+                        hintText: 'Search news...',
+                        prefixIcon: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedSearch01,
+                          color: AppTheme.primaryPurple,
+                          size: 20,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
             Expanded(
               child: RefreshIndicator(

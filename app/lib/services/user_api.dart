@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import '../models/user_model.dart';
 import 'core/api_client.dart';
 
@@ -38,6 +40,27 @@ class UserApi {
 
   Future<void> updateMyProfile(Map<String, dynamic> updateData) async {
     await _client.dio.put('/user/profile/me', data: updateData);
+  }
+
+  Future<UserModel> uploadProfileImage(File imageFile) async {
+    String fileName = imageFile.path.split('/').last;
+    FormData formData = FormData.fromMap({
+      "image": await MultipartFile.fromFile(
+        imageFile.path,
+        filename: fileName,
+      ),
+    });
+
+    final response = await _client.dio.patch(
+      '/user/profile/image',
+      data: formData,
+    );
+    return UserModel.fromJson(response.data);
+  }
+
+  Future<UserModel> removeProfileImage() async {
+    final response = await _client.dio.delete('/user/profile/image');
+    return UserModel.fromJson(response.data);
   }
 
   Future<List<UserModel>> getDirectory() async {

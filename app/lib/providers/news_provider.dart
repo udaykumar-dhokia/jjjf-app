@@ -71,6 +71,7 @@ class NewsProvider extends ChangeNotifier {
   }
 
   void setSearchQuery(String query) {
+    if (_searchQuery == query) return;
     _searchQuery = query;
     fetchNews(refresh: true);
   }

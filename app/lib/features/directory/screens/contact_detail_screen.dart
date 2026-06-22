@@ -123,9 +123,11 @@ class ContactDetailScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 50,
                           backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage(
-                            'https://api.dicebear.com/10.x/glass/png?seed=${contact.firstName}',
-                          ),
+                          backgroundImage: contact.photoUrl != null
+                              ? NetworkImage(contact.photoUrl!) as ImageProvider
+                              : NetworkImage(
+                                  'https://api.dicebear.com/10.x/glass/png?seed=${contact.firstName}',
+                                ),
                         ),
                       ),
                       const SizedBox(height: 16),
