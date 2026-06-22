@@ -23,6 +23,7 @@ class StepContactAddress extends StatelessWidget {
             const SizedBox(height: 16),
             CustomTextField(
               labelText: 'Phone Number *',
+              maxLength: 10,
               hintText: 'Enter 10-digit number',
               initialValue: provider.phoneNumber,
               keyboardType: TextInputType.phone,
@@ -42,6 +43,7 @@ class StepContactAddress extends StatelessWidget {
             const SizedBox(height: 8),
             CustomTextField(
               labelText: 'WhatsApp Number',
+              maxLength: 10,
               hintText: 'Leave blank if same as phone',
               initialValue: provider.whatsappNumber,
               keyboardType: TextInputType.phone,
@@ -146,6 +148,7 @@ class StepContactAddress extends StatelessWidget {
             CustomTextField(
               labelText: 'Pin Code',
               hintText: 'Postal code',
+              maxLength: 6,
               initialValue: provider.pinCode,
               keyboardType: TextInputType.number,
               onChanged: (val) =>

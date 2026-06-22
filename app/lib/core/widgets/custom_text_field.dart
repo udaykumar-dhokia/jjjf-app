@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final bool readOnly;
   final int maxLines;
   final VoidCallback? onTap;
+  final int? maxLength;
 
   const CustomTextField({
     super.key,
@@ -31,6 +32,7 @@ class CustomTextField extends StatelessWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.onTap,
+    this.maxLength,
   });
 
   @override
@@ -45,30 +47,25 @@ class CustomTextField extends StatelessWidget {
       readOnly: readOnly,
       maxLines: maxLines,
       onTap: onTap,
+      maxLength: maxLength,
       style: GoogleFonts.inter(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
-        prefixIcon: prefixIcon != null 
+        prefixIcon: prefixIcon != null
             ? Padding(
                 padding: const EdgeInsets.only(right: 12.0),
                 child: UnconstrainedBox(child: prefixIcon),
-              ) 
+              )
             : null,
-        prefixIconConstraints: const BoxConstraints(
-          minWidth: 0, 
-          minHeight: 0,
-        ),
-        suffixIcon: suffixIcon != null 
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        suffixIcon: suffixIcon != null
             ? Padding(
                 padding: const EdgeInsets.only(left: 12.0),
                 child: UnconstrainedBox(child: suffixIcon),
               )
             : null,
-        suffixIconConstraints: const BoxConstraints(
-          minWidth: 0,
-          minHeight: 0,
-        ),
+        suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
       ),
     );
   }
