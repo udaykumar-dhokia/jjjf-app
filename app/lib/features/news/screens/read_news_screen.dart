@@ -4,8 +4,12 @@ import 'package:flutter/cupertino.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../models/news_model.dart';
 import '../../../services/user_api.dart';
+import '../../../providers/user_provider.dart';
+import '../../../providers/news_provider.dart';
+import 'package:provider/provider.dart';
 import '../../directory/screens/contact_detail_screen.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import 'edit_news_screen.dart';
 
 class ReadNewsScreen extends StatefulWidget {
   final NewsModel news;
@@ -64,8 +68,51 @@ class _ReadNewsScreenState extends State<ReadNewsScreen> {
     }
   }
 
+  Future<void> _deletePost() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Delete Post'),
+        content: const Text('Are you sure you want to delete this post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black54),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && mounted) {
+      final success = await context.read<NewsProvider>().deleteNewsPost(
+        widget.news.id,
+      );
+      if (success && mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post deleted successfully')),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to delete post')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.watch<UserProvider>().userProfile;
+    final isAuthor = currentUser?.id == widget.news.userId;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -78,6 +125,33 @@ class _ReadNewsScreenState extends State<ReadNewsScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: isAuthor
+            ? [
+                IconButton(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedEdit02,
+                    color: AppTheme.primaryPurple,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditNewsScreen(news: widget.news),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedDelete02,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                  onPressed: _deletePost,
+                ),
+              ]
+            : null,
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -106,10 +180,11 @@ class _ReadNewsScreenState extends State<ReadNewsScreen> {
                       child: Image.network(
                         'https://api.dicebear.com/10.x/glass/png?seed=${widget.news.userName}',
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const HugeIcon(
-                          icon: HugeIcons.strokeRoundedUser,
-                          color: AppTheme.primaryPurple,
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const HugeIcon(
+                              icon: HugeIcons.strokeRoundedUser,
+                              color: AppTheme.primaryPurple,
+                            ),
                       ),
                     ),
                   ),
@@ -196,7 +271,7 @@ class _ReadNewsScreenState extends State<ReadNewsScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-            ]
+            ],
           ],
         ),
       ),

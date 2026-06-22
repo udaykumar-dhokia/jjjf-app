@@ -13,8 +13,8 @@ class ApiClient {
     : _dio = Dio(
         BaseOptions(
           baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
+          connectTimeout: const Duration(seconds: 20),
+          receiveTimeout: const Duration(seconds: 20),
         ),
       ),
       _storage = const FlutterSecureStorage() {

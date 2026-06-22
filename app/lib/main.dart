@@ -2,6 +2,7 @@ import 'package:app/providers/complete_profile_provider.dart';
 import 'package:app/providers/directory_provider.dart';
 import 'package:app/providers/news_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -17,6 +18,15 @@ import 'features/main/screens/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+    ),
+  );
+
   await dotenv.load(fileName: ".env");
 
   const storage = FlutterSecureStorage();
@@ -64,20 +74,27 @@ class JaloreJainSanghApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Jalore Jain Sangh',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      builder: (context, child) {
-        return GradientBackground(child: child!);
-      },
-      home: showOnboarding
-          ? const OnboardingScreen()
-          : (isAuthenticated
-                ? (isProfileComplete
-                      ? const MainScreen()
-                      : const CompleteProfileScreen())
-                : const LoginScreen()),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: MaterialApp(
+        title: 'Jalore Jain Sangh',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        builder: (context, child) {
+          return GradientBackground(child: child!);
+        },
+        home: showOnboarding
+            ? const OnboardingScreen()
+            : (isAuthenticated
+                  ? (isProfileComplete
+                        ? const MainScreen()
+                        : const CompleteProfileScreen())
+                  : const LoginScreen()),
+      ),
     );
   }
 }

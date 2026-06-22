@@ -16,7 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.centerTitle = false,
     this.elevation = 0,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor = Colors.white,
     this.foregroundColor = Colors.black87,
   });
 
@@ -29,7 +29,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       leading: leading,
       actions: actions,
-      surfaceTintColor: Colors.transparent,
+      surfaceTintColor: Colors.white,
       centerTitle: centerTitle,
       backgroundColor: backgroundColor,
       elevation: elevation,
