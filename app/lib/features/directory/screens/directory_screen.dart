@@ -12,7 +12,9 @@ import '../widgets/directory_filter_sheet.dart';
 import 'contact_detail_screen.dart';
 
 class DirectoryScreen extends StatefulWidget {
-  const DirectoryScreen({super.key});
+  final VoidCallback? onMenuTap;
+  
+  const DirectoryScreen({super.key, this.onMenuTap});
 
   @override
   State<DirectoryScreen> createState() => _DirectoryScreenState();
@@ -60,6 +62,16 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
         backgroundColor: Colors.transparent,
         appBar: CustomAppBar(
           title: 'Directory',
+          leading: widget.onMenuTap != null
+              ? IconButton(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedMenu01,
+                    color: AppTheme.primaryPurple,
+                    size: 24,
+                  ),
+                  onPressed: widget.onMenuTap,
+                )
+              : null,
           actions: [
             IconButton(
               icon: HugeIcon(

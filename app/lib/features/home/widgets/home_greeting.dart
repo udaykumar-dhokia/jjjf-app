@@ -29,7 +29,7 @@ class HomeGreeting extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text.rich(
             TextSpan(
-              text: '$greeting, 👋',
+              text: '$greeting, 👋\n',
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.black87,

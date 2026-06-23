@@ -14,9 +14,12 @@ import '../../../providers/user_provider.dart';
 import '../../../core/widgets/sliver_app_bar_delegate.dart';
 import '../widgets/user_activity_tab.dart';
 import 'update_profile_screen.dart';
+import '../../auth/screens/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final VoidCallback? onMenuTap;
+
+  const ProfileScreen({super.key, this.onMenuTap});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -283,6 +286,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.transparent,
         appBar: CustomAppBar(
           title: 'My Profile',
+          leading: widget.onMenuTap != null
+              ? IconButton(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedMenu01,
+                    color: AppTheme.primaryPurple,
+                    size: 24,
+                  ),
+                  onPressed: widget.onMenuTap,
+                )
+              : null,
           actions: user != null
               ? [
                   IconButton(
@@ -666,8 +679,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   width: double.infinity,
                                   height: 50,
                                   child: OutlinedButton.icon(
-                                    onPressed: () {
-                                      authProvider.logout();
+                                    onPressed: () async {
+                                      await authProvider.logout();
+                                      if (context.mounted) {
+                                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                          (route) => false,
+                                        );
+                                      }
                                     },
                                     icon: const HugeIcon(
                                       icon: HugeIcons.strokeRoundedLogout01,

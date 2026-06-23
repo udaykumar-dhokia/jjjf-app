@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../providers/user_provider.dart';
+import '../../../providers/auth_provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../home/screens/home_screen.dart';
@@ -10,6 +14,7 @@ import '../../news/screens/news_screen.dart';
 import '../../directory/screens/directory_screen.dart';
 import '../../businesses/screens/businesses_screen.dart';
 import '../../profile/screens/profile_screen.dart';
+import '../../auth/screens/login_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,6 +25,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late PersistentTabController _controller;
+  final _advancedDrawerController = AdvancedDrawerController();
 
   @override
   void initState() {
@@ -33,7 +39,12 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _advancedDrawerController.dispose();
     super.dispose();
+  }
+
+  void _handleMenuButtonPressed() {
+    _advancedDrawerController.showDrawer();
   }
 
   List<Widget> _buildScreens() {
@@ -43,12 +54,13 @@ class _MainScreenState extends State<MainScreen> {
           onNavigateTab: (index) {
             _controller.jumpToTab(index);
           },
+          onMenuTap: _handleMenuButtonPressed,
         ),
       ),
-      SafeArea(child: const NewsScreen()),
-      SafeArea(child: const DirectoryScreen()),
-      SafeArea(child: const BusinessesScreen()),
-      SafeArea(child: const ProfileScreen()),
+      SafeArea(child: NewsScreen(onMenuTap: _handleMenuButtonPressed)),
+      SafeArea(child: DirectoryScreen(onMenuTap: _handleMenuButtonPressed)),
+      SafeArea(child: BusinessesScreen(onMenuTap: _handleMenuButtonPressed)),
+      SafeArea(child: ProfileScreen(onMenuTap: _handleMenuButtonPressed)),
     ];
   }
 
@@ -130,7 +142,7 @@ class _MainScreenState extends State<MainScreen> {
     final imageUrl =
         (userProfile.photoUrl != null && userProfile.photoUrl!.isNotEmpty)
         ? userProfile.photoUrl!
-        : 'https://api.dicebear.com/7.x/avataaars/png?seed=${userProfile.firstName}';
+        : 'https://api.dicebear.com/10.x/glass/png?seed=${userProfile.firstName}';
 
     return Container(
       width: 32,
@@ -163,31 +175,216 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(context),
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true,
-        stateManagement: true,
-        hideNavigationBarWhenKeyboardAppears: true,
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        backgroundColor: Colors.white.withOpacity(0.95),
-        decoration: NavBarDecoration(
-          borderRadius: BorderRadius.circular(0.0),
-          colorBehindNavBar: Colors.transparent,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
+    return AdvancedDrawer(
+      backdrop: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(color: AppTheme.primaryPurple),
+      ),
+      controller: _advancedDrawerController,
+      animationCurve: Curves.easeInOut,
+      animationDuration: const Duration(milliseconds: 300),
+      animateChildDecoration: true,
+      rtlOpening: false,
+      disabledGestures: false,
+      childDecoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+      drawer: _buildDrawer(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _buildScreens(),
+          items: _navBarsItems(context),
+          handleAndroidBackButtonPress: true,
+          resizeToAvoidBottomInset: true,
+          stateManagement: true,
+          hideNavigationBarWhenKeyboardAppears: true,
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          backgroundColor: Colors.white.withOpacity(0.95),
+          decoration: NavBarDecoration(
+            borderRadius: BorderRadius.circular(0.0),
+            colorBehindNavBar: Colors.transparent,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          navBarStyle: NavBarStyle.style12,
         ),
-        navBarStyle: NavBarStyle.style12,
+      ),
+    );
+  }
+
+  Widget _buildDrawer() {
+    final userProvider = context.watch<UserProvider>();
+    final user = userProvider.userProfile;
+    final authProvider = context.read<AuthProvider>();
+
+    final imageUrl = (user?.photoUrl != null && user!.photoUrl!.isNotEmpty)
+        ? user.photoUrl!
+        : 'https://api.dicebear.com/10.x/glass/png?seed=${user?.firstName ?? 'User'}';
+
+    return SafeArea(
+      child: ListTileTheme(
+        textColor: Colors.white,
+        iconColor: Colors.white,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: IntrinsicHeight(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight:
+                    MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 100.0,
+                    height: 100.0,
+                    margin: const EdgeInsets.only(
+                      top: 24.0,
+                      bottom: 16.0,
+                      left: 16.0,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: const BoxDecoration(
+                      color: Colors.black26,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.network(imageUrl, fit: BoxFit.cover),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${user?.firstName ?? 'Guest'} ${user?.gotra ?? ''}'
+                              .trim(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        if (user?.memberId != null)
+                          Text(
+                            'Member ID: ${user!.memberId}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      _controller.jumpToTab(0);
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedHome01,
+                      color: Colors.white,
+                    ),
+                    title: const Text('Home'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      _controller.jumpToTab(1);
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedNews,
+                      color: Colors.white,
+                    ),
+                    title: const Text('News'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      _controller.jumpToTab(2);
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedContactBook,
+                      color: Colors.white,
+                    ),
+                    title: const Text('Directory'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      _controller.jumpToTab(3);
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedBuilding03,
+                      color: Colors.white,
+                    ),
+                    title: const Text('Businesses'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      _controller.jumpToTab(4);
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedUser,
+                      color: Colors.white,
+                    ),
+                    title: const Text('Profile'),
+                  ),
+
+                  const Spacer(),
+
+                  ListTile(
+                    onTap: () async {
+                      await authProvider.logout();
+                      if (context.mounted) {
+                        Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      }
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedLogout01,
+                      color: Colors.white,
+                    ),
+                    title: const Text('Logout'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Version 1.0.0',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

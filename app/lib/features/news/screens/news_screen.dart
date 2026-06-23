@@ -11,7 +11,9 @@ import '../widgets/news_card.dart';
 import 'create_news_screen.dart';
 
 class NewsScreen extends StatefulWidget {
-  const NewsScreen({super.key});
+  final VoidCallback? onMenuTap;
+  
+  const NewsScreen({super.key, this.onMenuTap});
 
   @override
   State<NewsScreen> createState() => _NewsScreenState();
@@ -54,6 +56,16 @@ class _NewsScreenState extends State<NewsScreen> {
         backgroundColor: Colors.transparent,
         appBar: CustomAppBar(
           title: 'Community News',
+          leading: widget.onMenuTap != null
+              ? IconButton(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedMenu01,
+                    color: AppTheme.primaryPurple,
+                    size: 24,
+                  ),
+                  onPressed: widget.onMenuTap,
+                )
+              : null,
           actions: [
             IconButton(
               icon: const HugeIcon(

@@ -53,7 +53,7 @@ export class UserService {
    * Sorted alphabetically by first name.
    */
   async getApprovedDirectory() {
-    return prisma.user.findMany({
+    const users = await prisma.user.findMany({
       where: {
         status: 'APPROVED',
       },
@@ -79,6 +79,13 @@ export class UserService {
         nativeDistrict: true,
         photoUrl: true,
       }
+    });
+
+    return users.map(user => {
+      if (!user.isPhoneNumberVisible) {
+        user.phoneNumber = null as any;
+      }
+      return user;
     });
   }
 
