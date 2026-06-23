@@ -26,10 +26,15 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
+    const { password, ...profileData } = dto;
+    const bcrypt = await import('bcryptjs');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        ...dto,
+        ...profileData,
+        password: hashedPassword,
         dateOfBirth: new Date(dto.dateOfBirth),
         isProfileComplete: true,
       },

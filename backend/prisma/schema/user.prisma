@@ -83,6 +83,7 @@ model User {
   role           Role          @default(MEMBER)
   status         ProfileStatus @default(PENDING_APPROVAL)
   assignedStates String[]
+  password       String        @default("$2b$10$M22AWip9WhljtCIkVeD7yuCXcZb0OUx/VcaIbA6w7XTDegDOHwYYG")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

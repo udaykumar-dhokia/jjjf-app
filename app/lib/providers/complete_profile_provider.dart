@@ -49,6 +49,10 @@ class CompleteProfileProvider extends ChangeNotifier {
   // Other Fields
   String occupationDescription = '';
 
+  // Password Fields
+  String password = '';
+  String confirmPassword = '';
+
   // Loading State
   bool isLoading = false;
   String? error;
@@ -166,6 +170,7 @@ class CompleteProfileProvider extends ChangeNotifier {
         if (whatsappNumber.isNotEmpty) 'whatsappNumber': whatsappNumber,
         'isPhoneNumberVisible': gender == 'MALE',
         'relationshipToHead': 'SELF',
+        if (!isUpdateMode) 'password': password,
       };
 
       if (isUpdateMode) {

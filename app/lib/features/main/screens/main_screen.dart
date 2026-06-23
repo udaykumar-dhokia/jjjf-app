@@ -3,7 +3,6 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../providers/user_provider.dart';
 import '../../../providers/auth_provider.dart';

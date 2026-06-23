@@ -32,6 +32,29 @@ class AuthApi {
     return response.data;
   }
 
+  Future<Map<String, dynamic>> loginWithPassword(String email, String password) async {
+    final response = await _client.dio.post(
+      '/auth/login/password',
+      data: {'email': email, 'password': password},
+    );
+
+    final accessToken = response.data['accessToken'];
+    final refreshToken = response.data['refreshToken'];
+    final isProfileComplete = response.data['isProfileComplete'];
+
+    if (accessToken != null) {
+      await _client.storage.write(key: 'accessToken', value: accessToken);
+    }
+    if (refreshToken != null) {
+      await _client.storage.write(key: 'refreshToken', value: refreshToken);
+    }
+    if (isProfileComplete != null) {
+      await _client.storage.write(key: 'isProfileComplete', value: isProfileComplete.toString());
+    }
+
+    return response.data;
+  }
+
   Future<void> logout() async {
     final refreshToken = await _client.storage.read(key: 'refreshToken');
     if (refreshToken != null) {

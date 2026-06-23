@@ -137,4 +137,32 @@ export class AuthService {
     }
     return { message: 'Logged out successfully' };
   }
+
+  /**
+   * Verifies the password supplied by the user.
+   *
+   * @param email - The email address.
+   * @param password - The password entered by the user.
+   * @returns An object containing JWT tokens.
+   */
+  async loginWithPassword(email: string, password: string) {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const bcrypt = await import('bcryptjs');
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const tokens = await this.tokenUtil.generateTokens(user.id, user.email || '', user.role, user.isProfileComplete);
+    
+    return {
+      ...tokens,
+      isNewUser: false,
+      isProfileComplete: user.isProfileComplete,
+    };
+  }
 }

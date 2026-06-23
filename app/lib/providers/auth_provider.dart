@@ -63,6 +63,24 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> loginWithPassword(String email, String password) async {
+    _setLoading(true);
+    try {
+      final response = await _authApi.loginWithPassword(email, password);
+      _isAuthenticated = true;
+      _isNewUser = response['isNewUser'] == true;
+      _isProfileComplete = response['isProfileComplete'] == true;
+      _error = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = "Invalid email or password.";
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<void> logout() async {
     await _authApi.logout();
     _isAuthenticated = false;

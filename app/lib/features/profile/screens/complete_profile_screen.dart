@@ -5,6 +5,7 @@ import '../../../providers/complete_profile_provider.dart';
 import '../widgets/step_personal_details.dart';
 import '../widgets/step_contact_address.dart';
 import '../widgets/step_occupation.dart';
+import '../widgets/step_password.dart';
 import '../../main/screens/main_screen.dart';
 
 class CompleteProfileScreen extends StatelessWidget {
@@ -34,6 +35,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
   ];
 
   @override
@@ -44,9 +46,11 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
 
   void _nextStep() {
     FocusScope.of(context).unfocus();
+    final provider = context.read<CompleteProfileProvider>();
+    final int maxSteps = provider.isUpdateMode ? 3 : 4;
 
     if (_formKeys[_currentPage].currentState!.validate()) {
-      if (_currentPage < 2) {
+      if (_currentPage < maxSteps - 1) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
@@ -96,6 +100,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CompleteProfileProvider>();
+    final int maxSteps = provider.isUpdateMode ? 3 : 4;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -123,7 +128,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
 
                   Expanded(
                     child: Text(
-                      "Complete Profile",
+                      provider.isUpdateMode ? "Update Profile" : "Complete Profile",
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
@@ -140,7 +145,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
                 vertical: 8.0,
               ),
               child: Row(
-                children: List.generate(3, (index) {
+                children: List.generate(maxSteps, (index) {
                   return Expanded(
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -165,7 +170,9 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
                     ? "Step 1: Personal Details"
                     : _currentPage == 1
                     ? "Step 2: Contact & Address"
-                    : "Step 3: Occupation",
+                    : _currentPage == 2
+                    ? "Step 3: Occupation"
+                    : "Step 4: Set Password",
                 style: const TextStyle(
                   color: AppTheme.primaryPurple,
                   fontWeight: FontWeight.bold,
@@ -187,6 +194,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
                   StepPersonalDetails(formKey: _formKeys[0]),
                   StepContactAddress(formKey: _formKeys[1]),
                   StepOccupation(formKey: _formKeys[2]),
+                  if (!provider.isUpdateMode) StepPassword(formKey: _formKeys[3]),
                 ],
               ),
             ),
@@ -212,7 +220,7 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
                     ),
                   )
                 : Text(
-                    _currentPage == 2 ? 'Submit Profile' : 'Next',
+                    _currentPage == maxSteps - 1 ? 'Submit Profile' : 'Next',
                     style: const TextStyle(fontSize: 16),
                   ),
           ),

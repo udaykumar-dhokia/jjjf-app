@@ -176,4 +176,9 @@ export class CompleteProfileDto {
   @IsEnum(RelationshipType)
   @IsNotEmpty()
   relationshipToHead!: RelationshipType;
+
+  @ApiProperty({ required: true, description: 'Password' })
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
 }

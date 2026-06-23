@@ -5,6 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { SendOtpDto } from './dto/send-otp.dto.js';
 import { VerifyOtpDto } from './dto/verify-otp.dto.js';
 import { RefreshTokenDto } from './dto/refresh-token.dto.js';
+import { LoginWithPasswordDto } from './dto/login-password.dto.js';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -25,6 +26,14 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Tokens returned on successful verification' })
   async verifyOtp(@Body() body: VerifyOtpDto) {
     return this.authService.verifyOtp(body.email, body.otp);
+  }
+
+  @Post('login/password')
+  @ApiOperation({ summary: 'Login with password' })
+  @ApiBody({ type: LoginWithPasswordDto })
+  @ApiResponse({ status: 200, description: 'Tokens returned on successful login' })
+  async loginWithPassword(@Body() body: LoginWithPasswordDto) {
+    return this.authService.loginWithPassword(body.email, body.password);
   }
 
   @UseGuards(AuthGuard('jwt-refresh'))
