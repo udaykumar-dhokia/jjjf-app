@@ -1,6 +1,7 @@
 import 'package:app/providers/complete_profile_provider.dart';
 import 'package:app/providers/directory_provider.dart';
 import 'package:app/providers/news_provider.dart';
+import 'package:app/providers/family_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => CompleteProfileProvider()),
         ChangeNotifierProvider(create: (_) => DirectoryProvider()),
         ChangeNotifierProvider(create: (_) => NewsProvider()),
+        ChangeNotifierProvider(create: (_) => FamilyProvider()),
       ],
       child: JaloreJainSanghApp(
         showOnboarding: showOnboarding,

@@ -272,6 +272,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  genealogy_chart:
+    dependency: "direct main"
+    description:
+      name: genealogy_chart
+      sha256: "2b5b876808ff59bd025626c7771fa22632f584c764bb56b0bce6ed3a7071d8b6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   google_fonts:
     dependency: "direct main"
     description:

@@ -15,6 +15,7 @@ import '../../../core/widgets/sliver_app_bar_delegate.dart';
 import '../widgets/user_activity_tab.dart';
 import 'update_profile_screen.dart';
 import '../../auth/screens/login_screen.dart';
+import '../../family/screens/family_tree_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback? onMenuTap;
@@ -25,16 +26,39 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
   bool _isUploadingProfilePic = false;
+
+  late TabController _tabController;
+  int _previousTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.index == 2) {
+        _tabController.index = _previousTabIndex;
+        Navigator.of(
+          context,
+          rootNavigator: true,
+        ).push(MaterialPageRoute(builder: (_) => const FamilyTreeScreen()));
+      } else {
+        _previousTabIndex = _tabController.index;
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().fetchMyProfile();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _showImagePickerOptions(BuildContext context, UserProvider provider) {
@@ -351,377 +375,369 @@ class _ProfileScreenState extends State<ProfileScreen> {
               )
             : user == null
             ? const Center(child: Text('No profile data found.'))
-            : DefaultTabController(
-                length: 2,
-                child: RefreshIndicator(
-                  onRefresh: () => userProvider.fetchMyProfile(),
-                  child: NestedScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    headerSliverBuilder: (context, innerBoxIsScrolled) {
-                      return [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 24),
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: user.status == 'PENDING_APPROVAL'
-                                      ? Border.all(
-                                          color: Colors.orange,
-                                          width: 2,
-                                        )
-                                      : null,
+            : RefreshIndicator(
+                onRefresh: () => userProvider.fetchMyProfile(),
+                child: NestedScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 24),
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: user.status == 'PENDING_APPROVAL'
+                                    ? Border.all(color: Colors.orange, width: 2)
+                                    : null,
+                              ),
+                              child: GestureDetector(
+                                onTap: () => _showImagePickerOptions(
+                                  context,
+                                  userProvider,
                                 ),
-                                child: GestureDetector(
-                                  onTap: () => _showImagePickerOptions(
-                                    context,
-                                    userProvider,
-                                  ),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 50,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: user.photoUrl != null
-                                            ? NetworkImage(user.photoUrl!)
-                                                  as ImageProvider
-                                            : NetworkImage(
-                                                'https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}',
-                                              ),
-                                      ),
-                                      if (_isUploadingProfilePic)
-                                        Container(
-                                          width: 100,
-                                          height: 100,
-                                          decoration: const BoxDecoration(
-                                            color: Colors.black45,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child:
-                                              const CupertinoActivityIndicator(
-                                                color: Colors.white,
-                                              ),
-                                        ),
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: AppTheme.primaryPurple,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 2,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: user.photoUrl != null
+                                          ? NetworkImage(user.photoUrl!)
+                                                as ImageProvider
+                                          : NetworkImage(
+                                              'https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}',
                                             ),
-                                          ),
-                                          child: const HugeIcon(
-                                            icon:
-                                                HugeIcons.strokeRoundedCamera01,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
+                                    ),
+                                    if (_isUploadingProfilePic)
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black45,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const CupertinoActivityIndicator(
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.primaryPurple,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: const HugeIcon(
+                                          icon: HugeIcons.strokeRoundedCamera01,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                '${user.firstName} ${user.fatherName} ${user.gotra}',
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              '${user.firstName} ${user.fatherName} ${user.gotra}',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
                               ),
-                              const SizedBox(height: 14),
+                            ),
+                            const SizedBox(height: 14),
+                          ],
+                        ),
+                      ),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: SliverAppBarDelegate(
+                          TabBar(
+                            controller: _tabController,
+                            indicatorColor: AppTheme.primaryPurple,
+                            labelColor: AppTheme.primaryPurple,
+                            unselectedLabelColor: Colors.black54,
+                            indicatorWeight: 3,
+                            tabs: const [
+                              Tab(text: 'Profile'),
+                              Tab(text: 'Activity'),
+                              Tab(text: 'Family'),
                             ],
                           ),
+                          backgroundColor: Colors.white.withOpacity(0.95),
                         ),
-                        SliverPersistentHeader(
-                          pinned: true,
-                          delegate: SliverAppBarDelegate(
-                            TabBar(
-                              indicatorColor: AppTheme.primaryPurple,
-                              labelColor: AppTheme.primaryPurple,
-                              unselectedLabelColor: Colors.black54,
-                              indicatorWeight: 3,
-                              tabs: const [
-                                Tab(text: 'Profile'),
-                                Tab(text: 'Activity'),
-                              ],
-                            ),
-                            backgroundColor: Colors.white.withOpacity(0.95),
-                          ),
-                        ),
-                      ];
-                    },
-                    body: TabBarView(
-                      children: [
-                        // Profile Tab
-                        SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(bottom: 100),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 16),
-                              _buildSectionCard('Personal Information', [
+                      ),
+                    ];
+                  },
+                  body: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      // Profile Tab
+                      SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: 100),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            _buildSectionCard('Personal Information', [
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedUser,
+                                'Gender',
+                                user.gender,
+                              ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedCalendar01,
+                                'Date of Birth',
+                                '${user.dateOfBirth.day}/${user.dateOfBirth.month}/${user.dateOfBirth.year}',
+                              ),
+                              if (user.bloodGroup != null &&
+                                  user.bloodGroup!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedBlood,
+                                  'Blood Group',
+                                  user.bloodGroup!,
+                                ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedFavourite,
+                                'Marital Status',
+                                user.maritalStatus,
+                              ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedBookOpen01,
+                                'Gotra',
+                                user.gotra,
+                              ),
+                              if (user.motherName != null &&
+                                  user.motherName!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedUserLove01,
+                                  'Mother Name',
+                                  user.motherName!,
+                                ),
+                              if (user.spouseName != null &&
+                                  user.spouseName!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedHeartAdd,
+                                  'Spouse Name',
+                                  user.spouseName!,
+                                ),
+                              if (user.husbandNameWithSurname != null &&
+                                  user.husbandNameWithSurname!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedHeartAdd,
+                                  'Husband Name',
+                                  user.husbandNameWithSurname!,
+                                ),
+                              if (user.sasuralGotra != null &&
+                                  user.sasuralGotra!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedBookOpen02,
+                                  'Sasural Gotra',
+                                  user.sasuralGotra!,
+                                ),
+                            ]),
+
+                            _buildSectionCard('Contact Details', [
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedCall02,
+                                'Phone Number',
+                                user.phoneNumber,
+                              ),
+                              if (user.whatsappNumber != null &&
+                                  user.whatsappNumber!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedMessage02,
+                                  'WhatsApp',
+                                  user.whatsappNumber!,
+                                ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedMail01,
+                                'Email',
+                                user.email,
+                              ),
+                              if (user.currentAddress != null &&
+                                  user.currentAddress!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedLocation01,
+                                  'Current Address',
+                                  user.currentAddress!,
+                                ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedCity01,
+                                'Current City/State',
+                                '${user.currentCity}, ${user.currentState}',
+                              ),
+                              if (user.pinCode != null &&
+                                  user.pinCode!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedLocation03,
+                                  'Pincode',
+                                  user.pinCode!,
+                                ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedMapPin,
+                                'Native Village',
+                                user.gaon,
+                              ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedMapPin,
+                                'Native Location',
+                                '${user.nativeDistrict}, ${user.nativeState}',
+                              ),
+                            ]),
+
+                            _buildSectionCard('Occupation & Education', [
+                              if (user.education != null &&
+                                  user.education!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedMortarboard01,
+                                  'Education',
+                                  user.education!,
+                                ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedBriefcase02,
+                                'Occupation Type',
+                                user.occupationType,
+                              ),
+                              if (user.occupationDetails?.companyName != null &&
+                                  user
+                                      .occupationDetails!
+                                      .companyName!
+                                      .isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedBuilding03,
+                                  'Company',
+                                  user.occupationDetails!.companyName!,
+                                ),
+                              if (user.occupationDetails?.designation != null &&
+                                  user
+                                      .occupationDetails!
+                                      .designation!
+                                      .isNotEmpty)
                                 _buildInfoRow(
                                   HugeIcons.strokeRoundedUser,
-                                  'Gender',
-                                  user.gender,
+                                  'Designation',
+                                  user.occupationDetails!.designation!,
                                 ),
+                              if (user.occupationDetails?.businessName !=
+                                      null &&
+                                  user
+                                      .occupationDetails!
+                                      .businessName!
+                                      .isNotEmpty)
                                 _buildInfoRow(
-                                  HugeIcons.strokeRoundedCalendar01,
-                                  'Date of Birth',
-                                  '${user.dateOfBirth.day}/${user.dateOfBirth.month}/${user.dateOfBirth.year}',
+                                  HugeIcons.strokeRoundedStore01,
+                                  'Business Name',
+                                  user.occupationDetails!.businessName!,
                                 ),
-                                if (user.bloodGroup != null &&
-                                    user.bloodGroup!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedBlood,
-                                    'Blood Group',
-                                    user.bloodGroup!,
-                                  ),
+                              if (user.occupationDetails?.category != null &&
+                                  user.occupationDetails!.category!.isNotEmpty)
                                 _buildInfoRow(
-                                  HugeIcons.strokeRoundedFavourite,
-                                  'Marital Status',
-                                  user.maritalStatus,
+                                  HugeIcons.strokeRoundedTag01,
+                                  'Business Category',
+                                  user.occupationDetails!.category!,
                                 ),
+                              if (user.occupationDetails?.industry != null &&
+                                  user.occupationDetails!.industry!.isNotEmpty)
                                 _buildInfoRow(
-                                  HugeIcons.strokeRoundedBookOpen01,
-                                  'Gotra',
-                                  user.gotra,
+                                  HugeIcons.strokeRoundedFactory,
+                                  'Industry',
+                                  user.occupationDetails!.industry!,
                                 ),
-                                if (user.motherName != null &&
-                                    user.motherName!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedUserLove01,
-                                    'Mother Name',
-                                    user.motherName!,
-                                  ),
-                                if (user.spouseName != null &&
-                                    user.spouseName!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedHeartAdd,
-                                    'Spouse Name',
-                                    user.spouseName!,
-                                  ),
-                                if (user.husbandNameWithSurname != null &&
-                                    user.husbandNameWithSurname!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedHeartAdd,
-                                    'Husband Name',
-                                    user.husbandNameWithSurname!,
-                                  ),
-                                if (user.sasuralGotra != null &&
-                                    user.sasuralGotra!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedBookOpen02,
-                                    'Sasural Gotra',
-                                    user.sasuralGotra!,
-                                  ),
-                              ]),
+                              if (user.occupationDetails?.address != null &&
+                                  user.occupationDetails!.address!.isNotEmpty)
+                                _buildInfoRow(
+                                  HugeIcons.strokeRoundedLocation04,
+                                  'Work Address',
+                                  '${user.occupationDetails!.address!}${user.occupationDetails?.city != null ? ', ${user.occupationDetails!.city}' : ''}',
+                                ),
+                            ]),
 
-                              _buildSectionCard('Contact Details', [
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedCall02,
-                                  'Phone Number',
-                                  user.phoneNumber,
-                                ),
-                                if (user.whatsappNumber != null &&
-                                    user.whatsappNumber!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedMessage02,
-                                    'WhatsApp',
-                                    user.whatsappNumber!,
-                                  ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedMail01,
-                                  'Email',
-                                  user.email,
-                                ),
-                                if (user.currentAddress != null &&
-                                    user.currentAddress!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedLocation01,
-                                    'Current Address',
-                                    user.currentAddress!,
-                                  ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedCity01,
-                                  'Current City/State',
-                                  '${user.currentCity}, ${user.currentState}',
-                                ),
-                                if (user.pinCode != null &&
-                                    user.pinCode!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedLocation03,
-                                    'Pincode',
-                                    user.pinCode!,
-                                  ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedMapPin,
-                                  'Native Village',
-                                  user.gaon,
-                                ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedMapPin,
-                                  'Native Location',
-                                  '${user.nativeDistrict}, ${user.nativeState}',
-                                ),
-                              ]),
+                            _buildSectionCard('Family Information', [
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedHome01,
+                                'Role in Family',
+                                user.relationshipToHead,
+                              ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedUserGroup,
+                                'Head of Family',
+                                user.isHeadOfFamily ? 'Yes' : 'No',
+                              ),
+                              _buildInfoRow(
+                                HugeIcons.strokeRoundedFingerPrint,
+                                'Family ID',
+                                user.familyId,
+                              ),
+                            ]),
 
-                              _buildSectionCard('Occupation & Education', [
-                                if (user.education != null &&
-                                    user.education!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedMortarboard01,
-                                    'Education',
-                                    user.education!,
-                                  ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedBriefcase02,
-                                  'Occupation Type',
-                                  user.occupationType,
-                                ),
-                                if (user.occupationDetails?.companyName !=
-                                        null &&
-                                    user
-                                        .occupationDetails!
-                                        .companyName!
-                                        .isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedBuilding03,
-                                    'Company',
-                                    user.occupationDetails!.companyName!,
-                                  ),
-                                if (user.occupationDetails?.designation !=
-                                        null &&
-                                    user
-                                        .occupationDetails!
-                                        .designation!
-                                        .isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedUser,
-                                    'Designation',
-                                    user.occupationDetails!.designation!,
-                                  ),
-                                if (user.occupationDetails?.businessName !=
-                                        null &&
-                                    user
-                                        .occupationDetails!
-                                        .businessName!
-                                        .isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedStore01,
-                                    'Business Name',
-                                    user.occupationDetails!.businessName!,
-                                  ),
-                                if (user.occupationDetails?.category != null &&
-                                    user
-                                        .occupationDetails!
-                                        .category!
-                                        .isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedTag01,
-                                    'Business Category',
-                                    user.occupationDetails!.category!,
-                                  ),
-                                if (user.occupationDetails?.industry != null &&
-                                    user
-                                        .occupationDetails!
-                                        .industry!
-                                        .isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedFactory,
-                                    'Industry',
-                                    user.occupationDetails!.industry!,
-                                  ),
-                                if (user.occupationDetails?.address != null &&
-                                    user.occupationDetails!.address!.isNotEmpty)
-                                  _buildInfoRow(
-                                    HugeIcons.strokeRoundedLocation04,
-                                    'Work Address',
-                                    '${user.occupationDetails!.address!}${user.occupationDetails?.city != null ? ', ${user.occupationDetails!.city}' : ''}',
-                                  ),
-                              ]),
+                            const SizedBox(height: 32),
 
-                              _buildSectionCard('Family Information', [
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedHome01,
-                                  'Role in Family',
-                                  user.relationshipToHead,
-                                ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedUserGroup,
-                                  'Head of Family',
-                                  user.isHeadOfFamily ? 'Yes' : 'No',
-                                ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedFingerPrint,
-                                  'Family ID',
-                                  user.familyId,
-                                ),
-                              ]),
-
-                              const SizedBox(height: 32),
-
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24.0,
-                                ),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: OutlinedButton.icon(
-                                    onPressed: () async {
-                                      await authProvider.logout();
-                                      if (context.mounted) {
-                                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                                          (route) => false,
-                                        );
-                                      }
-                                    },
-                                    icon: const HugeIcon(
-                                      icon: HugeIcons.strokeRoundedLogout01,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0,
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: OutlinedButton.icon(
+                                  onPressed: () async {
+                                    await authProvider.logout();
+                                    if (context.mounted) {
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                          builder: (_) => const LoginScreen(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    }
+                                  },
+                                  icon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedLogout01,
+                                    color: AppTheme.textLight,
+                                  ),
+                                  label: const Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      color: AppTheme.textLight,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                    side: const BorderSide(
                                       color: AppTheme.textLight,
                                     ),
-                                    label: const Text(
-                                      'Logout',
-                                      style: TextStyle(
-                                        color: AppTheme.textLight,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                      ),
-                                      side: const BorderSide(
-                                        color: AppTheme.textLight,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 32),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 32),
+                          ],
                         ),
-                        // Activity Tab
-                        UserActivityTab(userId: user.id),
-                      ],
-                    ),
+                      ),
+                      UserActivityTab(userId: user.id),
+                      const SizedBox.shrink(),
+                    ],
                   ),
                 ),
               ),

@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module.js';
 import { DirectoryModule } from './directory/directory.module.js';
 import { CloudinaryModule } from './cloudinary/cloudinary.module.js';
 import { NewsModule } from './news/news.module.js';
+import { FamilyModule } from './family/family.module.js';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { NewsModule } from './news/news.module.js';
     DirectoryModule,
     CloudinaryModule,
     NewsModule,
+    FamilyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
