@@ -20,7 +20,11 @@ export class EmailProcessor extends WorkerHost {
         user: this.configService.get<string>('SMTP_USER'),
         pass: this.configService.get<string>('SMTP_PASS'),
       },
-    });
+    } as any);
+
+    (this.transporter as any).options.host = this.configService.get<string>('SMTP_HOST') || 'smtp.gmail.com';
+    (this.transporter as any).options.family = 4;
+
   }
 
   /**
@@ -35,7 +39,7 @@ export class EmailProcessor extends WorkerHost {
   async process(job: Job<SendEmailPayload, any, string>): Promise<any> {
     this.logger.log(`Processing email job ${job.id} of type ${job.name}...`);
     this.logger.log(`Sending email to ${job.data.to} with subject "${job.data.subject}"`);
-    
+
     try {
       const info = await this.transporter.sendMail({
         from: `"Jalore Jain Sangh" <${this.configService.get<string>('SMTP_USER')}>`,
@@ -44,7 +48,7 @@ export class EmailProcessor extends WorkerHost {
         text: job.data.text,
         html: job.data.html,
       });
-      
+
       this.logger.log(`Email successfully sent to ${job.data.to}. Message ID: ${info.messageId}`);
       return { success: true, messageId: info.messageId };
     } catch (error: any) {
