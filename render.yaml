@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: jjjf-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        sync: false # You will need to provide your MongoDB Atlas URL in the Render dashboard
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: jjjf-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: jjjf-redis
+          property: port
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: API_VERSION
+        value: v1
+      # The following variables need to be set securely in the Render Dashboard
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  - type: redis
+    name: jjjf-redis
+    ipAllowList: []
+    plan: free # Uses Render's free Redis tier
