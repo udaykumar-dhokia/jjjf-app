@@ -38,7 +38,7 @@ class HomeMenuGrid extends StatelessWidget {
         'action': () => onNavigateTab(2),
       },
       {
-        'title': 'News',
+        'title': 'Updates',
         'icon': 'assets/icons/icons8-news-94.png',
         'action': () => onNavigateTab(1),
       },

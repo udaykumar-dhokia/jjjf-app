@@ -74,7 +74,10 @@ class _UserActivityTabState extends State<UserActivityTab> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(32.0),
-          child: Text('No recent activity.', style: TextStyle(color: Colors.black54, fontSize: 16)),
+          child: Text(
+            'No recent activity.',
+            style: TextStyle(color: Colors.black54, fontSize: 16),
+          ),
         ),
       );
     }

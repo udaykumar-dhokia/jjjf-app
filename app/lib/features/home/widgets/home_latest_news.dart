@@ -5,6 +5,7 @@ import '../../../providers/news_provider.dart';
 import '../../../models/news_model.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../news/screens/read_news_screen.dart';
+import '../../../core/widgets/skeleton_loading_wrapper.dart';
 
 class HomeLatestNews extends StatelessWidget {
   final Function(int) onNavigateTab;
@@ -16,10 +17,25 @@ class HomeLatestNews extends StatelessWidget {
     return Consumer<NewsProvider>(
       builder: (context, newsProvider, child) {
         if (newsProvider.isLoading && newsProvider.newsList.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Center(
-              child: CupertinoActivityIndicator(color: AppTheme.primaryPurple),
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SkeletonLoadingWrapper(
+              isLoading: true,
+              child: SizedBox(
+                height: 150,
+                child: _SmallNewsCard(
+                  news: NewsModel(
+                    id: '',
+                    title: 'Loading News Title',
+                    description: 'Loading description...',
+                    images: [],
+                    userId: '',
+                    userName: 'Author',
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                  ),
+                ),
+              ),
             ),
           );
         }
@@ -66,7 +82,7 @@ class HomeLatestNews extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             SizedBox(
-              height: 150, // Increased height to prevent text overflow
+              height: 150,
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.9),
                 itemCount: latestNews.length,

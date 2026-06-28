@@ -59,6 +59,7 @@ export class DirectoryService {
         whatsappNumber: true,
         isPhoneNumberVisible: true,
         gender: true,
+        familyId: true,
       }
     });
 

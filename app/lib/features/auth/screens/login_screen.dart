@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final email = _passwordEmailController.text.trim();
     final password = _passwordController.text;
-    
+
     final success = await authProvider.loginWithPassword(email, password);
 
     if (success) {
@@ -131,7 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             suffixIcon: IconButton(
               icon: HugeIcon(
-                icon: _obscurePassword ? HugeIcons.strokeRoundedViewOff : HugeIcons.strokeRoundedView,
+                icon: _obscurePassword
+                    ? HugeIcons.strokeRoundedViewOff
+                    : HugeIcons.strokeRoundedView,
                 color: Colors.black54,
                 size: 18,
               ),
@@ -157,7 +159,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ? const SizedBox(
                       height: 24,
                       width: 24,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
                     )
                   : const Text('Login', style: TextStyle(fontSize: 16)),
             ),
@@ -217,7 +222,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ? const SizedBox(
                       height: 24,
                       width: 24,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
                     )
                   : const Text('Send OTP', style: TextStyle(fontSize: 16)),
             ),
@@ -294,10 +302,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       Text(
                         "Log in to connect with the thriving Jain community.",
-                        style: Theme.of(context).textTheme.bodyLarge
-                            ?.copyWith(color: Colors.black54, height: 1.5),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.black54,
+                          height: 1.5,
+                        ),
                       ),
-                      
+
                       const SizedBox(height: 24),
 
                       Center(
@@ -330,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         _buildPasswordForm(authProvider)
                       else
                         _buildOtpForm(authProvider),
-                        
+
                       const SizedBox(height: 40),
                     ],
                   ),

@@ -10,10 +10,11 @@ import '../../../providers/directory_provider.dart';
 import '../../../models/user_model.dart';
 import '../widgets/directory_filter_sheet.dart';
 import 'contact_detail_screen.dart';
+import '../../../core/widgets/skeleton_loading_wrapper.dart';
 
 class DirectoryScreen extends StatefulWidget {
   final VoidCallback? onMenuTap;
-  
+
   const DirectoryScreen({super.key, this.onMenuTap});
 
   @override
@@ -163,20 +164,17 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
 
             // Contact List
             Expanded(
-              child: provider.isLoading
-                  ? const Center(
-                      child: CupertinoActivityIndicator(
-                        color: AppTheme.primaryPurple,
-                      ),
-                    )
-                  : provider.error != null
-                  ? Center(
-                      child: Text(
-                        provider.error!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    )
-                  : _buildContactList(provider.filteredContacts),
+              child: SkeletonLoadingWrapper(
+                isLoading: provider.isLoading,
+                child: provider.error != null
+                    ? Center(
+                        child: Text(
+                          provider.error!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      )
+                    : _buildContactList(provider.filteredContacts),
+              ),
             ),
           ],
         ),

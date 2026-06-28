@@ -30,17 +30,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<OnboardingData> _pages = [
     OnboardingData(
       title: "Unite & Grow\nTogether",
-      description: "Become part of an inspiring global network\nof Jain professionals and visionaries.",
+      description:
+          "Become part of an inspiring global network\nof Jain professionals and visionaries.",
       imagePath: 'assets/images/onboarding1.jpg',
     ),
     OnboardingData(
       title: "Unlock New\nHorizons",
-      description: "Explore powerful avenues for career advancement,\nenterprise expansion, and exclusive gatherings.",
+      description:
+          "Explore powerful avenues for career advancement,\nenterprise expansion, and exclusive gatherings.",
       imagePath: 'assets/images/onboarding2.jpg',
     ),
     OnboardingData(
       title: "Always in the\nLoop",
-      description: "Receive personalized insights, relevant news,\nand curated connections tailored just for you.",
+      description:
+          "Receive personalized insights, relevant news,\nand curated connections tailored just for you.",
       imagePath: 'assets/images/onboarding3.jpg',
     ),
   ];
@@ -218,7 +221,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: HugeIcon(icon: HugeIcons.strokeRoundedImage01, size: 100, color: Colors.black12),
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedImage01,
+                      size: 100,
+                      color: Colors.black12,
+                    ),
                   ),
                 );
               },

@@ -47,6 +47,43 @@ class FamilyProvider with ChangeNotifier {
     }
   }
 
+  Map<String, dynamic>? _viewingFamily;
+  Map<String, dynamic>? get viewingFamily => _viewingFamily;
+
+  List<UserModel> get viewingMembers {
+    if (_viewingFamily == null || _viewingFamily!['members'] == null) return [];
+    final List<dynamic> mems = _viewingFamily!['members'];
+    return mems.map((e) => UserModel.fromJson(e)).toList();
+  }
+
+  UserModel? get viewingHeadOfFamily {
+    if (_viewingFamily == null || _viewingFamily!['headOfFamily'] == null) return null;
+    return UserModel.fromJson(_viewingFamily!['headOfFamily']);
+  }
+
+  Future<void> fetchFamilyById(String familyId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _viewingFamily = await _familyApi.getFamilyById(familyId);
+    } catch (e) {
+      if (e.toString().contains('404') ||
+          e.toString().contains('null') ||
+          e.toString().contains('Family not found')) {
+        _viewingFamily = null;
+        _error = null;
+      } else {
+        _error = 'Failed to load family data. Please try again.';
+        print('Fetch family by id error: $e');
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> createFamily() async {
     _isLoading = true;
     _error = null;

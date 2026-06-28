@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/user_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeGreeting extends StatelessWidget {
   const HomeGreeting({super.key});
@@ -21,30 +22,34 @@ class HomeGreeting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
-        final firstName =
-            "${userProvider.userProfile?.firstName ?? 'Guest'} ${userProvider.userProfile?.gotra}";
+        final firstName = userProvider.isLoading
+            ? 'Loading Name Loading Gotra'
+            : "${userProvider.userProfile?.firstName ?? 'Guest'} ${userProvider.userProfile?.gotra ?? ''}";
         final greeting = _getGreeting();
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text.rich(
-            TextSpan(
-              text: '$greeting, 👋\n',
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-              children: [
-                TextSpan(
-                  text: firstName,
-                  style: const TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.w900,
-                    color: AppTheme.primaryPurple,
-                  ),
+          child: Skeletonizer(
+            enabled: userProvider.isLoading,
+            child: Text.rich(
+              TextSpan(
+                text: '$greeting, 👋\n',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
+                children: [
+                  TextSpan(
+                    text: firstName,
+                    style: const TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.primaryPurple,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

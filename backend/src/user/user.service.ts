@@ -83,6 +83,7 @@ export class UserService {
         gaon: true,
         nativeDistrict: true,
         photoUrl: true,
+        familyId: true,
       }
     });
 

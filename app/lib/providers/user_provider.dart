@@ -61,7 +61,7 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> updatePhoneVisibility(bool isVisible) async {
     if (_userProfile == null) return;
-    
+
     // Optimistic UI update
     final oldValue = _userProfile!.isPhoneNumberVisible;
     _userProfile = _userProfile!.copyWith(isPhoneNumberVisible: isVisible);

@@ -128,7 +128,9 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
 
                   Expanded(
                     child: Text(
-                      provider.isUpdateMode ? "Update Profile" : "Complete Profile",
+                      provider.isUpdateMode
+                          ? "Update Profile"
+                          : "Complete Profile",
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
@@ -194,7 +196,8 @@ class _CompleteProfileViewState extends State<_CompleteProfileView> {
                   StepPersonalDetails(formKey: _formKeys[0]),
                   StepContactAddress(formKey: _formKeys[1]),
                   StepOccupation(formKey: _formKeys[2]),
-                  if (!provider.isUpdateMode) StepPassword(formKey: _formKeys[3]),
+                  if (!provider.isUpdateMode)
+                    StepPassword(formKey: _formKeys[3]),
                 ],
               ),
             ),

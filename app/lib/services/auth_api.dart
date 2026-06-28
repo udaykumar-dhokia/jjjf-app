@@ -26,13 +26,19 @@ class AuthApi {
       await _client.storage.write(key: 'refreshToken', value: refreshToken);
     }
     if (isProfileComplete != null) {
-      await _client.storage.write(key: 'isProfileComplete', value: isProfileComplete.toString());
+      await _client.storage.write(
+        key: 'isProfileComplete',
+        value: isProfileComplete.toString(),
+      );
     }
 
     return response.data;
   }
 
-  Future<Map<String, dynamic>> loginWithPassword(String email, String password) async {
+  Future<Map<String, dynamic>> loginWithPassword(
+    String email,
+    String password,
+  ) async {
     final response = await _client.dio.post(
       '/auth/login/password',
       data: {'email': email, 'password': password},
@@ -49,7 +55,10 @@ class AuthApi {
       await _client.storage.write(key: 'refreshToken', value: refreshToken);
     }
     if (isProfileComplete != null) {
-      await _client.storage.write(key: 'isProfileComplete', value: isProfileComplete.toString());
+      await _client.storage.write(
+        key: 'isProfileComplete',
+        value: isProfileComplete.toString(),
+      );
     }
 
     return response.data;
@@ -59,9 +68,11 @@ class AuthApi {
     final refreshToken = await _client.storage.read(key: 'refreshToken');
     if (refreshToken != null) {
       try {
-        final dioLogout = Dio(BaseOptions(
-          baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
-        ));
+        final dioLogout = Dio(
+          BaseOptions(
+            baseUrl: dotenv.env['BASE_URL'] ?? 'http://10.0.2.2:3333/api',
+          ),
+        );
         await dioLogout.post(
           '/auth/logout',
           data: {'refreshToken': refreshToken},

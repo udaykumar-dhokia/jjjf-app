@@ -140,14 +140,18 @@ class UserModel {
       sasuralGotra: json['sasuralGotra'],
       gender: json['gender'] ?? 'OTHER',
       maritalStatus: json['maritalStatus'] ?? 'SINGLE',
-      dateOfBirth: json['dateOfBirth'] != null ? DateTime.parse(json['dateOfBirth']) : DateTime.now(),
+      dateOfBirth: json['dateOfBirth'] != null
+          ? DateTime.parse(json['dateOfBirth'])
+          : DateTime.now(),
       bloodGroup: json['bloodGroup'],
       photoUrl: json['photoUrl'],
       email: json['email'] ?? '',
       isEmailVerified: json['isEmailVerified'] ?? false,
       education: json['education'],
       occupationType: json['occupationType'] ?? 'OTHER',
-      occupationDetails: json['occupationDetails'] != null ? OccupationDetails.fromJson(json['occupationDetails']) : null,
+      occupationDetails: json['occupationDetails'] != null
+          ? OccupationDetails.fromJson(json['occupationDetails'])
+          : null,
       gaon: json['gaon'] ?? '',
       nativeDistrict: json['nativeDistrict'] ?? '',
       nativeState: json['nativeState'] ?? '',
@@ -164,7 +168,9 @@ class UserModel {
       relationshipToHead: json['relationshipToHead'] ?? 'SELF',
       role: json['role'] ?? 'MEMBER',
       status: json['status'] ?? 'PENDING_APPROVAL',
-      assignedStates: json['assignedStates'] != null ? List<String>.from(json['assignedStates']) : [],
+      assignedStates: json['assignedStates'] != null
+          ? List<String>.from(json['assignedStates'])
+          : [],
     );
   }
 
@@ -255,7 +261,8 @@ class UserModel {
       motherName: motherName ?? this.motherName,
       gotra: gotra ?? this.gotra,
       spouseName: spouseName ?? this.spouseName,
-      husbandNameWithSurname: husbandNameWithSurname ?? this.husbandNameWithSurname,
+      husbandNameWithSurname:
+          husbandNameWithSurname ?? this.husbandNameWithSurname,
       sasuralGotra: sasuralGotra ?? this.sasuralGotra,
       gender: gender ?? this.gender,
       maritalStatus: maritalStatus ?? this.maritalStatus,

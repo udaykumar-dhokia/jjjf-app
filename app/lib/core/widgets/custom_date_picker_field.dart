@@ -21,7 +21,7 @@ class CustomDatePickerField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Format date as DD/MM/YYYY
-    final displayDate = selectedDate != null 
+    final displayDate = selectedDate != null
         ? "${selectedDate!.day.toString().padLeft(2, '0')}/${selectedDate!.month.toString().padLeft(2, '0')}/${selectedDate!.year}"
         : "";
 
@@ -34,10 +34,14 @@ class CustomDatePickerField extends StatelessWidget {
         onTap: () async {
           // Unfocus any currently focused field
           FocusScope.of(context).unfocus();
-          
+
           final DateTime? picked = await showDatePicker(
             context: context,
-            initialDate: selectedDate ?? DateTime.now().subtract(const Duration(days: 6570)), // Default ~18 years ago
+            initialDate:
+                selectedDate ??
+                DateTime.now().subtract(
+                  const Duration(days: 6570),
+                ), // Default ~18 years ago
             firstDate: DateTime(1900),
             lastDate: DateTime.now(),
             builder: (context, child) {
@@ -60,20 +64,24 @@ class CustomDatePickerField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: labelText,
           hintText: hintText,
-          prefixIcon: prefixIcon != null 
+          prefixIcon: prefixIcon != null
               ? Padding(
                   padding: const EdgeInsets.only(right: 12.0),
                   child: UnconstrainedBox(child: prefixIcon),
-                ) 
+                )
               : null,
           prefixIconConstraints: const BoxConstraints(
-            minWidth: 0, 
+            minWidth: 0,
             minHeight: 0,
           ),
           suffixIcon: const Padding(
             padding: EdgeInsets.only(left: 12.0),
             child: UnconstrainedBox(
-              child: Icon(Icons.calendar_today, color: Colors.black54, size: 18),
+              child: Icon(
+                Icons.calendar_today,
+                color: Colors.black54,
+                size: 18,
+              ),
             ),
           ),
           suffixIconConstraints: const BoxConstraints(

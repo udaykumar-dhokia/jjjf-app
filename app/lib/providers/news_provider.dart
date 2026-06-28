@@ -92,7 +92,10 @@ class NewsProvider extends ChangeNotifier {
       await fetchNews(refresh: true);
       return true;
     } on DioException catch (e) {
-      _error = e.response?.data['message']?.toString() ?? e.message ?? "Failed to create news post.";
+      _error =
+          e.response?.data['message']?.toString() ??
+          e.message ??
+          "Failed to create news post.";
       _isLoading = false;
       notifyListeners();
       return false;
@@ -128,14 +131,22 @@ class NewsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final updatedNews = await _newsApi.updateNews(id, title, description, newImages);
+      final updatedNews = await _newsApi.updateNews(
+        id,
+        title,
+        description,
+        newImages,
+      );
       final index = _newsList.indexWhere((news) => news.id == id);
       if (index != -1) {
         _newsList[index] = updatedNews;
       }
       return true;
     } on DioException catch (e) {
-      _error = e.response?.data['message']?.toString() ?? e.message ?? "Failed to update news post.";
+      _error =
+          e.response?.data['message']?.toString() ??
+          e.message ??
+          "Failed to update news post.";
       return false;
     } catch (e) {
       _error = e.toString();

@@ -6,9 +6,7 @@ import 'core/api_client.dart';
 class UserApi {
   final ApiClient _client = ApiClient();
 
-  Future<void> completeProfile(
-    Map<String, dynamic> completeProfileData,
-  ) async {
+  Future<void> completeProfile(Map<String, dynamic> completeProfileData) async {
     final response = await _client.dio.put(
       '/user/profile',
       data: completeProfileData,
@@ -23,7 +21,7 @@ class UserApi {
     if (refreshToken != null) {
       await _client.storage.write(key: 'refreshToken', value: refreshToken);
     }
-    
+
     // Once successfully completed, set flag to true so next boot goes straight to Home
     await _client.storage.write(key: 'isProfileComplete', value: 'true');
   }
@@ -45,10 +43,7 @@ class UserApi {
   Future<UserModel> uploadProfileImage(File imageFile) async {
     String fileName = imageFile.path.split('/').last;
     FormData formData = FormData.fromMap({
-      "image": await MultipartFile.fromFile(
-        imageFile.path,
-        filename: fileName,
-      ),
+      "image": await MultipartFile.fromFile(imageFile.path, filename: fileName),
     });
 
     final response = await _client.dio.patch(

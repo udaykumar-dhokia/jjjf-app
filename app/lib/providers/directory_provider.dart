@@ -36,13 +36,13 @@ class DirectoryProvider extends ChangeNotifier {
 
   List<UserModel> _allContacts = [];
   List<UserModel> _filteredContacts = [];
-  
+
   Map<String, List<String>> _metadata = {
     'gotras': [],
     'cities': [],
     'states': [],
   };
-  
+
   bool _isLoading = false;
   String? _error;
   String _searchQuery = '';
@@ -54,7 +54,7 @@ class DirectoryProvider extends ChangeNotifier {
   List<UserModel> get filteredContacts => _filteredContacts;
   String get searchQuery => _searchQuery;
   DirectoryFilter get activeFilter => _activeFilter;
-  
+
   List<String> get availableGotras => _metadata['gotras'] ?? [];
   List<String> get availableCities => _metadata['cities'] ?? [];
   List<String> get availableStates => _metadata['states'] ?? [];
@@ -109,7 +109,8 @@ class DirectoryProvider extends ChangeNotifier {
       // 1. Check Search Query
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
-        final fullName = '${user.firstName} ${user.fatherName} ${user.gotra}'.toLowerCase();
+        final fullName = '${user.firstName} ${user.fatherName} ${user.gotra}'
+            .toLowerCase();
         final city = user.currentCity.toLowerCase();
         if (!fullName.contains(query) && !city.contains(query)) {
           return false;
@@ -118,32 +119,40 @@ class DirectoryProvider extends ChangeNotifier {
 
       // 2. Check Active Filters
       if (!_activeFilter.isEmpty) {
-        if (_activeFilter.genders.isNotEmpty && !_activeFilter.genders.contains(user.gender)) {
+        if (_activeFilter.genders.isNotEmpty &&
+            !_activeFilter.genders.contains(user.gender)) {
           return false;
         }
-        if (_activeFilter.maritalStatuses.isNotEmpty && !_activeFilter.maritalStatuses.contains(user.maritalStatus)) {
+        if (_activeFilter.maritalStatuses.isNotEmpty &&
+            !_activeFilter.maritalStatuses.contains(user.maritalStatus)) {
           return false;
         }
-        if (_activeFilter.bloodGroups.isNotEmpty && (user.bloodGroup == null || !_activeFilter.bloodGroups.contains(user.bloodGroup))) {
+        if (_activeFilter.bloodGroups.isNotEmpty &&
+            (user.bloodGroup == null ||
+                !_activeFilter.bloodGroups.contains(user.bloodGroup))) {
           return false;
         }
-        if (_activeFilter.occupationTypes.isNotEmpty && !_activeFilter.occupationTypes.contains(user.occupationType)) {
+        if (_activeFilter.occupationTypes.isNotEmpty &&
+            !_activeFilter.occupationTypes.contains(user.occupationType)) {
           return false;
         }
-        if (_activeFilter.gotras.isNotEmpty && !_activeFilter.gotras.contains(user.gotra)) {
+        if (_activeFilter.gotras.isNotEmpty &&
+            !_activeFilter.gotras.contains(user.gotra)) {
           return false;
         }
-        if (_activeFilter.states.isNotEmpty && !_activeFilter.states.contains(user.currentState)) {
+        if (_activeFilter.states.isNotEmpty &&
+            !_activeFilter.states.contains(user.currentState)) {
           return false;
         }
-        if (_activeFilter.cities.isNotEmpty && !_activeFilter.cities.contains(user.currentCity)) {
+        if (_activeFilter.cities.isNotEmpty &&
+            !_activeFilter.cities.contains(user.currentCity)) {
           return false;
         }
       }
 
       return true;
     }).toList();
-    
+
     _isLoading = false;
     notifyListeners();
   }

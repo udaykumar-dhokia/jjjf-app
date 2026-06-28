@@ -164,8 +164,11 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                                   backgroundColor: Colors.white,
                                   backgroundImage: user != null
                                       ? (user.photoUrl != null
-                                          ? NetworkImage(user.photoUrl!) as ImageProvider
-                                          : NetworkImage('https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}'))
+                                            ? NetworkImage(user.photoUrl!)
+                                                  as ImageProvider
+                                            : NetworkImage(
+                                                'https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}',
+                                              ))
                                       : null,
                                   child: user == null
                                       ? const Icon(Icons.person)

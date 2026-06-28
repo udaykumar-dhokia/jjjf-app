@@ -6,7 +6,7 @@ import '../../../core/theme/app_theme.dart';
 
 class BusinessesScreen extends StatelessWidget {
   final VoidCallback? onMenuTap;
-  
+
   const BusinessesScreen({super.key, this.onMenuTap});
 
   @override
@@ -27,9 +27,7 @@ class BusinessesScreen extends StatelessWidget {
                 )
               : null,
         ),
-        body: const Center(
-          child: Text('Businesses Screen Content'),
-        ),
+        body: const Center(child: Text('Businesses Screen Content')),
       ),
     );
   }

@@ -29,7 +29,10 @@ class CustomDropdownField extends StatelessWidget {
         items: items.map((String item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item, style: const TextStyle(fontWeight: FontWeight.w500)),
+            child: Text(
+              item,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
           );
         }).toList(),
         onChanged: onChanged,
@@ -37,14 +40,14 @@ class CustomDropdownField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: labelText,
           hintText: hintText,
-          prefixIcon: prefixIcon != null 
+          prefixIcon: prefixIcon != null
               ? Padding(
                   padding: const EdgeInsets.only(right: 12.0),
                   child: UnconstrainedBox(child: prefixIcon),
-                ) 
+                )
               : null,
           prefixIconConstraints: const BoxConstraints(
-            minWidth: 0, 
+            minWidth: 0,
             minHeight: 0,
           ),
         ),

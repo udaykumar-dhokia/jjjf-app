@@ -31,7 +31,9 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.news.title);
-    _descriptionController = TextEditingController(text: widget.news.description);
+    _descriptionController = TextEditingController(
+      text: widget.news.description,
+    );
   }
 
   @override
@@ -44,7 +46,9 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
   Future<void> _pickImages() async {
     if (_selectedImages.length >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You can only select up to 3 new images.')),
+        const SnackBar(
+          content: Text('You can only select up to 3 new images.'),
+        ),
       );
       return;
     }
@@ -86,7 +90,9 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
 
     if (success && mounted) {
       Navigator.pop(context); // Go back to read news
-      Navigator.pop(context); // Also pop the read news because the state would be stale, or we could update it. Let's just pop twice.
+      Navigator.pop(
+        context,
+      ); // Also pop the read news because the state would be stale, or we could update it. Let's just pop twice.
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(newsProvider.error ?? 'Failed to update post')),
@@ -160,8 +166,11 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
                                   backgroundColor: Colors.white,
                                   backgroundImage: user != null
                                       ? (user.photoUrl != null
-                                          ? NetworkImage(user.photoUrl!) as ImageProvider
-                                          : NetworkImage('https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}'))
+                                            ? NetworkImage(user.photoUrl!)
+                                                  as ImageProvider
+                                            : NetworkImage(
+                                                'https://api.dicebear.com/10.x/glass/png?seed=${user.firstName}',
+                                              ))
                                       : null,
                                   child: user == null
                                       ? const Icon(Icons.person)
@@ -216,10 +225,17 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
                                 ? 'Required'
                                 : null,
                           ),
-                          
-                          if (_selectedImages.isEmpty && widget.news.images.isNotEmpty) ...[
+
+                          if (_selectedImages.isEmpty &&
+                              widget.news.images.isNotEmpty) ...[
                             const SizedBox(height: 16),
-                            const Text('Current Images (will be kept if no new images are selected)', style: TextStyle(color: Colors.black54, fontSize: 12)),
+                            const Text(
+                              'Current Images (will be kept if no new images are selected)',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 12,
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             SizedBox(
                               height: 100,
@@ -233,7 +249,9 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(16),
                                       image: DecorationImage(
-                                        image: NetworkImage(widget.news.images[index]),
+                                        image: NetworkImage(
+                                          widget.news.images[index],
+                                        ),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -245,7 +263,13 @@ class _EditNewsScreenState extends State<EditNewsScreen> {
 
                           if (_selectedImages.isNotEmpty) ...[
                             const SizedBox(height: 16),
-                            const Text('New Images (will replace existing images)', style: TextStyle(color: Colors.black54, fontSize: 12)),
+                            const Text(
+                              'New Images (will replace existing images)',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 12,
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             SizedBox(
                               height: 140,

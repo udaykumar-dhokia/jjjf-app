@@ -10,9 +10,12 @@ import '../../../models/user_model.dart';
 import '../../../providers/family_provider.dart';
 import '../../../providers/user_provider.dart';
 import 'add_edit_family_member_screen.dart';
+import '../../../core/widgets/skeleton_loading_wrapper.dart';
 
 class FamilyTreeScreen extends StatefulWidget {
-  const FamilyTreeScreen({super.key});
+  final String? familyId;
+
+  const FamilyTreeScreen({super.key, this.familyId});
 
   @override
   State<FamilyTreeScreen> createState() => _FamilyTreeScreenState();
@@ -23,7 +26,11 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FamilyProvider>().fetchMyFamily();
+      if (widget.familyId != null) {
+        context.read<FamilyProvider>().fetchFamilyById(widget.familyId!);
+      } else {
+        context.read<FamilyProvider>().fetchMyFamily();
+      }
     });
   }
 
@@ -208,203 +215,220 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
     final familyProvider = context.watch<FamilyProvider>();
     final userProvider = context.watch<UserProvider>();
     final currentUser = userProvider.userProfile;
-    final isHead = currentUser?.isHeadOfFamily ?? false;
+    final isReadOnly = widget.familyId != null;
+    final isHead = !isReadOnly && (currentUser?.isHeadOfFamily ?? false);
+
+    final familyData = isReadOnly ? familyProvider.viewingFamily : familyProvider.myFamily;
+    final familyMembers = isReadOnly ? familyProvider.viewingMembers : familyProvider.members;
+    final headOfFamily = isReadOnly ? familyProvider.viewingHeadOfFamily : familyProvider.headOfFamily;
 
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: CustomAppBar(
-          title: 'Family Tree',
+          title: isReadOnly ? 'Family Tree' : 'My Family Tree',
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh, color: Colors.black87),
-              onPressed: () => familyProvider.fetchMyFamily(),
+              onPressed: () {
+                if (isReadOnly) {
+                  familyProvider.fetchFamilyById(widget.familyId!);
+                } else {
+                  familyProvider.fetchMyFamily();
+                }
+              },
             ),
           ],
         ),
-        body: familyProvider.isLoading
-            ? const Center(
-                child: CupertinoActivityIndicator(
-                  color: AppTheme.primaryPurple,
-                ),
-              )
-            : familyProvider.error != null
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      familyProvider.error!,
-                      style: const TextStyle(color: AppTheme.textLight),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => familyProvider.fetchMyFamily(),
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
-              )
-            : familyProvider.myFamily == null
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
+        body: SkeletonLoadingWrapper(
+          isLoading: familyProvider.isLoading,
+          child: familyProvider.error != null
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const HugeIcon(
-                        icon: HugeIcons.strokeRoundedUserGroup,
-                        size: 80,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'No Family Yet',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Text(
+                        familyProvider.error!,
+                        style: const TextStyle(color: AppTheme.textLight),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Create your family tree, become the head of the family, and start adding your relatives.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final success = await familyProvider.createFamily();
-                            if (success && mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Family created successfully! You are now the Head.',
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryPurple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: const Text(
-                            'Create Family',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (isReadOnly) {
+                            familyProvider.fetchFamilyById(widget.familyId!);
+                          } else {
+                            familyProvider.fetchMyFamily();
+                          }
+                        },
+                        child: const Text('Retry'),
                       ),
                     ],
                   ),
-                ),
-              )
-            : GenealogyChart.family(
-                enablePan: true,
-                enableZoom: true,
-                members: _mapToFamilyMembers(
-                  familyProvider.members,
-                  familyProvider.headOfFamily,
-                ),
-                layout: FamilyTreeLayout(
-                  generationHeight:
-                      250, // Increased to prevent node overlap and show edges clearly
-                  siblingSpacing: 100,
-                ),
-                familyNodeStyle: FamilyNodeStyle.detailed,
-                familyNodeBuilder: (context, member, state) {
-                  final userModel = familyProvider.members.firstWhere(
-                    (m) => m.id == member.id,
-                    orElse: () => familyProvider.headOfFamily!,
-                  );
-                  return Container(
-                    width: 180,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: state.isSelected
-                            ? AppTheme.primaryPurple
-                            : Colors.grey.shade300,
-                        width: state.isSelected ? 2 : 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
+                )
+              : familyData == null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 36,
-                          backgroundImage: NetworkImage(member.avatar!),
+                        const HugeIcon(
+                          icon: HugeIcons.strokeRoundedUserGroup,
+                          size: 80,
+                          color: Colors.white,
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          member.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'No Family Yet',
                           textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Create your family tree, become the head of the family, and start adding your relatives.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white70,
+                            height: 1.5,
                           ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryPurple.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            userModel.relationshipToHead == 'SELF'
-                                ? 'HEAD OF FAMILY'
-                                : userModel.relationshipToHead.replaceAll(
-                                    '_',
-                                    ' ',
-                                  ),
-                            style: const TextStyle(
-                              color: AppTheme.primaryPurple,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                        ),
+                        const SizedBox(height: 32),
+                        if (!isReadOnly)
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                final success = await familyProvider
+                                    .createFamily();
+                                if (success && mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Family created successfully! You are now the Head.',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryPurple,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text(
+                                'Create Family',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
-                  );
-                },
-                onMemberTap: (fm) {
-                  final userModel = familyProvider.members.firstWhere(
-                    (m) => m.id == fm.id,
-                  );
-                  _showMemberOptions(context, userModel, isHead);
-                },
-              ),
+                  ),
+                )
+              : GenealogyChart.family(
+                  enablePan: true,
+                  enableZoom: true,
+                  members: _mapToFamilyMembers(
+                    familyMembers,
+                    headOfFamily,
+                  ),
+                  layout: FamilyTreeLayout(
+                    generationHeight:
+                        250, // Increased to prevent node overlap and show edges clearly
+                    siblingSpacing: 100,
+                  ),
+                  familyNodeStyle: FamilyNodeStyle.detailed,
+                  familyNodeBuilder: (context, member, state) {
+                    final userModel = familyMembers.firstWhere(
+                      (m) => m.id == member.id,
+                      orElse: () => headOfFamily!,
+                    );
+                    return Container(
+                      width: 180,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: state.isSelected
+                              ? AppTheme.primaryPurple
+                              : Colors.grey.shade300,
+                          width: state.isSelected ? 2 : 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 36,
+                            backgroundImage: NetworkImage(member.avatar!),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            member.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryPurple.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              userModel.relationshipToHead == 'SELF'
+                                  ? 'HEAD OF FAMILY'
+                                  : userModel.relationshipToHead.replaceAll(
+                                      '_',
+                                      ' ',
+                                    ),
+                              style: const TextStyle(
+                                color: AppTheme.primaryPurple,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  onMemberTap: (fm) {
+                    if (isReadOnly) return;
+                    final userModel = familyMembers.firstWhere(
+                      (m) => m.id == fm.id,
+                    );
+                    _showMemberOptions(context, userModel, isHead);
+                  },
+                ),
+        ),
         floatingActionButton: isHead
             ? FloatingActionButton.extended(
                 onPressed: () {

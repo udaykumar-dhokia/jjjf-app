@@ -9,10 +9,11 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../../providers/news_provider.dart';
 import '../widgets/news_card.dart';
 import 'create_news_screen.dart';
+import '../../../core/widgets/skeleton_loading_wrapper.dart';
 
 class NewsScreen extends StatefulWidget {
   final VoidCallback? onMenuTap;
-  
+
   const NewsScreen({super.key, this.onMenuTap});
 
   @override
@@ -55,7 +56,7 @@ class _NewsScreenState extends State<NewsScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: CustomAppBar(
-          title: 'Community News',
+          title: 'Community Updates',
           leading: widget.onMenuTap != null
               ? IconButton(
                   icon: const HugeIcon(
@@ -129,59 +130,56 @@ class _NewsScreenState extends State<NewsScreen> {
               child: RefreshIndicator(
                 onRefresh: () => provider.fetchNews(refresh: true),
                 color: AppTheme.primaryPurple,
-                child: provider.isLoading && provider.newsList.isEmpty
-                    ? const Center(
-                        child: CupertinoActivityIndicator(
-                          color: AppTheme.primaryPurple,
-                        ),
-                      )
-                    : provider.error != null && provider.newsList.isEmpty
-                    ? Center(
-                        child: Text(
-                          provider.error!,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      )
-                    : provider.newsList.isEmpty
-                    ? ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: const [
-                          SizedBox(height: 200),
-                          Center(
-                            child: Text(
-                              'No news posts found.',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 16,
-                              ),
-                            ),
+                child: SkeletonLoadingWrapper(
+                  isLoading: provider.isLoading && provider.newsList.isEmpty,
+                  child: provider.error != null && provider.newsList.isEmpty
+                      ? Center(
+                          child: Text(
+                            provider.error!,
+                            style: const TextStyle(color: Colors.red),
                           ),
-                        ],
-                      )
-                    : ListView.builder(
-                        controller: _scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(
-                          parent: BouncingScrollPhysics(),
-                        ),
-                        padding: const EdgeInsets.only(bottom: 100),
-                        itemCount:
-                            provider.newsList.length +
-                            (provider.hasMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == provider.newsList.length) {
-                            return const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(
-                                child: CupertinoActivityIndicator(
-                                  color: AppTheme.primaryPurple,
+                        )
+                      : provider.newsList.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: const [
+                            SizedBox(height: 200),
+                            Center(
+                              child: Text(
+                                'No news posts found.',
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 16,
                                 ),
                               ),
-                            );
-                          }
-                          final news = provider.newsList[index];
-                          return NewsCard(news: news);
-                        },
-                      ),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics(),
+                          ),
+                          padding: const EdgeInsets.only(bottom: 100),
+                          itemCount:
+                              provider.newsList.length +
+                              (provider.hasMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == provider.newsList.length) {
+                              return const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: CupertinoActivityIndicator(
+                                    color: AppTheme.primaryPurple,
+                                  ),
+                                ),
+                              );
+                            }
+                            final news = provider.newsList[index];
+                            return NewsCard(news: news);
+                          },
+                        ),
+                ),
               ),
             ),
           ],
