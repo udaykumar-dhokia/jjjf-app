@@ -11,6 +11,7 @@ import { DirectoryModule } from './directory/directory.module.js';
 import { CloudinaryModule } from './cloudinary/cloudinary.module.js';
 import { NewsModule } from './news/news.module.js';
 import { FamilyModule } from './family/family.module.js';
+import { BusinessModule } from './business/business.module.js';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FamilyModule } from './family/family.module.js';
     CloudinaryModule,
     NewsModule,
     FamilyModule,
+    BusinessModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,20 +9,48 @@ enum JobType {
   JOB_REQUIRED
 }
 
+enum BusinessCategory {
+  AGRICULTURE
+  AUTOMOTIVE
+  BANKING
+  CONSULTING
+  EDUCATION
+  ELECTRONICS
+  ENTERTAINMENT
+  FINANCE
+  FOOD_AND_BEVERAGE
+  HEALTHCARE
+  HOSPITALITY
+  IT
+  LEGAL
+  LOGISTICS
+  MANUFACTURING
+  MEDIA
+  REAL_ESTATE
+  RETAIL
+  TELECOMMUNICATIONS
+  TEXTILES
+  TOURISM
+  TRANSPORTATION
+  WHOLESALE
+  OTHER
+}
+
 model BusinessListing {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  ownerId       String        @db.ObjectId
-  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  ownerId       String           @db.ObjectId
+  owner         User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   
   businessName  String
-  category      String
+  category      BusinessCategory
   description   String?
   logoUrl       String?
+  website       String?
   contactNumber String
   address       String
   city          String
   state         String
-  status        ListingStatus @default(PENDING)
+  status        ListingStatus    @default(APPROVED)
   
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

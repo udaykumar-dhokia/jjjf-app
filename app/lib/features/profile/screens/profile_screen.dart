@@ -13,6 +13,7 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/user_provider.dart';
 import '../../../core/widgets/sliver_app_bar_delegate.dart';
 import '../widgets/user_activity_tab.dart';
+import '../widgets/user_business_tab.dart';
 import 'update_profile_screen.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../family/screens/family_tree_screen.dart';
@@ -32,33 +33,41 @@ class _ProfileScreenState extends State<ProfileScreen>
   final ImagePicker _picker = ImagePicker();
   bool _isUploadingProfilePic = false;
 
-  late TabController _tabController;
+  TabController? _tabController;
   int _previousTabIndex = 0;
+  bool _hasBusiness = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      if (_tabController.index == 2) {
-        _tabController.index = _previousTabIndex;
-        Navigator.of(
-          context,
-          rootNavigator: true,
-        ).push(MaterialPageRoute(builder: (_) => const FamilyTreeScreen()));
-      } else {
-        _previousTabIndex = _tabController.index;
-      }
-    });
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().fetchMyProfile();
     });
   }
 
+  void _updateTabController(bool hasBusiness) {
+    if (_tabController == null || _hasBusiness != hasBusiness) {
+      _hasBusiness = hasBusiness;
+      _tabController?.dispose();
+      _tabController = TabController(length: hasBusiness ? 4 : 3, vsync: this);
+      _tabController!.addListener(() {
+        final familyIndex = _hasBusiness ? 3 : 2;
+        if (_tabController!.index == familyIndex) {
+          _tabController!.index = _previousTabIndex;
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).push(MaterialPageRoute(builder: (_) => const FamilyTreeScreen()));
+        } else {
+          _previousTabIndex = _tabController!.index;
+        }
+      });
+    }
+  }
+
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
@@ -305,6 +314,12 @@ class _ProfileScreenState extends State<ProfileScreen>
     final userProvider = context.watch<UserProvider>();
     final authProvider = context.read<AuthProvider>();
     final user = userProvider.userProfile;
+    final hasBusiness =
+        user?.occupationType.toUpperCase().contains('BUSINESS') ?? false;
+
+    if (user != null) {
+      _updateTabController(hasBusiness);
+    }
 
     return GradientBackground(
       child: Scaffold(
@@ -465,15 +480,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                           pinned: true,
                           delegate: SliverAppBarDelegate(
                             TabBar(
-                              controller: _tabController,
+                              controller: _tabController!,
                               indicatorColor: AppTheme.primaryPurple,
                               labelColor: AppTheme.primaryPurple,
                               unselectedLabelColor: Colors.black54,
                               indicatorWeight: 3,
-                              tabs: const [
-                                Tab(text: 'Profile'),
-                                Tab(text: 'Activity'),
-                                Tab(text: 'Family'),
+                              tabs: [
+                                const Tab(text: 'Profile'),
+                                const Tab(text: 'Activity'),
+                                if (hasBusiness) const Tab(text: 'Business'),
+                                const Tab(text: 'Family'),
                               ],
                             ),
                             backgroundColor: Colors.white.withOpacity(0.95),
@@ -482,7 +498,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ];
                     },
                     body: TabBarView(
-                      controller: _tabController,
+                      controller: _tabController!,
                       children: [
                         // Profile Tab
                         SingleChildScrollView(
@@ -746,6 +762,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ),
                         ),
                         UserActivityTab(userId: user.id),
+                        if (hasBusiness) UserBusinessTab(userId: user.id),
                         const SizedBox.shrink(),
                       ],
                     ),

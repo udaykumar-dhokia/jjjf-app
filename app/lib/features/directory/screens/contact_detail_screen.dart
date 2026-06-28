@@ -6,6 +6,7 @@ import '../../../models/user_model.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/sliver_app_bar_delegate.dart';
 import '../../profile/widgets/user_activity_tab.dart';
+import '../../profile/widgets/user_business_tab.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../family/screens/family_tree_screen.dart';
 
@@ -21,13 +22,16 @@ class ContactDetailScreen extends StatefulWidget {
 class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _previousTabIndex = 0;
+  late bool _hasBusiness;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _hasBusiness = widget.contact.occupationType.toUpperCase().contains('BUSINESS');
+    _tabController = TabController(length: _hasBusiness ? 4 : 3, vsync: this);
     _tabController.addListener(() {
-      if (_tabController.index == 2) {
+      final familyIndex = _hasBusiness ? 3 : 2;
+      if (_tabController.index == familyIndex) {
         _tabController.index = _previousTabIndex;
         if (widget.contact.familyId != null && widget.contact.familyId!.isNotEmpty) {
           Navigator.of(context, rootNavigator: true).push(
@@ -215,10 +219,11 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTi
                     labelColor: AppTheme.primaryPurple,
                     unselectedLabelColor: Colors.black54,
                     indicatorWeight: 3,
-                    tabs: const [
-                      Tab(text: 'Profile'),
-                      Tab(text: 'Activity'),
-                      Tab(text: 'Family'),
+                    tabs: [
+                      const Tab(text: 'Profile'),
+                      const Tab(text: 'Activity'),
+                      if (_hasBusiness) const Tab(text: 'Business'),
+                      const Tab(text: 'Family'),
                     ],
                   ),
                   backgroundColor: Colors.white.withOpacity(0.90),
@@ -418,6 +423,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTi
               ),
               // Activity Tab
               UserActivityTab(userId: widget.contact.id),
+              // Business Tab
+              if (_hasBusiness) UserBusinessTab(userId: widget.contact.id),
               // Family Tab Placeholder
               const SizedBox.shrink(),
             ],

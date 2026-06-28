@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsBoolean, IsDateString, IsOptional, ValidateNested } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsBoolean, IsDateString, IsOptional, ValidateNested, IsUrl } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Gender, MaritalStatus, OccupationType, RelationshipType } from '@prisma/client';
+import { Gender, MaritalStatus, OccupationType, RelationshipType, BusinessCategory } from '@prisma/client';
 
 export class OccupationDetailsDto {
   @ApiProperty({ required: false, description: 'Business name for occupation' })
@@ -9,10 +9,10 @@ export class OccupationDetailsDto {
   @IsOptional()
   businessName?: string;
 
-  @ApiProperty({ required: false, description: 'Occupation category' })
-  @IsString()
+  @ApiProperty({ required: false, enum: BusinessCategory, description: 'Occupation category' })
+  @IsEnum(BusinessCategory)
   @IsOptional()
-  category?: string;
+  category?: BusinessCategory;
 
   @ApiProperty({ required: false, description: 'Address of the occupation' })
   @IsString()
@@ -34,7 +34,7 @@ export class OccupationDetailsDto {
   @IsOptional()
   designation?: string;
 
-  @ApiProperty({ required: false, description: 'Industry type' })
+  @ApiProperty({ required: false, description: 'Industry type (non-business)' })
   @IsString()
   @IsOptional()
   industry?: string;
@@ -48,6 +48,16 @@ export class OccupationDetailsDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiProperty({ required: false, description: 'Website URL' })
+  @IsUrl()
+  @IsOptional()
+  website?: string;
+
+  @ApiProperty({ required: false, description: 'Logo URL from Cloudinary' })
+  @IsUrl()
+  @IsOptional()
+  logoUrl?: string;
 }
 
 export class CompleteProfileDto {

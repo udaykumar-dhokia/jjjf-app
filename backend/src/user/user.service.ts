@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, OccupationType } from '@prisma/client';
 import { CompleteProfileDto } from './dto/complete-profile.dto.js';
 import { TokenUtilService } from '../auth/utils/token.util.js';
 import { CloudinaryService } from '../cloudinary/cloudinary.service.js';
+import { BusinessService } from '../business/business.service.js';
 
 const prisma = new PrismaClient();
 
@@ -11,6 +12,7 @@ export class UserService {
   constructor(
     private readonly tokenUtil: TokenUtilService,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly businessService: BusinessService,
   ) {}
 
   /**
@@ -40,6 +42,10 @@ export class UserService {
       },
     });
 
+    if (dto.occupationType === OccupationType.BUSINESS_OWNER && dto.occupationDetails) {
+      await this.businessService.upsertFromProfile(userId, dto.currentState, dto.occupationDetails);
+    }
+
     await prisma.refreshToken.deleteMany({ where: { userId } });
 
     return this.tokenUtil.generateTokens(updatedUser.id, updatedUser.email || '', updatedUser.role, updatedUser.isProfileComplete);
@@ -59,9 +65,6 @@ export class UserService {
    */
   async getApprovedDirectory() {
     const users = await prisma.user.findMany({
-      where: {
-        status: 'APPROVED',
-      },
       orderBy: {
         firstName: 'asc',
       },
@@ -101,17 +104,17 @@ export class UserService {
   async getDirectoryMetadata() {
     const [gotras, cities, states] = await Promise.all([
       prisma.user.findMany({
-        where: { status: 'APPROVED', gotra: { not: '' } },
+        where: { gotra: { not: '' } },
         distinct: ['gotra'],
         select: { gotra: true },
       }),
       prisma.user.findMany({
-        where: { status: 'APPROVED', currentCity: { not: '' } },
+        where: { currentCity: { not: '' } },
         distinct: ['currentCity'],
         select: { currentCity: true },
       }),
       prisma.user.findMany({
-        where: { status: 'APPROVED', currentState: { not: '' } },
+        where: { currentState: { not: '' } },
         distinct: ['currentState'],
         select: { currentState: true },
       }),
@@ -139,15 +142,17 @@ export class UserService {
 
   /**
    * Updates a user record.
-   * @param id - The user ID.
-   * @param data - Partial user data to update.
-   * @returns The updated user record.
    */
   async update(id: string, data: any) {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    if (data.occupationType === OccupationType.BUSINESS_OWNER && data.occupationDetails) {
+      await this.businessService.upsertFromProfile(id, data.currentState || user.currentState, data.occupationDetails);
+    }
+
     return prisma.user.update({ where: { id }, data });
   }
 
