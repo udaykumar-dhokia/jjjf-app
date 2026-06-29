@@ -313,7 +313,10 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     final userProvider = context.watch<UserProvider>();
     final authProvider = context.read<AuthProvider>();
-    final user = userProvider.userProfile;
+    
+    final actualUser = userProvider.userProfile;
+    final user = actualUser ?? (userProvider.isLoading ? UserModel.dummy() : null);
+    
     final hasBusiness =
         user?.occupationType.toUpperCase().contains('BUSINESS') ?? false;
 
@@ -336,7 +339,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   onPressed: widget.onMenuTap,
                 )
               : null,
-          actions: user != null
+          actions: actualUser != null
               ? [
                   IconButton(
                     icon: const HugeIcon(
@@ -345,7 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       size: 20,
                     ),
                     onPressed: () {
-                      _showSettingsBottomSheet(context, user, userProvider);
+                      _showSettingsBottomSheet(context, actualUser, userProvider);
                     },
                   ),
                   IconButton(
@@ -358,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute(
                           builder: (_) =>
-                              UpdateProfileScreen(currentUser: user),
+                              UpdateProfileScreen(currentUser: actualUser),
                         ),
                       );
                     },

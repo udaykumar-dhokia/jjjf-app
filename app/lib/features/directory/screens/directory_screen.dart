@@ -173,7 +173,11 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                           style: const TextStyle(color: Colors.red),
                         ),
                       )
-                    : _buildContactList(provider.filteredContacts),
+                    : _buildContactList(
+                        provider.isLoading && provider.filteredContacts.isEmpty
+                            ? List.generate(5, (index) => UserModel.dummy())
+                            : provider.filteredContacts,
+                      ),
               ),
             ),
           ],

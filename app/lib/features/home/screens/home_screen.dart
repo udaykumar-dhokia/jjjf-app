@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/update_checker_icon.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../widgets/hero_carousel.dart';
@@ -34,6 +35,9 @@ class HomeScreen extends StatelessWidget {
             ),
             onPressed: onMenuTap,
           ),
+          actions: const [
+            UpdateCheckerIcon(),
+          ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(

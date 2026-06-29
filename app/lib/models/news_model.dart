@@ -52,4 +52,17 @@ class NewsModel {
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
+
+  factory NewsModel.dummy() {
+    return NewsModel(
+      id: 'dummy',
+      title: 'This is a dummy title',
+      description: 'This is a dummy description that is slightly longer to show how the skeleton handles multiple lines of text in the UI.',
+      images: ['https://api.dicebear.com/10.x/glass/png?seed=dummy'],
+      userId: 'dummy_user',
+      userName: 'Dummy User',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
 }

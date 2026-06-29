@@ -17,10 +17,7 @@ class SkeletonLoadingWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isLoading) return child;
 
-    return Skeletonizer(
-      enabled: true,
-      child: fallbackSkeleton ?? const _DefaultListSkeleton(),
-    );
+    return Skeletonizer(enabled: true, child: fallbackSkeleton ?? child);
   }
 }
 

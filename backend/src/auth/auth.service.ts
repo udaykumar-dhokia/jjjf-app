@@ -57,6 +57,7 @@ export class AuthService {
       user = await prisma.user.create({
         data: {
           email,
+          memberId: `TEMP_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
           firstName: 'New',
           fatherName: 'User',
           gotra: 'Unknown',

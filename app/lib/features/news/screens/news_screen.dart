@@ -1,3 +1,4 @@
+import 'package:app/models/news_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -139,7 +140,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             style: const TextStyle(color: Colors.red),
                           ),
                         )
-                      : provider.newsList.isEmpty
+                      : (provider.newsList.isEmpty && !provider.isLoading)
                       ? ListView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           children: const [
@@ -157,26 +158,31 @@ class _NewsScreenState extends State<NewsScreen> {
                         )
                       : ListView.builder(
                           controller: _scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(
-                            parent: BouncingScrollPhysics(),
-                          ),
-                          padding: const EdgeInsets.only(bottom: 100),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: 100, top: 8),
                           itemCount:
-                              provider.newsList.length +
-                              (provider.hasMore ? 1 : 0),
+                              provider.isLoading && provider.newsList.isEmpty
+                              ? 3
+                              : provider.newsList.length +
+                                    (provider.hasMore ? 1 : 0),
                           itemBuilder: (context, index) {
+                            if (provider.isLoading &&
+                                provider.newsList.isEmpty) {
+                              return NewsCard(news: NewsModel.dummy());
+                            }
                             if (index == provider.newsList.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: CupertinoActivityIndicator(
-                                    color: AppTheme.primaryPurple,
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppTheme.primaryPurple,
+                                    ),
                                   ),
                                 ),
                               );
                             }
-                            final news = provider.newsList[index];
-                            return NewsCard(news: news);
+                            return NewsCard(news: provider.newsList[index]);
                           },
                         ),
                 ),

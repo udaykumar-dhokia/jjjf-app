@@ -215,6 +215,50 @@ class UserModel {
     };
   }
 
+  factory UserModel.dummy() {
+    return UserModel(
+      id: 'dummy_id',
+      memberId: 'MEM_0000_123456',
+      firstName: 'DummyFirst',
+      fatherName: 'DummyFather',
+      motherName: 'DummyMother',
+      gotra: 'DummyGotra',
+      spouseName: 'DummySpouse',
+      husbandNameWithSurname: 'DummyHusband',
+      sasuralGotra: 'DummySasural',
+      gender: 'MALE',
+      maritalStatus: 'SINGLE',
+      dateOfBirth: DateTime(1990, 1, 1),
+      email: 'dummy@example.com',
+      isEmailVerified: true,
+      occupationType: 'BUSINESS',
+      occupationDetails: OccupationDetails(
+        companyName: 'Dummy Company',
+        designation: 'Dummy Designation',
+      ),
+      gaon: 'DummyGaon',
+      nativeDistrict: 'DummyDistrict',
+      nativeState: 'DummyState',
+      currentAddress: '123 Dummy Street, Dummy Area',
+      currentCity: 'DummyCity',
+      currentState: 'DummyState',
+      pinCode: '123456',
+      phoneNumber: '9876543210',
+      whatsappNumber: '9876543210',
+      isPhoneNumberVisible: true,
+      isProfileComplete: true,
+      familyId: 'dummy_family_id',
+      isHeadOfFamily: true,
+      relationshipToHead: 'SELF',
+      role: 'MEMBER',
+      status: 'APPROVED',
+      assignedStates: [],
+      photoUrl: 'https://api.dicebear.com/10.x/glass/png?seed=Dummy',
+      bloodGroup: 'O+',
+      education: 'Dummy Education Details',
+    );
+  }
+
   UserModel copyWith({
     String? id,
     String? memberId,
