@@ -6,8 +6,10 @@ import '../widgets/hero_carousel.dart';
 import '../widgets/home_greeting.dart';
 import '../widgets/home_menu_grid.dart';
 import '../widgets/home_latest_news.dart';
+import '../widgets/home_latest_jobs.dart';
 
 import 'package:hugeicons/hugeicons.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -35,9 +37,7 @@ class HomeScreen extends StatelessWidget {
             ),
             onPressed: onMenuTap,
           ),
-          actions: const [
-            UpdateCheckerIcon(),
-          ],
+          actions: const [UpdateCheckerIcon()],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -53,7 +53,39 @@ class HomeScreen extends StatelessWidget {
                 HomeMenuGrid(onNavigateTab: onNavigateTab),
                 const SizedBox(height: 32),
                 HomeLatestNews(onNavigateTab: onNavigateTab),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
+                const HomeLatestJobs(
+                  title: 'Latest Vacancies',
+                  isVacancy: true,
+                ),
+                const SizedBox(height: 32),
+                const HomeLatestJobs(
+                  title: 'Latest Job Requests',
+                  isVacancy: false,
+                ),
+                const SizedBox(height: 32),
+                ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [
+                      AppTheme.primaryPurple.withOpacity(0.6),
+                      AppTheme.primaryPurple.withOpacity(0.0),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ).createShader(bounds),
+                  child: Text(
+                    'JALORE JILLA\nJAIN FEDERATION',
+                    style: GoogleFonts.poppins(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      height: 1.0,
+                      letterSpacing: -1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 48),
               ],
             ),
           ),

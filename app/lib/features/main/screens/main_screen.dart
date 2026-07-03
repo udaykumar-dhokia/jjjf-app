@@ -6,6 +6,8 @@ import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 
 import '../../../providers/user_provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/news_provider.dart';
+import '../../../providers/job_provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../home/screens/home_screen.dart';
@@ -33,6 +35,8 @@ class _MainScreenState extends State<MainScreen> {
     _controller = PersistentTabController(initialIndex: 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().fetchMyProfile();
+      context.read<NewsProvider>().fetchNews();
+      context.read<JobProvider>().fetchJobs();
     });
   }
 
