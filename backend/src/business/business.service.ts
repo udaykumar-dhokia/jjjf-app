@@ -37,14 +37,37 @@ export class BusinessService {
   }
 
   /**
-   * Retrieves approved listings, optionally filtered by city.
-   * @param city - Optional city filter.
-   * @returns Array of approved listings.
+   * Retrieves approved listings, optionally filtered by city and owner details.
    */
-  async findApprovedDirectory(city?: string) {
+  async findApprovedDirectory(
+    cities?: string,
+    gaons?: string,
+    nativeDistricts?: string,
+    nativeStates?: string,
+    gotras?: string,
+  ) {
     const whereClause: any = { status: ListingStatus.APPROVED };
-    if (city) {
-      whereClause.city = city;
+    
+    if (cities) {
+      whereClause.city = { in: cities.split(',').map((s) => s.trim()) };
+    }
+
+    const ownerFilter: any = {};
+    if (gaons) {
+      ownerFilter.gaon = { in: gaons.split(',').map((s) => s.trim()) };
+    }
+    if (nativeDistricts) {
+      ownerFilter.nativeDistrict = { in: nativeDistricts.split(',').map((s) => s.trim()) };
+    }
+    if (nativeStates) {
+      ownerFilter.nativeState = { in: nativeStates.split(',').map((s) => s.trim()) };
+    }
+    if (gotras) {
+      ownerFilter.gotra = { in: gotras.split(',').map((s) => s.trim()) };
+    }
+
+    if (Object.keys(ownerFilter).length > 0) {
+      whereClause.owner = ownerFilter;
     }
 
     return prisma.businessListing.findMany({

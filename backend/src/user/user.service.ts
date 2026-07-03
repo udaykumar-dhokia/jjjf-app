@@ -102,7 +102,7 @@ export class UserService {
    * Retrieves unique metadata (gotras, cities, states) for filtering the directory.
    */
   async getDirectoryMetadata() {
-    const [gotras, cities, states] = await Promise.all([
+    const [gotras, cities, states, gaons, nativeDistricts, nativeStates] = await Promise.all([
       prisma.user.findMany({
         where: { gotra: { not: '' } },
         distinct: ['gotra'],
@@ -118,12 +118,30 @@ export class UserService {
         distinct: ['currentState'],
         select: { currentState: true },
       }),
+      prisma.user.findMany({
+        where: { gaon: { not: '' } },
+        distinct: ['gaon'],
+        select: { gaon: true },
+      }),
+      prisma.user.findMany({
+        where: { nativeDistrict: { not: '' } },
+        distinct: ['nativeDistrict'],
+        select: { nativeDistrict: true },
+      }),
+      prisma.user.findMany({
+        where: { nativeState: { not: '' } },
+        distinct: ['nativeState'],
+        select: { nativeState: true },
+      }),
     ]);
 
     return {
       gotras: gotras.map(g => g.gotra).sort(),
       cities: cities.map(c => c.currentCity).sort(),
       states: states.map(s => s.currentState).sort(),
+      gaons: gaons.map(g => g.gaon).sort(),
+      nativeDistricts: nativeDistricts.map(nd => nd.nativeDistrict).sort(),
+      nativeStates: nativeStates.map(ns => ns.nativeState).sort(),
     };
   }
 

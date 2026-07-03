@@ -7,11 +7,37 @@ class BusinessApi {
   final ApiClient _client = ApiClient();
 
   /// Fetches all approved business listings
-  /// Optionally filters by city
-  Future<List<BusinessListing>> getApprovedDirectory({String? city}) async {
-    String url = '/business/directory/approved';
-    if (city != null && city.isNotEmpty) {
-      url += '?city=${Uri.encodeComponent(city)}';
+  /// Optionally filters by cities, and owner details
+  Future<List<BusinessListing>> getApprovedDirectory({
+    List<String> cities = const [],
+    List<String> gaons = const [],
+    List<String> nativeDistricts = const [],
+    List<String> nativeStates = const [],
+    List<String> gotras = const [],
+  }) async {
+    String url = '/business/directory/approved?';
+    
+    final params = <String>[];
+    if (cities.isNotEmpty) {
+      params.add('cities=${Uri.encodeComponent(cities.join(','))}');
+    }
+    if (gaons.isNotEmpty) {
+      params.add('gaons=${Uri.encodeComponent(gaons.join(','))}');
+    }
+    if (nativeDistricts.isNotEmpty) {
+      params.add('nativeDistricts=${Uri.encodeComponent(nativeDistricts.join(','))}');
+    }
+    if (nativeStates.isNotEmpty) {
+      params.add('nativeStates=${Uri.encodeComponent(nativeStates.join(','))}');
+    }
+    if (gotras.isNotEmpty) {
+      params.add('gotras=${Uri.encodeComponent(gotras.join(','))}');
+    }
+
+    if (params.isNotEmpty) {
+      url += params.join('&');
+    } else {
+      url = '/business/directory/approved';
     }
 
     final response = await _client.dio.get(url);

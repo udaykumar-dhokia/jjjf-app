@@ -276,9 +276,9 @@ class _BusinessesScreenState extends State<BusinessesScreen> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: provider.filter.city,
+          value: provider.filter.cities.length == 1 ? provider.filter.cities.first : null,
           hint: Text(
-            'All Cities',
+            provider.filter.cities.length > 1 ? 'Multiple Cities' : 'All Cities',
             style: GoogleFonts.inter(
               color: Colors.black,
               fontWeight: FontWeight.w600,
@@ -308,7 +308,7 @@ class _BusinessesScreenState extends State<BusinessesScreen> {
           ],
           onChanged: (city) {
             provider.updateFilter(
-              city: city,
+              cities: city == null ? [] : [city],
               category: provider.filter.category,
             );
           },

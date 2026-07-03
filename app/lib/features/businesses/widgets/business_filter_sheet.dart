@@ -13,27 +13,38 @@ class BusinessFilterSheet extends StatefulWidget {
 
 class _BusinessFilterSheetState extends State<BusinessFilterSheet> {
   String? _selectedCategory;
+  List<String> _selectedCities = [];
+  List<String> _selectedOwnerGaons = [];
+  List<String> _selectedOwnerNativeDistricts = [];
+  List<String> _selectedOwnerNativeStates = [];
+  List<String> _selectedOwnerGotras = [];
 
   @override
   void initState() {
     super.initState();
     final filter = context.read<BusinessProvider>().filter;
     _selectedCategory = filter.category;
+    _selectedCities = List.from(filter.cities);
+    _selectedOwnerGaons = List.from(filter.ownerGaons);
+    _selectedOwnerNativeDistricts = List.from(filter.ownerNativeDistricts);
+    _selectedOwnerNativeStates = List.from(filter.ownerNativeStates);
+    _selectedOwnerGotras = List.from(filter.ownerGotras);
   }
 
   void _applyFilter() {
-    final currentCity = context.read<BusinessProvider>().filter.city;
     context.read<BusinessProvider>().updateFilter(
-      city: currentCity,
+      cities: _selectedCities,
       category: _selectedCategory,
+      ownerGaons: _selectedOwnerGaons,
+      ownerNativeDistricts: _selectedOwnerNativeDistricts,
+      ownerNativeStates: _selectedOwnerNativeStates,
+      ownerGotras: _selectedOwnerGotras,
     );
     Navigator.pop(context);
   }
 
   void _resetFilter() {
-    final currentCity = context.read<BusinessProvider>().filter.city;
     context.read<BusinessProvider>().clearFilter();
-    context.read<BusinessProvider>().updateFilter(city: currentCity);
     Navigator.pop(context);
   }
 
@@ -100,6 +111,69 @@ class _BusinessFilterSheetState extends State<BusinessFilterSheet> {
     );
   }
 
+  Widget _buildMultiSelectChips({
+    required String title,
+    required List<String> options,
+    required List<String> selectedValues,
+    required ValueChanged<List<String>> onChanged,
+  }) {
+    if (options.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(),
+          child: Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((option) {
+            final isSelected = selectedValues.contains(option);
+            return FilterChip(
+              label: Text(
+                option,
+                style: GoogleFonts.inter(
+                  color: isSelected ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              selected: isSelected,
+              onSelected: (selected) {
+                final newSelectedValues = List<String>.from(selectedValues);
+                if (selected) {
+                  newSelectedValues.add(option);
+                } else {
+                  newSelectedValues.remove(option);
+                }
+                onChanged(newSelectedValues);
+              },
+              selectedColor: AppTheme.primaryPurple,
+              checkmarkColor: Colors.white,
+              backgroundColor: AppTheme.backgroundLight,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected ? AppTheme.primaryPurple : Colors.black12,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessProvider>();
@@ -144,6 +218,13 @@ class _BusinessFilterSheetState extends State<BusinessFilterSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildMultiSelectChips(
+                      title: 'Business Cities',
+                      options: provider.availableCities,
+                      selectedValues: _selectedCities,
+                      onChanged: (values) =>
+                          setState(() => _selectedCities = values),
+                    ),
                     _buildDropdownFilterGroup(
                       title: 'Category',
                       value: _selectedCategory,
@@ -153,6 +234,47 @@ class _BusinessFilterSheetState extends State<BusinessFilterSheet> {
                           _selectedCategory = val;
                         });
                       },
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(height: 1, color: Colors.black12),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Owner Details',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryPurple,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildMultiSelectChips(
+                      title: 'Native Village (Gaon)',
+                      options: provider.availableGaons,
+                      selectedValues: _selectedOwnerGaons,
+                      onChanged: (values) =>
+                          setState(() => _selectedOwnerGaons = values),
+                    ),
+                    _buildMultiSelectChips(
+                      title: 'Native District',
+                      options: provider.availableNativeDistricts,
+                      selectedValues: _selectedOwnerNativeDistricts,
+                      onChanged: (values) => setState(
+                        () => _selectedOwnerNativeDistricts = values,
+                      ),
+                    ),
+                    _buildMultiSelectChips(
+                      title: 'Native State',
+                      options: provider.availableNativeStates,
+                      selectedValues: _selectedOwnerNativeStates,
+                      onChanged: (values) =>
+                          setState(() => _selectedOwnerNativeStates = values),
+                    ),
+                    _buildMultiSelectChips(
+                      title: 'Gotra',
+                      options: provider.availableGotras,
+                      selectedValues: _selectedOwnerGotras,
+                      onChanged: (values) =>
+                          setState(() => _selectedOwnerGotras = values),
                     ),
                   ],
                 ),

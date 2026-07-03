@@ -71,6 +71,9 @@ class UserApi {
       'gotras': List<String>.from(data['gotras'] ?? []),
       'cities': List<String>.from(data['cities'] ?? []),
       'states': List<String>.from(data['states'] ?? []),
+      'gaons': List<String>.from(data['gaons'] ?? []),
+      'nativeDistricts': List<String>.from(data['nativeDistricts'] ?? []),
+      'nativeStates': List<String>.from(data['nativeStates'] ?? []),
     };
   }
 }

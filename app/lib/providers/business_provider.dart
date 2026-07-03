@@ -4,12 +4,29 @@ import '../services/business_api.dart';
 import '../services/user_api.dart'; // We'll need metadata for categories/cities if available
 
 class BusinessFilter {
-  String? city;
+  List<String> cities;
   String? category;
+  List<String> ownerGaons;
+  List<String> ownerNativeDistricts;
+  List<String> ownerNativeStates;
+  List<String> ownerGotras;
 
-  BusinessFilter({this.city, this.category});
+  BusinessFilter({
+    this.cities = const [],
+    this.category,
+    this.ownerGaons = const [],
+    this.ownerNativeDistricts = const [],
+    this.ownerNativeStates = const [],
+    this.ownerGotras = const [],
+  });
 
-  bool get isEmpty => city == null && category == null;
+  bool get isEmpty =>
+      cities.isEmpty &&
+      category == null &&
+      ownerGaons.isEmpty &&
+      ownerNativeDistricts.isEmpty &&
+      ownerNativeStates.isEmpty &&
+      ownerGotras.isEmpty;
 }
 
 class BusinessProvider with ChangeNotifier {
@@ -23,6 +40,10 @@ class BusinessProvider with ChangeNotifier {
   
   // Metadata for dropdowns
   List<String> _availableCities = [];
+  List<String> _availableGotras = [];
+  List<String> _availableGaons = [];
+  List<String> _availableNativeDistricts = [];
+  List<String> _availableNativeStates = [];
   List<String> _availableCategories = [
     'AGRICULTURE', 'AUTOMOTIVE', 'BANKING', 'CONSULTING', 'EDUCATION',
     'ELECTRONICS', 'ENTERTAINMENT', 'FINANCE', 'FOOD_AND_BEVERAGE', 
@@ -39,6 +60,10 @@ class BusinessProvider with ChangeNotifier {
   String get searchQuery => _searchQuery;
   List<String> get availableCities => _availableCities;
   List<String> get availableCategories => _availableCategories;
+  List<String> get availableGotras => _availableGotras;
+  List<String> get availableGaons => _availableGaons;
+  List<String> get availableNativeDistricts => _availableNativeDistricts;
+  List<String> get availableNativeStates => _availableNativeStates;
 
   List<BusinessListing> get filteredBusinesses {
     if (_searchQuery.isEmpty) return _businesses;
@@ -56,8 +81,8 @@ class BusinessProvider with ChangeNotifier {
     _error = null;
     
     // Set default city if filter isn't set
-    if (_filter.city == null && defaultCity != null) {
-      _filter.city = defaultCity;
+    if (_filter.cities.isEmpty && defaultCity != null) {
+      _filter.cities = [defaultCity];
     }
     
     notifyListeners();
@@ -67,15 +92,49 @@ class BusinessProvider with ChangeNotifier {
       // We can reuse the user API metadata for cities
       try {
         final metadata = await UserApi().getDirectoryMetadata();
-        _availableCities = metadata['cities'] ?? [];
+        if (metadata['cities'] != null && metadata['cities']!.isNotEmpty) {
+          _availableCities = metadata['cities']!;
+        }
+        if (metadata['gaons'] != null && metadata['gaons']!.isNotEmpty) {
+          _availableGaons = metadata['gaons']!;
+        }
+        if (metadata['nativeDistricts'] != null && metadata['nativeDistricts']!.isNotEmpty) {
+          _availableNativeDistricts = metadata['nativeDistricts']!;
+        }
+        if (metadata['nativeStates'] != null && metadata['nativeStates']!.isNotEmpty) {
+          _availableNativeStates = metadata['nativeStates']!;
+        }
+        if (metadata['gotras'] != null && metadata['gotras']!.isNotEmpty) {
+          _availableGotras = metadata['gotras']!;
+        }
       } catch (_) {
         // Fallback or ignore if metadata fails
       }
 
-      // 2. Fetch business listings based on current city filter
-      _businesses = await BusinessApi().getApprovedDirectory(city: _filter.city);
+      // 2. Fetch business listings based on current city and owner filters
+      _businesses = await BusinessApi().getApprovedDirectory(
+        cities: _filter.cities,
+        gaons: _filter.ownerGaons,
+        nativeDistricts: _filter.ownerNativeDistricts,
+        nativeStates: _filter.ownerNativeStates,
+        gotras: _filter.ownerGotras,
+      );
       
-      // 3. Apply local filtering for category (since backend GET only filters by city currently)
+      // Extract available owner details from the fetched list only if metadata failed
+      if (_availableGaons.isEmpty) {
+        _availableGaons = _businesses.map((b) => b.owner?.gaon ?? '').where((s) => s.isNotEmpty).toSet().toList();
+      }
+      if (_availableGotras.isEmpty) {
+        _availableGotras = _businesses.map((b) => b.owner?.gotra ?? '').where((s) => s.isNotEmpty).toSet().toList();
+      }
+      if (_availableNativeDistricts.isEmpty) {
+        _availableNativeDistricts = _businesses.map((b) => b.owner?.nativeDistrict ?? '').where((s) => s.isNotEmpty).toSet().toList();
+      }
+      if (_availableNativeStates.isEmpty) {
+        _availableNativeStates = _businesses.map((b) => b.owner?.nativeState ?? '').where((s) => s.isNotEmpty).toSet().toList();
+      }
+
+      // 3. Apply local filtering for category (since backend GET doesn't filter by category currently)
       if (_filter.category != null && _filter.category!.isNotEmpty) {
         _businesses = _businesses.where((b) => b.category == _filter.category).toList();
       }
@@ -88,9 +147,20 @@ class BusinessProvider with ChangeNotifier {
     }
   }
 
-  void updateFilter({String? city, String? category}) {
-    _filter.city = city;
-    _filter.category = category;
+  void updateFilter({
+    List<String>? cities, 
+    String? category,
+    List<String>? ownerGaons,
+    List<String>? ownerNativeDistricts,
+    List<String>? ownerNativeStates,
+    List<String>? ownerGotras,
+  }) {
+    if (cities != null) _filter.cities = cities;
+    if (category != null) _filter.category = category;
+    if (ownerGaons != null) _filter.ownerGaons = ownerGaons;
+    if (ownerNativeDistricts != null) _filter.ownerNativeDistricts = ownerNativeDistricts;
+    if (ownerNativeStates != null) _filter.ownerNativeStates = ownerNativeStates;
+    if (ownerGotras != null) _filter.ownerGotras = ownerGotras;
     fetchBusinesses();
   }
 

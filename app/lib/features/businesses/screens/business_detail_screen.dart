@@ -12,8 +12,31 @@ class BusinessDetailScreen extends StatelessWidget {
 
   const BusinessDetailScreen({super.key, required this.business});
 
-  Widget _buildInfoRow(dynamic icon, String label, String value) {
+  Widget _buildInfoRow(
+    dynamic icon,
+    String label,
+    String value, {
+    VoidCallback? onTap,
+    bool isLink = false,
+  }) {
     if (value.isEmpty) return const SizedBox.shrink();
+
+    Widget valueWidget = Text(
+      value,
+      style: TextStyle(
+        color: isLink ? Colors.blue : Colors.black87,
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
+        decoration: isLink ? TextDecoration.underline : null,
+        decorationColor: isLink ? Colors.blue : null,
+      ),
+      textAlign: TextAlign.right,
+    );
+
+    if (onTap != null) {
+      valueWidget = GestureDetector(onTap: onTap, child: valueWidget);
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -36,18 +59,7 @@ class BusinessDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-              textAlign: TextAlign.right,
-            ),
-          ),
+          Expanded(flex: 3, child: valueWidget),
         ],
       ),
     );
@@ -115,72 +127,92 @@ class BusinessDetailScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16),
                   Container(
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.white,
-                      backgroundImage: business.logoUrl != null
-                          ? NetworkImage(business.logoUrl!) as ImageProvider
-                          : const NetworkImage(
-                              'https://api.dicebear.com/10.x/glass/png?seed=business',
-                            ),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      business.businessName.trim(),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                      textAlign: TextAlign.center,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryPurple.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          business.category,
-                          style: const TextStyle(
-                            color: AppTheme.primaryPurple,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.white,
+                            backgroundImage: business.logoUrl != null
+                                ? NetworkImage(business.logoUrl!)
+                                      as ImageProvider
+                                : const NetworkImage(
+                                    'https://api.dicebear.com/10.x/glass/png?seed=business',
+                                  ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Description
-                  if (business.description != null &&
-                      business.description!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        business.description!,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.black87,
-                          height: 1.4,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                business.businessName.trim(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryPurple.withOpacity(
+                                    0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  business.category,
+                                  style: const TextStyle(
+                                    color: AppTheme.primaryPurple,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              if (business.description != null &&
+                                  business.description!.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                Text(
+                                  business.description!,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                      ],
                     ),
-                  const SizedBox(height: 24),
+                  ),
 
                   // Information Sections
                   _buildSectionCard('Contact Information', [
@@ -189,11 +221,27 @@ class BusinessDetailScreen extends StatelessWidget {
                       'Phone Number',
                       business.contactNumber,
                     ),
-                    if (business.website != null)
+                    if (business.website != null &&
+                        business.website!.isNotEmpty)
                       _buildInfoRow(
                         HugeIcons.strokeRoundedGlobal,
                         'Website',
                         business.website!,
+                        isLink: true,
+                        onTap: () async {
+                          String urlStr = business.website!;
+                          if (!urlStr.startsWith('http://') &&
+                              !urlStr.startsWith('https://')) {
+                            urlStr = 'https://$urlStr';
+                          }
+                          final Uri url = Uri.parse(urlStr);
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(
+                              url,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
                       ),
                   ]),
 
@@ -213,7 +261,6 @@ class BusinessDetailScreen extends StatelessWidget {
                   ]),
 
                   if (business.owner != null) ...[
-                    const SizedBox(height: 16),
                     _buildSectionCard('Business Owner', [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
@@ -244,10 +291,51 @@ class BusinessDetailScreen extends StatelessWidget {
                             fontSize: 13,
                           ),
                         ),
-                        trailing: const HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowRight01,
-                          color: Colors.black54,
-                          size: 20,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (business.owner!.whatsappNumber != null &&
+                                business.owner!.whatsappNumber!.isNotEmpty)
+                              IconButton(
+                                icon: const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedWhatsapp,
+                                  color: Colors.green,
+                                  size: 24,
+                                ),
+                                onPressed: () async {
+                                  final url = Uri.parse(
+                                    'https://wa.me/${business.owner!.whatsappNumber}',
+                                  );
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(
+                                      url,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                              ),
+                            if (business.owner!.phoneNumber.isNotEmpty)
+                              IconButton(
+                                icon: const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCall,
+                                  color: Colors.black,
+                                  size: 24,
+                                ),
+                                onPressed: () async {
+                                  final url = Uri.parse(
+                                    'tel:${business.owner!.phoneNumber}',
+                                  );
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(url);
+                                  }
+                                },
+                              ),
+                            const HugeIcon(
+                              icon: HugeIcons.strokeRoundedArrowRight01,
+                              color: Colors.black54,
+                              size: 20,
+                            ),
+                          ],
                         ),
                         onTap: () {
                           Navigator.of(context, rootNavigator: true).push(
@@ -268,7 +356,7 @@ class BusinessDetailScreen extends StatelessWidget {
           ],
         ),
         bottomNavigationBar:
-            (business.contactNumber.isNotEmpty || business.website != null)
+            (business.contactNumber.isNotEmpty || business.address.isNotEmpty)
             ? Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -320,19 +408,22 @@ class BusinessDetailScreen extends StatelessWidget {
                           ),
                         ),
                       if (business.contactNumber.isNotEmpty &&
-                          business.website != null)
+                          business.address.isNotEmpty)
                         const SizedBox(width: 16),
-                      if (business.website != null &&
-                          business.website!.isNotEmpty)
+                      if (business.address.isNotEmpty)
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () async {
-                              String urlStr = business.website!;
-                              if (!urlStr.startsWith('http://') &&
-                                  !urlStr.startsWith('https://')) {
-                                urlStr = 'https://$urlStr';
-                              }
-                              final Uri url = Uri.parse(urlStr);
+                              final addressParts = [
+                                business.businessName,
+                                business.address,
+                                business.city,
+                                business.state,
+                              ].where((part) => part.isNotEmpty).join(', ');
+                              final query = Uri.encodeComponent(addressParts);
+                              final Uri url = Uri.parse(
+                                'https://www.google.com/maps/search/?api=1&query=$query',
+                              );
                               if (await canLaunchUrl(url)) {
                                 await launchUrl(
                                   url,
@@ -341,12 +432,12 @@ class BusinessDetailScreen extends StatelessWidget {
                               }
                             },
                             icon: const HugeIcon(
-                              icon: HugeIcons.strokeRoundedGlobal,
+                              icon: HugeIcons.strokeRoundedLocation01,
                               color: Colors.white,
                               size: 20,
                             ),
                             label: const Text(
-                              'Website',
+                              'Maps',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

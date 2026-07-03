@@ -23,10 +23,20 @@ export class BusinessController {
   @UseGuards(JwtAuthGuard)
   @Get('directory/approved')
   @ApiOperation({ summary: 'Get all approved business listings for the directory' })
-  @ApiQuery({ name: 'city', required: false, type: String })
+  @ApiQuery({ name: 'cities', required: false, type: String, description: 'Comma-separated list of cities' })
+  @ApiQuery({ name: 'gaons', required: false, type: String, description: 'Comma-separated list of native villages' })
+  @ApiQuery({ name: 'nativeDistricts', required: false, type: String, description: 'Comma-separated list of native districts' })
+  @ApiQuery({ name: 'nativeStates', required: false, type: String, description: 'Comma-separated list of native states' })
+  @ApiQuery({ name: 'gotras', required: false, type: String, description: 'Comma-separated list of gotras' })
   @ApiResponse({ status: 200, description: 'List of approved businesses' })
-  findApprovedDirectory(@Query('city') city?: string) {
-    return this.businessService.findApprovedDirectory(city);
+  findApprovedDirectory(
+    @Query('cities') cities?: string,
+    @Query('gaons') gaons?: string,
+    @Query('nativeDistricts') nativeDistricts?: string,
+    @Query('nativeStates') nativeStates?: string,
+    @Query('gotras') gotras?: string,
+  ) {
+    return this.businessService.findApprovedDirectory(cities, gaons, nativeDistricts, nativeStates, gotras);
   }
 
   @UseGuards(JwtAuthGuard)
