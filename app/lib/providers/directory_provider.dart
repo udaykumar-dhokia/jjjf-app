@@ -10,6 +10,9 @@ class DirectoryFilter {
   final Set<String> gotras;
   final Set<String> states;
   final Set<String> cities;
+  final Set<String> gaons;
+  final Set<String> nativeDistricts;
+  final Set<String> nativeStates;
 
   DirectoryFilter({
     this.genders = const {},
@@ -19,6 +22,9 @@ class DirectoryFilter {
     this.gotras = const {},
     this.states = const {},
     this.cities = const {},
+    this.gaons = const {},
+    this.nativeDistricts = const {},
+    this.nativeStates = const {},
   });
 
   bool get isEmpty =>
@@ -28,7 +34,10 @@ class DirectoryFilter {
       occupationTypes.isEmpty &&
       gotras.isEmpty &&
       states.isEmpty &&
-      cities.isEmpty;
+      cities.isEmpty &&
+      gaons.isEmpty &&
+      nativeDistricts.isEmpty &&
+      nativeStates.isEmpty;
 }
 
 class DirectoryProvider extends ChangeNotifier {
@@ -58,6 +67,9 @@ class DirectoryProvider extends ChangeNotifier {
   List<String> get availableGotras => _metadata['gotras'] ?? [];
   List<String> get availableCities => _metadata['cities'] ?? [];
   List<String> get availableStates => _metadata['states'] ?? [];
+  List<String> get availableGaons => _metadata['gaons'] ?? [];
+  List<String> get availableNativeDistricts => _metadata['nativeDistricts'] ?? [];
+  List<String> get availableNativeStates => _metadata['nativeStates'] ?? [];
 
   DirectoryProvider() {
     fetchDirectory();
@@ -146,6 +158,18 @@ class DirectoryProvider extends ChangeNotifier {
         }
         if (_activeFilter.cities.isNotEmpty &&
             !_activeFilter.cities.contains(user.currentCity)) {
+          return false;
+        }
+        if (_activeFilter.gaons.isNotEmpty &&
+            !_activeFilter.gaons.contains(user.gaon)) {
+          return false;
+        }
+        if (_activeFilter.nativeDistricts.isNotEmpty &&
+            !_activeFilter.nativeDistricts.contains(user.nativeDistrict)) {
+          return false;
+        }
+        if (_activeFilter.nativeStates.isNotEmpty &&
+            !_activeFilter.nativeStates.contains(user.nativeState)) {
           return false;
         }
       }

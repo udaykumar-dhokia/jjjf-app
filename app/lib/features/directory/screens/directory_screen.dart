@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -8,6 +7,7 @@ import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../providers/directory_provider.dart';
 import '../../../models/user_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/directory_filter_sheet.dart';
 import 'contact_detail_screen.dart';
 import '../../../core/widgets/skeleton_loading_wrapper.dart';
@@ -244,7 +244,7 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                           vertical: 4,
                         ),
                         leading: CircleAvatar(
-                          radius: 24,
+                          radius: 16,
                           backgroundColor: AppTheme.primaryPurple.withOpacity(
                             0.1,
                           ),
@@ -254,12 +254,27 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                                   'https://api.dicebear.com/10.x/glass/png?seed=${contact.firstName}',
                                 ),
                         ),
-                        title: Text(
-                          '${contact.firstName} ${contact.fatherName} ${contact.gotra}'
-                              .trim(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                        title: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    '${contact.firstName} ${contact.fatherName}'
+                                        .trim(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' | ${contact.gaon}',
+                                style: TextStyle(
+                                  color: Colors.black.withOpacity(0.5),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         subtitle: Text(
@@ -269,6 +284,50 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing:
+                            (contact.whatsappNumber != null &&
+                                contact.whatsappNumber!.isNotEmpty)
+                            ? IconButton(
+                                icon: const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedWhatsapp,
+                                  color: Color(0xFF25D366),
+                                  size: 24,
+                                ),
+                                onPressed: () async {
+                                  final String waPhone = contact.whatsappNumber!
+                                      .replaceAll(RegExp(r'\D'), '');
+                                  final String finalPhone = waPhone.length == 10
+                                      ? '91$waPhone'
+                                      : waPhone;
+                                  final Uri url = Uri.parse(
+                                    'https://wa.me/$finalPhone',
+                                  );
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(
+                                      url,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                              )
+                            : (contact.isPhoneNumberVisible &&
+                                  contact.phoneNumber.isNotEmpty)
+                            ? IconButton(
+                                icon: const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCall02,
+                                  color: AppTheme.primaryPurple,
+                                  size: 24,
+                                ),
+                                onPressed: () async {
+                                  final Uri url = Uri.parse(
+                                    'tel:${contact.phoneNumber}',
+                                  );
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(url);
+                                  }
+                                },
+                              )
+                            : null,
                         onTap: () {
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(

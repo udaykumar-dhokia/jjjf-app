@@ -16,22 +16,7 @@ class _DirectoryFilterSheetState extends State<DirectoryFilterSheet> {
 
   // Static Enums
   final List<String> _availableGenders = ['MALE', 'FEMALE', 'OTHER'];
-  final List<String> _availableMaritalStatuses = [
-    'SINGLE',
-    'MARRIED',
-    'DIVORCED',
-    'WIDOWED',
-  ];
-  final List<String> _availableBloodGroups = [
-    'A+',
-    'A-',
-    'B+',
-    'B-',
-    'AB+',
-    'AB-',
-    'O+',
-    'O-',
-  ];
+
   final List<String> _availableOccupationTypes = [
     'BUSINESS',
     'JOB_PROFESSIONAL',
@@ -44,6 +29,9 @@ class _DirectoryFilterSheetState extends State<DirectoryFilterSheet> {
   List<String> _availableGotras = [];
   List<String> _availableStates = [];
   List<String> _availableCities = [];
+  List<String> _availableGaons = [];
+  List<String> _availableNativeDistricts = [];
+  List<String> _availableNativeStates = [];
 
   @override
   void initState() {
@@ -57,11 +45,17 @@ class _DirectoryFilterSheetState extends State<DirectoryFilterSheet> {
       gotras: Set.from(provider.activeFilter.gotras),
       states: Set.from(provider.activeFilter.states),
       cities: Set.from(provider.activeFilter.cities),
+      gaons: Set.from(provider.activeFilter.gaons),
+      nativeDistricts: Set.from(provider.activeFilter.nativeDistricts),
+      nativeStates: Set.from(provider.activeFilter.nativeStates),
     );
 
     _availableGotras = provider.availableGotras;
     _availableStates = provider.availableStates;
     _availableCities = provider.availableCities;
+    _availableGaons = provider.availableGaons;
+    _availableNativeDistricts = provider.availableNativeDistricts;
+    _availableNativeStates = provider.availableNativeStates;
   }
 
   void _toggleSetSelection(Set<String> set, String value) {
@@ -259,16 +253,7 @@ class _DirectoryFilterSheetState extends State<DirectoryFilterSheet> {
                       _availableGenders,
                       _currentFilter.genders,
                     ),
-                    _buildFilterGroup(
-                      'Marital Status',
-                      _availableMaritalStatuses,
-                      _currentFilter.maritalStatuses,
-                    ),
-                    _buildFilterGroup(
-                      'Blood Group',
-                      _availableBloodGroups,
-                      _currentFilter.bloodGroups,
-                    ),
+
                     _buildFilterGroup(
                       'Occupation',
                       _availableOccupationTypes,
@@ -288,6 +273,21 @@ class _DirectoryFilterSheetState extends State<DirectoryFilterSheet> {
                       'City',
                       _availableCities,
                       _currentFilter.cities,
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Native Village (Gaon)',
+                      _availableGaons,
+                      _currentFilter.gaons,
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Native District',
+                      _availableNativeDistricts,
+                      _currentFilter.nativeDistricts,
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Native State',
+                      _availableNativeStates,
+                      _currentFilter.nativeStates,
                     ),
                   ],
                 ),
