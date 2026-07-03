@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../jobs/screens/jobs_screen.dart';
 
 class HomeMenuGrid extends StatelessWidget {
   final Function(int) onNavigateTab;
@@ -50,7 +51,9 @@ class HomeMenuGrid extends StatelessWidget {
       {
         'title': 'Job Board',
         'icon': 'assets/icons/icons8-graduation-cap-94.png',
-        'action': () => _showComingSoon(context, 'Job Board'),
+        'action': () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const JobsScreen()),
+        ),
       },
       {
         'title': 'Birthdays',

@@ -12,6 +12,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module.js';
 import { NewsModule } from './news/news.module.js';
 import { FamilyModule } from './family/family.module.js';
 import { BusinessModule } from './business/business.module.js';
+import { JobsModule } from './jobs/jobs.module.js';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BusinessModule } from './business/business.module.js';
     NewsModule,
     FamilyModule,
     BusinessModule,
+    JobsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

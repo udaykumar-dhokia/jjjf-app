@@ -16,10 +16,10 @@ model ShokSandesh {
   contactPerson    String
   contactPhone     String
   status           DemiseStatus @default(PENDING)
-  
-  approvedById     String?      @db.ObjectId
-  approvedBy       User?        @relation("ApprovedShokSandesh", fields: [approvedById], references: [id])
-  
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+
+  approvedById String? @db.ObjectId
+  approvedBy   User?   @relation("ApprovedShokSandesh", fields: [approvedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

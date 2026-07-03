@@ -4,16 +4,16 @@ enum MediaType {
 }
 
 model Gallery {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  mediaUrl     String
-  mediaType    MediaType
-  isLive       Boolean   @default(false)
-  
-  eventId      String?   @db.ObjectId
-  event        Event?    @relation(fields: [eventId], references: [id])
-  
-  uploadedById String    @db.ObjectId
-  uploadedBy   User      @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
-  
-  createdAt    DateTime  @default(now())
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  mediaUrl  String
+  mediaType MediaType
+  isLive    Boolean   @default(false)
+
+  eventId String? @db.ObjectId
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  uploadedById String @db.ObjectId
+  uploadedBy   User   @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }

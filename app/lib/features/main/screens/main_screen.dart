@@ -14,6 +14,7 @@ import '../../directory/screens/directory_screen.dart';
 import '../../businesses/screens/businesses_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../../auth/screens/login_screen.dart';
+import '../../jobs/screens/jobs_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -333,6 +334,19 @@ class _MainScreenState extends State<MainScreen> {
                       color: Colors.white,
                     ),
                     title: const Text('Businesses'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const JobsScreen()),
+                      );
+                    },
+                    leading: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedBriefcase02,
+                      color: Colors.white,
+                    ),
+                    title: const Text('Job Board'),
                   ),
                   ListTile(
                     onTap: () {

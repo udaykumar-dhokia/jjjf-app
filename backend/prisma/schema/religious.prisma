@@ -1,10 +1,10 @@
 model Pachkhan {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
   title      String
   lyricsText String
   audioUrl   String
-  
-  createdAt  DateTime @default(now())
+
+  createdAt DateTime @default(now())
 }
 
 model TirthGuide {
@@ -16,8 +16,8 @@ model TirthGuide {
   latitude         Float
   longitude        Float
   address          String
-  
-  createdAt        DateTime @default(now())
+
+  createdAt DateTime @default(now())
 }
 
 model Panchang {
@@ -28,6 +28,6 @@ model Panchang {
   sunsetTime      String
   locationName    String
   specialOccasion String?
-  
-  createdAt       DateTime @default(now())
+
+  createdAt DateTime @default(now())
 }
