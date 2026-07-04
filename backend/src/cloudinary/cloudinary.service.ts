@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
 import * as streamifier from 'streamifier';
 import 'multer';
@@ -10,6 +10,8 @@ import 'multer';
  */
 @Injectable()
 export class CloudinaryService {
+  constructor(@Inject('Cloudinary') private cloudinaryConfig: any) {}
+
   /**
    * Uploads an image file to Cloudinary.
    *

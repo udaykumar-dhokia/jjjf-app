@@ -7,12 +7,14 @@ import { EmailModule } from './email/email.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { RedisModule } from './redis/redis.module.js';
 import { UserModule } from './user/user.module.js';
+
 import { DirectoryModule } from './directory/directory.module.js';
 import { CloudinaryModule } from './cloudinary/cloudinary.module.js';
 import { NewsModule } from './news/news.module.js';
 import { FamilyModule } from './family/family.module.js';
 import { BusinessModule } from './business/business.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
+import { MatrimonyModule } from './matrimony/matrimony.module.js';
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { JobsModule } from './jobs/jobs.module.js';
     FamilyModule,
     BusinessModule,
     JobsModule,
+    MatrimonyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

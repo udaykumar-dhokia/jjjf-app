@@ -103,15 +103,17 @@ model User {
 
   phoneNumberRequests String[] @db.ObjectId
 
-  matrimonialProfile  MatrimonialProfile?
-  businesses          BusinessListing[]
-  jobs                JobBoard[]
-  rsvps               RSVP[]
-  newsPosted          News[]
-  shokSandeshApproved ShokSandesh[]       @relation("ApprovedShokSandesh")
-  galleryUploaded     Gallery[]
-  familiesHeaded      Family[]            @relation("FamilyHead")
-  refreshTokens       RefreshToken[]
+  matrimonialProfile          MatrimonialProfile?
+  sentMatrimonialRequests     MatrimonialAccessRequest[] @relation("SentMatrimonialRequests")
+  receivedMatrimonialRequests MatrimonialAccessRequest[] @relation("ReceivedMatrimonialRequests")
+  businesses                  BusinessListing[]
+  jobs                        JobBoard[]
+  rsvps                       RSVP[]
+  newsPosted                  News[]
+  shokSandeshApproved         ShokSandesh[]              @relation("ApprovedShokSandesh")
+  galleryUploaded             Gallery[]
+  familiesHeaded              Family[]                   @relation("FamilyHead")
+  refreshTokens               RefreshToken[]
 }
 
 type OccupationDetails {

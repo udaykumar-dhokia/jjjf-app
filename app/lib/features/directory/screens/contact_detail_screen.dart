@@ -19,7 +19,8 @@ class ContactDetailScreen extends StatefulWidget {
   State<ContactDetailScreen> createState() => _ContactDetailScreenState();
 }
 
-class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTickerProviderStateMixin {
+class _ContactDetailScreenState extends State<ContactDetailScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _previousTabIndex = 0;
   late bool _hasBusiness;
@@ -27,16 +28,19 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTi
   @override
   void initState() {
     super.initState();
-    _hasBusiness = widget.contact.occupationType.toUpperCase().contains('BUSINESS');
+    _hasBusiness = widget.contact.occupationType.toUpperCase().contains(
+      'BUSINESS',
+    );
     _tabController = TabController(length: _hasBusiness ? 4 : 3, vsync: this);
     _tabController.addListener(() {
       final familyIndex = _hasBusiness ? 3 : 2;
       if (_tabController.index == familyIndex) {
         _tabController.index = _previousTabIndex;
-        if (widget.contact.familyId != null && widget.contact.familyId!.isNotEmpty) {
+        if (widget.contact.familyId.isNotEmpty) {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
-              builder: (_) => FamilyTreeScreen(familyId: widget.contact.familyId),
+              builder: (_) =>
+                  FamilyTreeScreen(familyId: widget.contact.familyId),
             ),
           );
         } else {
@@ -166,7 +170,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTi
                         backgroundColor: Colors.white,
                         backgroundImage: widget.contact.photoUrl != null
                             ? NetworkImage(widget.contact.photoUrl!)
-                                as ImageProvider
+                                  as ImageProvider
                             : NetworkImage(
                                 'https://api.dicebear.com/10.x/glass/png?seed=${widget.contact.firstName}',
                               ),
@@ -361,36 +365,59 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTi
                         'Occupation Type',
                         widget.contact.occupationType,
                       ),
-                      if (widget.contact.occupationDetails?.companyName != null &&
-                          widget.contact.occupationDetails!.companyName!.isNotEmpty)
+                      if (widget.contact.occupationDetails?.companyName !=
+                              null &&
+                          widget
+                              .contact
+                              .occupationDetails!
+                              .companyName!
+                              .isNotEmpty)
                         _buildInfoRow(
                           HugeIcons.strokeRoundedBuilding03,
                           'Company',
                           widget.contact.occupationDetails!.companyName!,
                         ),
-                      if (widget.contact.occupationDetails?.designation != null &&
-                          widget.contact.occupationDetails!.designation!.isNotEmpty)
+                      if (widget.contact.occupationDetails?.designation !=
+                              null &&
+                          widget
+                              .contact
+                              .occupationDetails!
+                              .designation!
+                              .isNotEmpty)
                         _buildInfoRow(
                           HugeIcons.strokeRoundedUser,
                           'Designation',
                           widget.contact.occupationDetails!.designation!,
                         ),
-                      if (widget.contact.occupationDetails?.businessName != null &&
-                          widget.contact.occupationDetails!.businessName!.isNotEmpty)
+                      if (widget.contact.occupationDetails?.businessName !=
+                              null &&
+                          widget
+                              .contact
+                              .occupationDetails!
+                              .businessName!
+                              .isNotEmpty)
                         _buildInfoRow(
                           HugeIcons.strokeRoundedStore01,
                           'Business Name',
                           widget.contact.occupationDetails!.businessName!,
                         ),
                       if (widget.contact.occupationDetails?.category != null &&
-                          widget.contact.occupationDetails!.category!.isNotEmpty)
+                          widget
+                              .contact
+                              .occupationDetails!
+                              .category!
+                              .isNotEmpty)
                         _buildInfoRow(
                           HugeIcons.strokeRoundedTag01,
                           'Category',
                           widget.contact.occupationDetails!.category!,
                         ),
                       if (widget.contact.occupationDetails?.industry != null &&
-                          widget.contact.occupationDetails!.industry!.isNotEmpty)
+                          widget
+                              .contact
+                              .occupationDetails!
+                              .industry!
+                              .isNotEmpty)
                         _buildInfoRow(
                           HugeIcons.strokeRoundedFactory,
                           'Industry',
@@ -431,7 +458,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> with SingleTi
           ),
         ),
         bottomNavigationBar:
-            (widget.contact.isPhoneNumberVisible && widget.contact.phoneNumber.isNotEmpty)
+            (widget.contact.isPhoneNumberVisible &&
+                widget.contact.phoneNumber.isNotEmpty)
             ? Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
