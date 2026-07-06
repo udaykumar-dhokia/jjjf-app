@@ -138,7 +138,7 @@ class HomeMenuGrid extends StatelessWidget {
       },
       {
         'title': 'Matrimony',
-        'icon': 'assets/icons/icons8-love-94.png',
+        'icon': 'assets/icons/icons8-couple-96.png',
         'action': () => _handleMatrimonyTap(context),
       },
       {

@@ -26,6 +26,17 @@ export class MatrimonyService {
         userId,
         ...dto,
       },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            gotra: true,
+            dateOfBirth: true,
+            phoneNumber: true,
+            whatsappNumber: true,
+          }
+        }
+      }
     });
   }
 
@@ -72,6 +83,17 @@ export class MatrimonyService {
     return prisma.matrimonialProfile.update({
       where: { userId },
       data: dto,
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            gotra: true,
+            dateOfBirth: true,
+            phoneNumber: true,
+            whatsappNumber: true,
+          }
+        }
+      }
     });
   }
 
@@ -147,6 +169,10 @@ export class MatrimonyService {
         userWhere.currentCity = { in: query.cities };
       }
 
+      if (query.gender) {
+        userWhere.gender = query.gender;
+      }
+
       // Gotras (User OR subCaste)
       if (query.gotras && query.gotras.length > 0) {
         whereClause.AND.push({
@@ -204,6 +230,9 @@ export class MatrimonyService {
       dateOfBirth: p.user.dateOfBirth,
       age: new Date().getFullYear() - new Date(p.user.dateOfBirth).getFullYear(),
       photoGallery: p.photoGallery,
+      height: p.height,
+      educationDetails: p.educationDetails,
+      monthlyIncome: p.monthlyIncome,
     }));
   }
 
@@ -297,7 +326,14 @@ export class MatrimonyService {
       where: { requesterId: userId },
       include: {
         target: {
-          select: { firstName: true, gotra: true }
+          select: { 
+            firstName: true, 
+            gotra: true,
+            photoUrl: true,
+            matrimonialProfile: {
+              select: { photoGallery: true }
+            }
+          }
         }
       }
     });
@@ -314,7 +350,14 @@ export class MatrimonyService {
       where: { targetId: userId },
       include: {
         requester: {
-          select: { firstName: true, gotra: true }
+          select: { 
+            firstName: true, 
+            gotra: true,
+            photoUrl: true,
+            matrimonialProfile: {
+              select: { photoGallery: true }
+            }
+          }
         }
       }
     });

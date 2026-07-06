@@ -9,6 +9,7 @@ class MatrimonialAccessRequest {
   // Minimal info about the other person in the request
   final String? otherPersonName;
   final String? otherPersonGotra;
+  final String? otherPersonImage;
 
   MatrimonialAccessRequest({
     required this.id,
@@ -19,6 +20,7 @@ class MatrimonialAccessRequest {
     this.updatedAt,
     this.otherPersonName,
     this.otherPersonGotra,
+    this.otherPersonImage,
   });
 
   factory MatrimonialAccessRequest.fromJson(Map<String, dynamic> json, {bool isSent = true}) {
@@ -35,6 +37,12 @@ class MatrimonialAccessRequest {
       updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt']) : null,
       otherPersonName: userNode != null ? userNode['firstName'] : null,
       otherPersonGotra: userNode != null ? userNode['gotra'] : null,
+      otherPersonImage: userNode != null && 
+              userNode['matrimonialProfile'] != null && 
+              userNode['matrimonialProfile']['photoGallery'] != null &&
+              (userNode['matrimonialProfile']['photoGallery'] as List).isNotEmpty 
+          ? userNode['matrimonialProfile']['photoGallery'][0] 
+          : (userNode != null ? userNode['photoUrl'] : null),
     );
   }
 }

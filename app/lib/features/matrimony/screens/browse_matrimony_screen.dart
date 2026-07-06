@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../providers/matrimony_provider.dart';
+import '../../../providers/user_provider.dart';
 import '../widgets/matrimony_filter_sheet.dart';
 import 'matrimony_profile_detail_screen.dart';
 
@@ -30,8 +31,25 @@ class _BrowseMatrimonyScreenState extends State<BrowseMatrimonyScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProvider = context.read<UserProvider>();
       final provider = context.read<MatrimonyProvider>();
       if (provider.browseList.isEmpty) {
+        if (provider.activeFilter.isEmpty &&
+            provider.activeFilter.gender == null) {
+          final userGender = userProvider.userProfile?.gender;
+          String? targetGender;
+          if (userGender == 'MALE')
+            targetGender = 'FEMALE';
+          else if (userGender == 'FEMALE')
+            targetGender = 'MALE';
+
+          if (targetGender != null) {
+            provider.setFilter(
+              provider.activeFilter.copyWith(gender: targetGender),
+            );
+            return;
+          }
+        }
         provider.fetchBrowseList();
       }
     });
@@ -265,7 +283,7 @@ class _BrowseMatrimonyScreenState extends State<BrowseMatrimonyScreen> {
                                       children: [
                                         Text(
                                           ageText.isNotEmpty
-                                              ? '$name, $ageText'
+                                              ? '$name $gotra, $ageText'
                                               : name,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -287,10 +305,6 @@ class _BrowseMatrimonyScreenState extends State<BrowseMatrimonyScreen> {
                                           spacing: 8,
                                           runSpacing: 8,
                                           children: [
-                                            _buildChip(
-                                              HugeIcons.strokeRoundedUserGroup,
-                                              gotra,
-                                            ),
                                             if (profile.height != null &&
                                                 profile.height!.isNotEmpty)
                                               _buildChip(
@@ -305,14 +319,6 @@ class _BrowseMatrimonyScreenState extends State<BrowseMatrimonyScreen> {
                                                 HugeIcons
                                                     .strokeRoundedBookOpen01,
                                                 profile.educationDetails,
-                                              ),
-                                            if (profile.monthlyIncome != null &&
-                                                profile
-                                                    .monthlyIncome!
-                                                    .isNotEmpty)
-                                              _buildChip(
-                                                HugeIcons.strokeRoundedMoney04,
-                                                profile.monthlyIncome!,
                                               ),
                                           ],
                                         ),

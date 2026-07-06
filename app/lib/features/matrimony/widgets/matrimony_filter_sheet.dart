@@ -27,7 +27,7 @@ class _MatrimonyFilterSheetState extends State<MatrimonyFilterSheet> {
     super.initState();
     final provider = context.read<MatrimonyProvider>();
     _currentFilter = provider.activeFilter.copyWith();
-    
+
     _availableGotras = provider.availableGotras;
     _availableEducation = provider.availableEducation;
     _availableHeights = provider.availableHeights;
@@ -110,6 +110,58 @@ class _MatrimonyFilterSheetState extends State<MatrimonyFilterSheet> {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildGenderSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'Gender',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        Wrap(
+          spacing: 12,
+          children: ['MALE', 'FEMALE', 'Any'].map((g) {
+            final isSelected =
+                (g == 'Any' && _currentFilter.gender == null) ||
+                (_currentFilter.gender == g);
+            return ChoiceChip(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              label: Text(
+                g == 'Any' ? 'Any' : (g == 'MALE' ? 'Male' : 'Female'),
+              ),
+              selected: isSelected,
+              onSelected: (selected) {
+                if (selected) {
+                  setState(() {
+                    _currentFilter = _currentFilter.copyWith(
+                      gender: g == 'Any' ? null : g,
+                      clearGender: g == 'Any',
+                    );
+                  });
+                }
+              },
+              selectedColor: AppTheme.primaryPurple.withOpacity(0.2),
+              labelStyle: TextStyle(
+                color: isSelected ? AppTheme.primaryPurple : Colors.black87,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 16),
       ],
@@ -246,27 +298,74 @@ class _MatrimonyFilterSheetState extends State<MatrimonyFilterSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildGenderSelector(),
                     _buildAgeRange(),
-                    _buildDropdownFilterGroup('Location / City', _availableCities, _currentFilter.cities, (val) {
-                      final newSet = Set<String>.from(_currentFilter.cities);
-                      newSet.contains(val) ? newSet.remove(val) : newSet.add(val);
-                      setState(() => _currentFilter = _currentFilter.copyWith(cities: newSet));
-                    }),
-                    _buildDropdownFilterGroup('Education', _availableEducation, _currentFilter.education, (val) {
-                      final newSet = Set<String>.from(_currentFilter.education);
-                      newSet.contains(val) ? newSet.remove(val) : newSet.add(val);
-                      setState(() => _currentFilter = _currentFilter.copyWith(education: newSet));
-                    }),
-                    _buildDropdownFilterGroup('Height', _availableHeights, _currentFilter.heights, (val) {
-                      final newSet = Set<String>.from(_currentFilter.heights);
-                      newSet.contains(val) ? newSet.remove(val) : newSet.add(val);
-                      setState(() => _currentFilter = _currentFilter.copyWith(heights: newSet));
-                    }),
-                    _buildDropdownFilterGroup('Gotra / Subcaste', _availableGotras, _currentFilter.gotras, (val) {
-                      final newSet = Set<String>.from(_currentFilter.gotras);
-                      newSet.contains(val) ? newSet.remove(val) : newSet.add(val);
-                      setState(() => _currentFilter = _currentFilter.copyWith(gotras: newSet));
-                    }),
+                    _buildDropdownFilterGroup(
+                      'Location / City',
+                      _availableCities,
+                      _currentFilter.cities,
+                      (val) {
+                        final newSet = Set<String>.from(_currentFilter.cities);
+                        newSet.contains(val)
+                            ? newSet.remove(val)
+                            : newSet.add(val);
+                        setState(
+                          () => _currentFilter = _currentFilter.copyWith(
+                            cities: newSet,
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Education',
+                      _availableEducation,
+                      _currentFilter.education,
+                      (val) {
+                        final newSet = Set<String>.from(
+                          _currentFilter.education,
+                        );
+                        newSet.contains(val)
+                            ? newSet.remove(val)
+                            : newSet.add(val);
+                        setState(
+                          () => _currentFilter = _currentFilter.copyWith(
+                            education: newSet,
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Height',
+                      _availableHeights,
+                      _currentFilter.heights,
+                      (val) {
+                        final newSet = Set<String>.from(_currentFilter.heights);
+                        newSet.contains(val)
+                            ? newSet.remove(val)
+                            : newSet.add(val);
+                        setState(
+                          () => _currentFilter = _currentFilter.copyWith(
+                            heights: newSet,
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Gotra / Subcaste',
+                      _availableGotras,
+                      _currentFilter.gotras,
+                      (val) {
+                        final newSet = Set<String>.from(_currentFilter.gotras);
+                        newSet.contains(val)
+                            ? newSet.remove(val)
+                            : newSet.add(val);
+                        setState(
+                          () => _currentFilter = _currentFilter.copyWith(
+                            gotras: newSet,
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -310,7 +409,9 @@ class _MatrimonyFilterSheetState extends State<MatrimonyFilterSheet> {
                     flex: 2,
                     child: ElevatedButton(
                       onPressed: () {
-                        context.read<MatrimonyProvider>().setFilter(_currentFilter);
+                        context.read<MatrimonyProvider>().setFilter(
+                          _currentFilter,
+                        );
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

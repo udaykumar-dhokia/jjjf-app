@@ -13,6 +13,7 @@ class MatrimonyFilter {
   final Set<String> cities;
   final int? minAge;
   final int? maxAge;
+  final String? gender;
 
   MatrimonyFilter({
     this.gotras = const {},
@@ -21,6 +22,7 @@ class MatrimonyFilter {
     this.cities = const {},
     this.minAge,
     this.maxAge,
+    this.gender,
   });
 
   bool get isEmpty =>
@@ -29,7 +31,8 @@ class MatrimonyFilter {
       heights.isEmpty &&
       cities.isEmpty &&
       minAge == null &&
-      maxAge == null;
+      maxAge == null &&
+      gender == null;
 
   MatrimonyFilter copyWith({
     Set<String>? gotras,
@@ -38,8 +41,10 @@ class MatrimonyFilter {
     Set<String>? cities,
     int? minAge,
     int? maxAge,
+    String? gender,
     bool clearMinAge = false,
     bool clearMaxAge = false,
+    bool clearGender = false,
   }) {
     return MatrimonyFilter(
       gotras: gotras ?? this.gotras,
@@ -48,6 +53,7 @@ class MatrimonyFilter {
       cities: cities ?? this.cities,
       minAge: clearMinAge ? null : (minAge ?? this.minAge),
       maxAge: clearMaxAge ? null : (maxAge ?? this.maxAge),
+      gender: clearGender ? null : (gender ?? this.gender),
     );
   }
 }
@@ -193,6 +199,7 @@ class MatrimonyProvider with ChangeNotifier {
         if (_activeFilter.cities.isNotEmpty) queryParams['cities'] = _activeFilter.cities.toList();
         if (_activeFilter.minAge != null) queryParams['minAge'] = _activeFilter.minAge;
         if (_activeFilter.maxAge != null) queryParams['maxAge'] = _activeFilter.maxAge;
+        if (_activeFilter.gender != null) queryParams['gender'] = _activeFilter.gender;
       }
 
       _browseList = await _api.browseProfiles(queryParams);

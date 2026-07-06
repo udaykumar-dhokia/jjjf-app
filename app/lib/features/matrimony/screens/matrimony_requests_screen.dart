@@ -90,10 +90,14 @@ class _MatrimonyRequestsScreenState extends State<MatrimonyRequestsScreen>
     required bool isReceived,
     required MatrimonyProvider provider,
   }) {
+    final pendingRequests = requests
+        .where((req) => req.status == 'PENDING')
+        .toList();
+
     return RefreshIndicator(
       onRefresh: () => provider.fetchRequests(),
       color: AppTheme.primaryPurple,
-      child: requests.isEmpty
+      child: pendingRequests.isEmpty
           ? SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: SizedBox(
@@ -110,9 +114,9 @@ class _MatrimonyRequestsScreenState extends State<MatrimonyRequestsScreen>
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: requests.length,
+              itemCount: pendingRequests.length,
               itemBuilder: (context, index) {
-                final req = requests[index];
+                final req = pendingRequests[index];
                 final name = req.otherPersonName ?? 'Unknown';
                 final gotra = req.otherPersonGotra ?? 'Unknown';
 
@@ -139,11 +143,16 @@ class _MatrimonyRequestsScreenState extends State<MatrimonyRequestsScreen>
                           backgroundColor: AppTheme.primaryPurple.withOpacity(
                             0.1,
                           ),
-                          child: const HugeIcon(
-                            icon: HugeIcons.strokeRoundedUser,
-                            color: AppTheme.primaryPurple,
-                            size: 30,
-                          ),
+                          backgroundImage: req.otherPersonImage != null
+                              ? NetworkImage(req.otherPersonImage!)
+                              : null,
+                          child: req.otherPersonImage == null
+                              ? const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedUser,
+                                  color: AppTheme.primaryPurple,
+                                  size: 30,
+                                )
+                              : null,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -151,19 +160,11 @@ class _MatrimonyRequestsScreenState extends State<MatrimonyRequestsScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                name,
+                                '$name $gotra',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                   color: AppTheme.textDark,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                gotra,
-                                style: const TextStyle(
-                                  color: AppTheme.textLight,
-                                  fontSize: 14,
                                 ),
                               ),
                               const SizedBox(height: 8),

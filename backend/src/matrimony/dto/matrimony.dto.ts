@@ -159,4 +159,9 @@ export class BrowseMatrimonyQueryDto {
   @IsString({ each: true })
   @Transform(({ value }) => (Array.isArray(value) ? value : value ? [value] : undefined))
   cities?: string[];
+
+  @ApiPropertyOptional({ description: 'Filter by Gender' })
+  @IsString()
+  @IsOptional()
+  gender?: string;
 }

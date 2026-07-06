@@ -7,6 +7,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../models/matrimony_model.dart';
 import '../../../providers/matrimony_provider.dart';
+import '../../../core/widgets/sliver_app_bar_delegate.dart';
 
 class MatrimonyProfileDetailScreen extends StatefulWidget {
   final String targetId;
@@ -24,17 +25,25 @@ class MatrimonyProfileDetailScreen extends StatefulWidget {
 }
 
 class _MatrimonyProfileDetailScreenState
-    extends State<MatrimonyProfileDetailScreen> {
+    extends State<MatrimonyProfileDetailScreen>
+    with SingleTickerProviderStateMixin {
   bool _hasRequestedAccess = false;
-
   late Future<MatrimonialProfile?> _fullProfileFuture;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     _fullProfileFuture = context.read<MatrimonyProvider>().fetchFullProfile(
       widget.targetId,
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _requestAccess() async {
@@ -74,6 +83,10 @@ class _MatrimonyProfileDetailScreenState
         final bool accessDenied =
             provider.errorMessage != null &&
             provider.errorMessage!.contains('access');
+            
+        final bool isRequestAlreadySent = provider.sentRequests
+            .any((req) => req.targetId == widget.targetId);
+        final bool showAsRequested = _hasRequestedAccess || isRequestAlreadySent;
 
         final String name = widget.partialProfile?.firstName ?? 'Unknown';
         final String? imageUrl =
@@ -85,15 +98,23 @@ class _MatrimonyProfileDetailScreenState
           future: _fullProfileFuture,
           builder: (context, snapshot) {
             final fullProfile = snapshot.data;
+            final isWaiting =
+                snapshot.connectionState == ConnectionState.waiting;
+            final isError =
+                snapshot.hasError || !snapshot.hasData || fullProfile == null;
+            final shouldShowAccessDenied =
+                accessDenied || (!isWaiting && isError);
+
             return Scaffold(
-              backgroundColor: AppTheme.backgroundLight,
+              backgroundColor: Colors.white,
               appBar: CustomAppBar(
                 title: name,
                 backgroundColor: Colors.white,
                 elevation: 0,
               ),
               bottomNavigationBar:
-                  (fullProfile?.phoneNumber != null && fullProfile!.phoneNumber!.isNotEmpty)
+                  (fullProfile?.phoneNumber != null &&
+                      fullProfile!.phoneNumber!.isNotEmpty)
                   ? Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -129,11 +150,16 @@ class _MatrimonyProfileDetailScreenState
                                 ),
                                 label: const Text(
                                   'Call',
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.primaryPurple,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
@@ -144,8 +170,13 @@ class _MatrimonyProfileDetailScreenState
                             Expanded(
                               child: ElevatedButton.icon(
                                 onPressed: () async {
-                                  final phone = fullProfile.whatsappNumber ?? fullProfile.phoneNumber!;
-                                  final String waPhone = phone.replaceAll(RegExp(r'\D'), '');
+                                  final phone =
+                                      fullProfile.whatsappNumber ??
+                                      fullProfile.phoneNumber!;
+                                  final String waPhone = phone.replaceAll(
+                                    RegExp(r'\D'),
+                                    '',
+                                  );
                                   final String finalPhone = waPhone.length == 10
                                       ? '91$waPhone'
                                       : waPhone;
@@ -166,11 +197,16 @@ class _MatrimonyProfileDetailScreenState
                                 ),
                                 label: const Text(
                                   'WhatsApp',
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF25D366),
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
@@ -182,64 +218,228 @@ class _MatrimonyProfileDetailScreenState
                       ),
                     )
                   : null,
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Profile Image Container
-                    Container(
-                      height: 300,
-                      width: double.infinity,
-                      color: Colors.grey.shade200,
-                      child: Stack(
-                        fit: StackFit.expand,
+              body: shouldShowAccessDenied || isWaiting
+                  ? SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (imageUrl != null)
-                            Image.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                            )
-                          else
-                            const Center(
-                              child: HugeIcon(
-                                icon: HugeIcons.strokeRoundedUser,
-                                size: 100,
-                                color: Colors.grey,
+                          Container(
+                            height: 300,
+                            width: double.infinity,
+                            color: Colors.grey.shade200,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                if (imageUrl != null)
+                                  Image.network(imageUrl, fit: BoxFit.cover)
+                                else
+                                  const Center(
+                                    child: HugeIcon(
+                                      icon: HugeIcons.strokeRoundedUser,
+                                      size: 100,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                if (shouldShowAccessDenied && imageUrl != null)
+                                  BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                      sigmaX: 15,
+                                      sigmaY: 15,
+                                    ),
+                                    child: Container(
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            child: isWaiting
+                                ? const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(32.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : _buildAccessDeniedView(name, showAsRequested),
+                          ),
+                        ],
+                      ),
+                    )
+                  : NestedScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      headerSliverBuilder: (context, innerBoxIsScrolled) {
+                        return [
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  height: 300,
+                                  width: double.infinity,
+                                  color: Colors.grey.shade200,
+                                  child: imageUrl != null
+                                      ? Image.network(
+                                          imageUrl,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : const Center(
+                                          child: HugeIcon(
+                                            icon: HugeIcons.strokeRoundedUser,
+                                            size: 100,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(24),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        fullProfile!.age != null
+                                            ? '${fullProfile.firstName ?? 'Unknown'} ${fullProfile.gotra ?? fullProfile.subCaste}, ${fullProfile.age} yrs'
+                                            : (fullProfile.firstName ??
+                                                  'Unknown'),
+                                        style: const TextStyle(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.textDark,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: SliverAppBarDelegate(
+                              TabBar(
+                                controller: _tabController,
+                                indicatorColor: AppTheme.primaryPurple,
+                                labelColor: AppTheme.primaryPurple,
+                                unselectedLabelColor: Colors.black54,
+                                indicatorWeight: 3,
+                                tabs: const [
+                                  Tab(text: 'Personal'),
+                                  Tab(text: 'About'),
+                                  Tab(text: 'Expectations'),
+                                ],
                               ),
+                              backgroundColor: Colors.white.withOpacity(0.95),
                             ),
-                          if (accessDenied && imageUrl != null)
-                            BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                              child: Container(color: Colors.white.withOpacity(0.2)),
+                          ),
+                        ];
+                      },
+                      body: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          SingleChildScrollView(
+                            padding: const EdgeInsets.all(24),
+                            child: _buildInfoCard(
+                              title: 'Personal Details',
+                              children: [
+                                _buildDetailRow(
+                                  HugeIcons.strokeRoundedArrowUp01,
+                                  'Height',
+                                  fullProfile!.height ?? 'N/A',
+                                ),
+                                _buildDetailRow(
+                                  HugeIcons.strokeRoundedTapeMeasure,
+                                  'Weight',
+                                  '${fullProfile.weight ?? 'N/A'} kg',
+                                ),
+                                _buildDetailRow(
+                                  HugeIcons.strokeRoundedBookOpen01,
+                                  'Education',
+                                  fullProfile.educationDetails,
+                                ),
+                                _buildDetailRow(
+                                  HugeIcons.strokeRoundedMoney04,
+                                  'Monthly Income',
+                                  fullProfile.monthlyIncome ?? 'N/A',
+                                ),
+                                if (fullProfile.biodataPdfUrl != null &&
+                                    fullProfile.biodataPdfUrl!.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      children: [
+                                        const HugeIcon(
+                                          icon: HugeIcons.strokeRoundedLink01,
+                                          color: AppTheme.primaryPurple,
+                                          size: 24,
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              final Uri url = Uri.parse(
+                                                fullProfile.biodataPdfUrl!,
+                                              );
+                                              if (await canLaunchUrl(url)) {
+                                                await launchUrl(url);
+                                              }
+                                            },
+                                            child: const Text(
+                                              'View Biodata Document',
+                                              style: TextStyle(
+                                                color: AppTheme.primaryPurple,
+                                                fontWeight: FontWeight.bold,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
                             ),
+                          ),
+                          SingleChildScrollView(
+                            padding: const EdgeInsets.all(24),
+                            child: _buildInfoCard(
+                              title: 'About Me',
+                              children: [
+                                Text(
+                                  fullProfile!.aboutMe ??
+                                      'No details provided.',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: AppTheme.textDark,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            padding: const EdgeInsets.all(24),
+                            child: _buildInfoCard(
+                              title: 'Partner Expectations',
+                              children: [
+                                Text(
+                                  fullProfile!.expectations ??
+                                      'No details provided.',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: AppTheme.textDark,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-
-                    // Details Section
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: const BoxDecoration(
-                        color: AppTheme.backgroundLight,
-                      ),
-                      child: accessDenied
-                          ? _buildAccessDeniedView(name)
-                          : (snapshot.connectionState == ConnectionState.waiting)
-                              ? const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(32.0),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              : (snapshot.hasError ||
-                                      !snapshot.hasData ||
-                                      snapshot.data == null)
-                                  ? _buildAccessDeniedView(name)
-                                  : _buildFullDetailsView(snapshot.data!),
-                    ),
-                  ],
-                ),
-              ),
             );
           },
         );
@@ -247,7 +447,7 @@ class _MatrimonyProfileDetailScreenState
     );
   }
 
-  Widget _buildAccessDeniedView(String name) {
+  Widget _buildAccessDeniedView(String name, bool showAsRequested) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -273,7 +473,7 @@ class _MatrimonyProfileDetailScreenState
         ),
         const SizedBox(height: 32),
         ElevatedButton(
-          onPressed: _hasRequestedAccess ? null : _requestAccess,
+          onPressed: showAsRequested ? null : _requestAccess,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.primaryPurple,
             padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
@@ -282,7 +482,7 @@ class _MatrimonyProfileDetailScreenState
             ),
           ),
           child: Text(
-            _hasRequestedAccess ? 'Request Sent' : 'Request Access',
+            showAsRequested ? 'Request Sent' : 'Request Access',
             style: const TextStyle(
               fontSize: 18,
               color: Colors.white,
@@ -294,116 +494,10 @@ class _MatrimonyProfileDetailScreenState
     );
   }
 
-  Widget _buildFullDetailsView(MatrimonialProfile fullProfile) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Header Info
-        Text(
-          fullProfile.age != null 
-              ? '${fullProfile.firstName ?? 'Unknown'}, ${fullProfile.age} yrs'
-              : (fullProfile.firstName ?? 'Unknown'),
-          style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textDark,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Gotra: ${fullProfile.gotra ?? fullProfile.subCaste}',
-          style: const TextStyle(fontSize: 18, color: AppTheme.textLight),
-        ),
-        const SizedBox(height: 24),
-
-        // Personal Details Card
-        _buildInfoCard(
-          title: 'Personal Details',
-          children: [
-            _buildDetailRow(
-              HugeIcons.strokeRoundedArrowUp01,
-              'Height',
-              fullProfile.height ?? 'N/A',
-            ),
-            _buildDetailRow(
-              HugeIcons.strokeRoundedTapeMeasure,
-              'Weight',
-              '${fullProfile.weight ?? 'N/A'} kg',
-            ),
-            _buildDetailRow(
-              HugeIcons.strokeRoundedBookOpen01,
-              'Education',
-              fullProfile.educationDetails,
-            ),
-            _buildDetailRow(
-              HugeIcons.strokeRoundedMoney04,
-              'Income',
-              fullProfile.monthlyIncome ?? 'N/A',
-            ),
-            if (fullProfile.biodataPdfUrl != null && fullProfile.biodataPdfUrl!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: InkWell(
-                  onTap: () {
-                    // Could use url_launcher here if installed, else just show it
-                  },
-                  child: Row(
-                    children: [
-                      const HugeIcon(icon: HugeIcons.strokeRoundedLink01, color: AppTheme.primaryPurple, size: 24),
-                      const SizedBox(width: 16),
-                      const Expanded(
-                        child: Text(
-                          'View Biodata Document',
-                          style: TextStyle(
-                            color: AppTheme.primaryPurple,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // About Me Card
-        _buildInfoCard(
-          title: 'About Me',
-          children: [
-            Text(
-              fullProfile.aboutMe ?? 'No details provided.',
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppTheme.textDark,
-                height: 1.5,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Expectations Card
-        _buildInfoCard(
-          title: 'Partner Expectations',
-          children: [
-            Text(
-              fullProfile.expectations ?? 'No details provided.',
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppTheme.textDark,
-                height: 1.5,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoCard({required String title, required List<Widget> children}) {
+  Widget _buildInfoCard({
+    required String title,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(

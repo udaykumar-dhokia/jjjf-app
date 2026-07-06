@@ -93,16 +93,13 @@ class HomeLatestJobs extends StatelessWidget {
             SizedBox(
               height: 155,
               child: PageView.builder(
+                physics: BouncingScrollPhysics(),
                 controller: PageController(viewportFraction: 0.9),
                 itemCount: latestJobs.length,
                 padEnds: false,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 8.0,
-                      bottom: 8.0,
-                    ),
+                    padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
                     child: _SmallJobCard(job: latestJobs[index]),
                   );
                 },

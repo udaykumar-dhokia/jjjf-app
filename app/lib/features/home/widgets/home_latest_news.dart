@@ -84,16 +84,13 @@ class HomeLatestNews extends StatelessWidget {
             SizedBox(
               height: 150,
               child: PageView.builder(
+                physics: BouncingScrollPhysics(),
                 controller: PageController(viewportFraction: 0.9),
                 itemCount: latestNews.length,
                 padEnds: false,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 8.0,
-                      bottom: 8.0,
-                    ),
+                    padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
                     child: _SmallNewsCard(news: latestNews[index]),
                   );
                 },

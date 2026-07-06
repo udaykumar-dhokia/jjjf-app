@@ -3,6 +3,8 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../providers/user_provider.dart';
 import '../../../providers/auth_provider.dart';
@@ -17,6 +19,7 @@ import '../../businesses/screens/businesses_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../jobs/screens/jobs_screen.dart';
+import '../../matrimony/screens/matrimony_hub_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -28,6 +31,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late PersistentTabController _controller;
   final _advancedDrawerController = AdvancedDrawerController();
+  String _appVersion = 'Loading...';
 
   @override
   void initState() {
@@ -38,6 +42,24 @@ class _MainScreenState extends State<MainScreen> {
       context.read<NewsProvider>().fetchNews();
       context.read<JobProvider>().fetchJobs();
     });
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          _appVersion = 'Version ${info.version} (${info.buildNumber})';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _appVersion = 'Version unknown';
+        });
+      }
+    }
   }
 
   @override
@@ -45,6 +67,23 @@ class _MainScreenState extends State<MainScreen> {
     _controller.dispose();
     _advancedDrawerController.dispose();
     super.dispose();
+  }
+
+  Future<void> _launchYouTube(BuildContext context) async {
+    final Uri url = Uri.parse('https://www.youtube.com/');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch YouTube')),
+        );
+      }
+    }
+  }
+
+  void _showComingSoon(BuildContext context, String title) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$title is coming soon!')));
   }
 
   void _handleMenuButtonPressed() {
@@ -183,7 +222,9 @@ class _MainScreenState extends State<MainScreen> {
       backdrop: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(color: AppTheme.primaryPurple),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryPurple.withOpacity(0.9),
+        ),
       ),
       controller: _advancedDrawerController,
       animationCurve: Curves.easeInOut,
@@ -300,9 +341,11 @@ class _MainScreenState extends State<MainScreen> {
                       _advancedDrawerController.hideDrawer();
                       _controller.jumpToTab(0);
                     },
-                    leading: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedHome01,
-                      color: Colors.white,
+                    leading: Image.asset(
+                      'assets/icons/icons8-dashboard-96.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
                     ),
                     title: const Text('Home'),
                   ),
@@ -311,20 +354,24 @@ class _MainScreenState extends State<MainScreen> {
                       _advancedDrawerController.hideDrawer();
                       _controller.jumpToTab(1);
                     },
-                    leading: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedNews,
-                      color: Colors.white,
+                    leading: Image.asset(
+                      'assets/icons/icons8-news-94.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
                     ),
-                    title: const Text('News'),
+                    title: const Text('Updates'),
                   ),
                   ListTile(
                     onTap: () {
                       _advancedDrawerController.hideDrawer();
                       _controller.jumpToTab(2);
                     },
-                    leading: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedContactBook,
-                      color: Colors.white,
+                    leading: Image.asset(
+                      'assets/icons/icons8-contacts-94.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
                     ),
                     title: const Text('Directory'),
                   ),
@@ -333,11 +380,13 @@ class _MainScreenState extends State<MainScreen> {
                       _advancedDrawerController.hideDrawer();
                       _controller.jumpToTab(3);
                     },
-                    leading: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedBuilding03,
-                      color: Colors.white,
+                    leading: Image.asset(
+                      'assets/icons/icons8-building-94.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
                     ),
-                    title: const Text('Businesses'),
+                    title: const Text('Business'),
                   ),
                   ListTile(
                     onTap: () {
@@ -346,9 +395,11 @@ class _MainScreenState extends State<MainScreen> {
                         MaterialPageRoute(builder: (_) => const JobsScreen()),
                       );
                     },
-                    leading: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedBriefcase02,
-                      color: Colors.white,
+                    leading: Image.asset(
+                      'assets/icons/icons8-graduation-cap-94.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
                     ),
                     title: const Text('Job Board'),
                   ),
@@ -357,11 +408,30 @@ class _MainScreenState extends State<MainScreen> {
                       _advancedDrawerController.hideDrawer();
                       _controller.jumpToTab(4);
                     },
-                    leading: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedUser,
-                      color: Colors.white,
+                    leading: Image.asset(
+                      'assets/icons/icons8-user-100.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
                     ),
                     title: const Text('Profile'),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _advancedDrawerController.hideDrawer();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const MatrimonyHubScreen(),
+                        ),
+                      );
+                    },
+                    leading: Image.asset(
+                      'assets/icons/icons8-couple-96.png',
+                      width: 24,
+                      height: 24,
+                      // color: Colors.white,
+                    ),
+                    title: const Text('Matrimony'),
                   ),
 
                   const Spacer(),
@@ -390,7 +460,7 @@ class _MainScreenState extends State<MainScreen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Version 1.0.0',
+                      _appVersion,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withOpacity(0.5),
