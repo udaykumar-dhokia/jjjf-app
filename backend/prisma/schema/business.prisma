@@ -50,7 +50,7 @@ model BusinessListing {
   address       String
   city          String
   state         String
-  status        ListingStatus    @default(APPROVED)
+  status        ListingStatus    @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -67,7 +67,7 @@ model JobBoard {
   city           String
   salaryRange    String?
   description    String
-  status         ListingStatus @default(APPROVED)
+  status         ListingStatus @default(PENDING)
 
   contactName    String
   contactPhone   String?

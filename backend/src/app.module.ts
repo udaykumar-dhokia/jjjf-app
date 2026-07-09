@@ -15,6 +15,7 @@ import { FamilyModule } from './family/family.module.js';
 import { BusinessModule } from './business/business.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
 import { MatrimonyModule } from './matrimony/matrimony.module.js';
+import { AdminModule } from './admin/admin.module.js';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MatrimonyModule } from './matrimony/matrimony.module.js';
     BusinessModule,
     JobsModule,
     MatrimonyModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
