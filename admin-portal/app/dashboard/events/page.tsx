@@ -51,7 +51,7 @@ export default function EventsPage() {
           { key: "eventTime", label: "Event Time" },
           { key: "locationName", label: "Location Name" },
           { key: "locationMapUrl", label: "Map URL" },
-          { key: "status", label: "Status" },
+          { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />

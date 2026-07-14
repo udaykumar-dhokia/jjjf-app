@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
-import { PrismaClient, ProfileStatus, ListingStatus, EventStatus, DemiseStatus, MatrimonialStatus, Role } from '@prisma/client';
+import { PrismaClient, ProfileStatus, ListingStatus, EventStatus, DemiseStatus, MatrimonialStatus, Role, Gender, MaritalStatus, OccupationType, RelationshipType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AdminLoginDto } from './dto/admin-login.dto.js';
@@ -11,8 +11,59 @@ import { UpdateMatrimonialAdminDto } from './dto/update-matrimonial-admin.dto.js
 import { UpdateShokSandeshAdminDto } from './dto/update-shoksandesh-admin.dto.js';
 import { UpdateUserAdminDto } from './dto/update-user-admin.dto.js';
 import { UpdateNewsAdminDto } from './dto/update-news-admin.dto.js';
+import { CreateJobAdminDto } from './dto/create-job-admin.dto.js';
+import { CreateNewsAdminDto } from './dto/create-news-admin.dto.js';
+import { BulkCreateUsersDto, CsvUserDto } from './dto/bulk-create-users.dto.js';
 
 const prisma = new PrismaClient();
+
+function getPagination(pageStr?: string, limitStr?: string) {
+  const limit = limitStr ? parseInt(limitStr, 10) : 10;
+  const page = pageStr ? parseInt(pageStr, 10) : 1;
+  const skip = (page - 1) * limit;
+  return { skip, take: limit, page, limit };
+}
+
+function buildWhereClause(status: any, search?: string, filtersStr?: string, searchFields: string[] = []) {
+  const where: any = status ? { status } : {};
+
+  if (search && searchFields.length > 0) {
+    where.OR = searchFields.map(field => ({
+      [field]: { contains: search, mode: 'insensitive' }
+    }));
+  }
+
+  if (filtersStr) {
+    try {
+      const filters = JSON.parse(filtersStr);
+      for (const [key, value] of Object.entries(filters)) {
+        if (value !== undefined && value !== null && value !== '') {
+          if (value === 'true') where[key] = true;
+          else if (value === 'false') where[key] = false;
+          else where[key] = value; // Exact match for filters to support enums/numbers/dates safely
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing filters', e);
+    }
+  }
+  return where;
+}
+
+async function fetchPaginatedData(prismaDelegate: any, where: any, skip: number, take: number, include?: any) {
+  try {
+    const [data, total] = await Promise.all([
+      prismaDelegate.findMany({ where, skip, take, include, orderBy: { createdAt: 'desc' } }),
+      prismaDelegate.count({ where })
+    ]);
+    return { data, total };
+  } catch (e: any) {
+    if (e.name === 'PrismaClientValidationError') {
+      return { data: [], total: 0 };
+    }
+    throw e;
+  }
+}
 
 @Injectable()
 export class AdminService {
@@ -75,11 +126,90 @@ export class AdminService {
   // USER APPROVALS
   // ==========================================
 
-  async getUsers(status?: ProfileStatus) {
-    return prisma.user.findMany({
-      where: status ? { status } : undefined,
-      orderBy: { createdAt: 'desc' },
-    });
+  async bulkCreateUsers(adminId: string, dto: BulkCreateUsersDto) {
+    let createdCount = 0;
+    let skippedCount = 0;
+
+    const groupedUsers: Record<string, CsvUserDto[]> = {};
+    for (const u of dto.users) {
+      if (!groupedUsers[u.familyGroupIdentifier]) {
+        groupedUsers[u.familyGroupIdentifier] = [];
+      }
+      groupedUsers[u.familyGroupIdentifier].push(u);
+    }
+
+    for (const [groupId, group] of Object.entries(groupedUsers)) {
+      const newFamily = await prisma.family.create({
+        data: { addedByUserId: adminId },
+      });
+      let headUserId: string | null = null;
+
+      for (const u of group) {
+        const exists = await prisma.user.findFirst({
+          where: { OR: [{ email: u.email }, { phoneNumber: u.phoneNumber }] },
+        });
+
+        if (exists) {
+          skippedCount++;
+          continue;
+        }
+
+        const isHead = (u.relationshipToHead === 'SELF') || (!headUserId);
+
+        const newUser = await prisma.user.create({
+          data: {
+            familyId: newFamily.id,
+            isHeadOfFamily: isHead,
+            firstName: u.firstName,
+            fatherName: u.fatherName,
+            motherName: u.motherName,
+            gotra: u.gotra,
+            spouseName: u.spouseName,
+            husbandNameWithSurname: u.husbandNameWithSurname,
+            sasuralGotra: u.sasuralGotra,
+            gender: u.gender as Gender,
+            maritalStatus: u.maritalStatus as MaritalStatus,
+            dateOfBirth: new Date(u.dateOfBirth),
+            bloodGroup: u.bloodGroup,
+            email: u.email,
+            education: u.education,
+            occupationType: u.occupationType as OccupationType,
+            gaon: u.gaon,
+            nativeDistrict: u.nativeDistrict,
+            nativeState: u.nativeState,
+            currentAddress: u.currentAddress,
+            currentCity: u.currentCity,
+            currentState: u.currentState,
+            pinCode: u.pinCode,
+            phoneNumber: u.phoneNumber,
+            whatsappNumber: u.whatsappNumber,
+            isPhoneNumberVisible: String(u.isPhoneNumberVisible).toLowerCase() === 'true',
+            relationshipToHead: u.relationshipToHead as RelationshipType,
+            status: ProfileStatus.APPROVED,
+          },
+        });
+
+        if (isHead && !headUserId) {
+          headUserId = newUser.id;
+          await prisma.family.update({
+            where: { id: newFamily.id },
+            data: { headOfFamilyId: headUserId },
+          });
+        }
+        createdCount++;
+      }
+    }
+
+    return { message: `Successfully created ${createdCount} users. Skipped ${skippedCount} duplicates.` };
+  }
+
+  async getUsers(status?: ProfileStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['firstName', 'fatherName', 'gotra', 'email', 'phoneNumber', 'gaon', 'currentCity'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.user, where, skip, take);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateUser(id: string, dto: UpdateUserAdminDto) {
@@ -126,12 +256,13 @@ export class AdminService {
   // BUSINESS APPROVALS
   // ==========================================
 
-  async getBusinesses(status?: ListingStatus) {
-    return prisma.businessListing.findMany({
-      where: status ? { status } : undefined,
-      include: { owner: { select: { firstName: true, gotra: true, memberId: true } } },
-      orderBy: { createdAt: 'desc' },
-    });
+  async getBusinesses(status?: ListingStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['businessName', 'description', 'contactNumber', 'city', 'state'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.businessListing, where, skip, take, { owner: { select: { firstName: true, gotra: true, memberId: true } } });
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateBusiness(id: string, dto: UpdateBusinessAdminDto) {
@@ -165,12 +296,23 @@ export class AdminService {
   // JOB APPROVALS
   // ==========================================
 
-  async getJobs(status?: ListingStatus) {
-    return prisma.jobBoard.findMany({
-      where: status ? { status } : undefined,
-      include: { postedBy: { select: { firstName: true, gotra: true, memberId: true } } },
-      orderBy: { createdAt: 'desc' },
+  async createJob(adminId: string, dto: CreateJobAdminDto) {
+    return prisma.jobBoard.create({
+      data: {
+        ...dto,
+        postedById: adminId,
+        status: ListingStatus.APPROVED,
+      },
     });
+  }
+
+  async getJobs(status?: ListingStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['roleTitle', 'industry', 'city', 'description', 'contactName'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.jobBoard, where, skip, take, { postedBy: { select: { firstName: true, gotra: true, memberId: true } } });
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateJob(id: string, dto: UpdateJobAdminDto) {
@@ -204,12 +346,13 @@ export class AdminService {
   // MATRIMONIAL APPROVALS
   // ==========================================
 
-  async getMatrimonials(status?: MatrimonialStatus) {
-    return prisma.matrimonialProfile.findMany({
-      where: status ? { status } : undefined,
-      include: { user: { select: { firstName: true, gotra: true, memberId: true, gender: true } } },
-      orderBy: { createdAt: 'desc' },
-    });
+  async getMatrimonials(status?: MatrimonialStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['subCaste', 'educationDetails', 'aboutMe', 'expectations'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.matrimonialProfile, where, skip, take, { user: { select: { firstName: true, gotra: true, memberId: true, gender: true } } });
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateMatrimonial(id: string, dto: UpdateMatrimonialAdminDto) {
@@ -243,11 +386,13 @@ export class AdminService {
   // EVENT APPROVALS
   // ==========================================
 
-  async getEvents(status?: EventStatus) {
-    return prisma.event.findMany({
-      where: status ? { status } : undefined,
-      orderBy: { createdAt: 'desc' },
-    });
+  async getEvents(status?: EventStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['title', 'description', 'locationName'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.event, where, skip, take);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateEvent(id: string, dto: UpdateEventAdminDto) {
@@ -289,11 +434,13 @@ export class AdminService {
   // SHOK SANDESH APPROVALS
   // ==========================================
 
-  async getShokSandesh(status?: DemiseStatus) {
-    return prisma.shokSandesh.findMany({
-      where: status ? { status } : undefined,
-      orderBy: { createdAt: 'desc' },
-    });
+  async getShokSandesh(status?: DemiseStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['deceasedName', 'nativeVillage', 'funeralDetails', 'survivingFamily', 'contactPerson'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.shokSandesh, where, skip, take);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateShokSandesh(id: string, dto: UpdateShokSandeshAdminDto) {
@@ -333,11 +480,27 @@ export class AdminService {
   // NEWS APPROVALS
   // ==========================================
 
-  async getNews(status?: any) {
-    return prisma.news.findMany({
-      where: status ? { status } : undefined,
-      orderBy: { createdAt: 'desc' },
+  async createNews(adminId: string, dto: CreateNewsAdminDto) {
+    const admin = await prisma.user.findUnique({ where: { id: adminId } });
+    if (!admin) throw new NotFoundException('Admin user not found');
+    const userName = `${admin.firstName} ${admin.gotra || ''}`.trim();
+    return prisma.news.create({
+      data: {
+        ...dto,
+        userId: adminId,
+        userName,
+        status: 'APPROVED',
+      },
     });
+  }
+
+  async getNews(status?: string, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
+    const { skip, take, page, limit } = getPagination(pageStr, limitStr);
+    const searchFields = ['title', 'description', 'userName'];
+    const where = buildWhereClause(status, search, filtersStr, searchFields);
+
+    const { data, total } = await fetchPaginatedData(prisma.news, where, skip, take);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async updateNews(id: string, dto: UpdateNewsAdminDto) {

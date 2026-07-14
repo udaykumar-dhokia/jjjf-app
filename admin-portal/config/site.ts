@@ -24,14 +24,14 @@ export const siteConfig = {
       label: "Matrimonials",
       href: "/dashboard/matrimonials",
     },
-    {
-      label: "Events",
-      href: "/dashboard/events",
-    },
-    {
-      label: "Shok Sandesh",
-      href: "/dashboard/shok-sandesh",
-    },
+    // {
+    //   label: "Events",
+    //   href: "/dashboard/events",
+    // },
+    // {
+    //   label: "Shok Sandesh",
+    //   href: "/dashboard/shok-sandesh",
+    // },
     {
       label: "News",
       href: "/dashboard/news",

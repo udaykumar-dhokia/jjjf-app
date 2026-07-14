@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { ApprovalTable } from "@/components/ApprovalTable";
 import { fetchApi } from "@/lib/api";
+import { BulkUploadUsersModal } from "@/components/BulkUploadUsersModal";
 
 export default function UsersPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [saving, setSaving] = useState(false);
 
@@ -59,12 +61,12 @@ export default function UsersPage() {
           { key: "spouseName", label: "Spouse Name" },
           { key: "husbandNameWithSurname", label: "Husband Name" },
           { key: "sasuralGotra", label: "Sasural Gotra" },
-          { key: "gender", label: "Gender" },
-          { key: "maritalStatus", label: "Marital Status" },
+          { key: "gender", label: "Gender", type: 'enum', options: [{ label: 'Male', value: 'MALE' }, { label: 'Female', value: 'FEMALE' }, { label: 'Other', value: 'OTHER' }] },
+          { key: "maritalStatus", label: "Marital Status", type: 'enum', options: [{ label: 'Single', value: 'SINGLE' }, { label: 'Married', value: 'MARRIED' }, { label: 'Divorced', value: 'DIVORCED' }, { label: 'Widowed', value: 'WIDOWED' }] },
           { key: "dateOfBirth", label: "DOB", render: (item) => item.dateOfBirth ? new Date(item.dateOfBirth).toLocaleDateString() : "" },
           { key: "bloodGroup", label: "Blood Group" },
           { key: "education", label: "Education" },
-          { key: "occupationType", label: "Occupation" },
+          { key: "occupationType", label: "Occupation", type: 'enum', options: [{ label: 'Business Owner', value: 'BUSINESS_OWNER' }, { label: 'Job Professional', value: 'JOB_PROFESSIONAL' }, { label: 'Other', value: 'OTHER' }] },
           { key: "gaon", label: "Village" },
           { key: "nativeDistrict", label: "Native District" },
           { key: "nativeState", label: "Native State" },
@@ -76,8 +78,8 @@ export default function UsersPage() {
           { key: "whatsappNumber", label: "WhatsApp" },
           { key: "isPhoneNumberVisible", label: "Phone Visible", render: (item) => item.isPhoneNumberVisible ? "Yes" : "No" },
           { key: "email", label: "Email" },
-          { key: "role", label: "Role" },
-          { key: "profileStatus", label: "Status" },
+          { key: "role", label: "Role", type: 'enum', options: [{ label: 'Super Admin', value: 'SUPER_ADMIN' }, { label: 'Sub Admin', value: 'SUB_ADMIN' }, { label: 'State Admin', value: 'STATE_ADMIN' }, { label: 'Member', value: 'MEMBER' }] },
+          { key: "profileStatus", label: "Status", type: 'enum', options: [{ label: 'Pending Approval', value: 'PENDING_APPROVAL' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }, { label: 'Blocked', value: 'BLOCKED' }] },
           { key: "date", label: "Registered", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />
@@ -254,6 +256,25 @@ export default function UsersPage() {
           </div>
         </div>
       )}
+
+      <button
+        onClick={() => setIsBulkUploadModalOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 flex items-center justify-center text-xl transition-transform hover:scale-105 z-40"
+        title="Bulk Upload Users"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+      </button>
+
+      <BulkUploadUsersModal
+        isOpen={isBulkUploadModalOpen}
+        onClose={() => setIsBulkUploadModalOpen(false)}
+        onSuccess={() => {
+          setIsBulkUploadModalOpen(false);
+          setRefreshTrigger((prev) => prev + 1);
+        }}
+      />
     </>
   );
 }

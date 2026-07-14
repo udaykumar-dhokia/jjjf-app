@@ -57,7 +57,7 @@ export default function ShokSandeshPage() {
           { key: "contactPerson", label: "Contact Person" },
           { key: "contactPhone", label: "Contact Phone" },
           { key: "deceasedPhotoUrl", label: "Photo URL" },
-          { key: "status", label: "Status" },
+          { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />

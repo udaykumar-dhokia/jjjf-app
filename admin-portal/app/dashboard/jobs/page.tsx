@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { ApprovalTable } from "@/components/ApprovalTable";
 import { fetchApi } from "@/lib/api";
+import { CreateJobModal } from "@/components/CreateJobModal";
 
 export default function JobsPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [saving, setSaving] = useState(false);
 
@@ -39,7 +41,7 @@ export default function JobsPage() {
         onEdit={(item) => setEditingItem(item)}
         columns={[
           { key: "roleTitle", label: "Role" },
-          { key: "type", label: "Type", render: (item) => item.type === "JOB_REQUIRED" ? "Job Required" : "Vacancy Available" },
+          { key: "type", label: "Type", type: 'enum', options: [{ label: 'Vacancy Available', value: 'VACANCY_AVAILABLE' }, { label: 'Job Required', value: 'JOB_REQUIRED' }], render: (item) => item.type === "JOB_REQUIRED" ? "Job Required" : "Vacancy Available" },
           { key: "industry", label: "Industry" },
           { key: "salaryRange", label: "Salary Range" },
           { key: "city", label: "City" },
@@ -48,7 +50,7 @@ export default function JobsPage() {
           { key: "contactPhone", label: "Contact Phone" },
           { key: "whatsappNumber", label: "WhatsApp" },
           { key: "contactEmail", label: "Email" },
-          { key: "status", label: "Status" },
+          { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />
@@ -147,6 +149,23 @@ export default function JobsPage() {
           </div>
         </div>
       )}
+
+      <button
+        onClick={() => setIsCreateModalOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 flex items-center justify-center text-3xl font-light transition-transform hover:scale-105 z-40"
+        title="Create Job"
+      >
+        +
+      </button>
+
+      <CreateJobModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          setIsCreateModalOpen(false);
+          setRefreshTrigger((prev) => prev + 1);
+        }}
+      />
     </>
   );
 }

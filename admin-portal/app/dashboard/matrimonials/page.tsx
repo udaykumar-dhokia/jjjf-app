@@ -56,7 +56,7 @@ export default function MatrimonialsPage() {
           { key: "aboutMe", label: "About Me" },
           { key: "expectations", label: "Expectations" },
           { key: "biodataPdfUrl", label: "Biodata PDF" },
-          { key: "status", label: "Status" },
+          { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />

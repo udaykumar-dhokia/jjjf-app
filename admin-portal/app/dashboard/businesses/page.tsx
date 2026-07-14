@@ -39,7 +39,16 @@ export default function BusinessesPage() {
         onEdit={(item) => setEditingItem(item)}
         columns={[
           { key: "businessName", label: "Business Name" },
-          { key: "category", label: "Category" },
+          { key: "category", label: "Category", type: 'enum', options: [
+            { label: 'Agriculture', value: 'AGRICULTURE' }, { label: 'Automotive', value: 'AUTOMOTIVE' }, { label: 'Banking', value: 'BANKING' },
+            { label: 'Consulting', value: 'CONSULTING' }, { label: 'Education', value: 'EDUCATION' }, { label: 'Electronics', value: 'ELECTRONICS' },
+            { label: 'Entertainment', value: 'ENTERTAINMENT' }, { label: 'Finance', value: 'FINANCE' }, { label: 'Food & Beverage', value: 'FOOD_AND_BEVERAGE' },
+            { label: 'Healthcare', value: 'HEALTHCARE' }, { label: 'Hospitality', value: 'HOSPITALITY' }, { label: 'IT', value: 'IT' },
+            { label: 'Legal', value: 'LEGAL' }, { label: 'Logistics', value: 'LOGISTICS' }, { label: 'Manufacturing', value: 'MANUFACTURING' },
+            { label: 'Media', value: 'MEDIA' }, { label: 'Real Estate', value: 'REAL_ESTATE' }, { label: 'Retail', value: 'RETAIL' },
+            { label: 'Telecommunications', value: 'TELECOMMUNICATIONS' }, { label: 'Textiles', value: 'TEXTILES' }, { label: 'Tourism', value: 'TOURISM' },
+            { label: 'Transportation', value: 'TRANSPORTATION' }, { label: 'Wholesale', value: 'WHOLESALE' }, { label: 'Other', value: 'OTHER' }
+          ] },
           { key: "description", label: "Description" },
           { key: "contactNumber", label: "Contact No" },
           { key: "whatsappNumber", label: "WhatsApp" },
@@ -48,7 +57,7 @@ export default function BusinessesPage() {
           { key: "city", label: "City" },
           { key: "state", label: "State" },
           { key: "logoUrl", label: "Logo URL" },
-          { key: "status", label: "Status" },
+          { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />

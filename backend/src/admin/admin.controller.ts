@@ -9,6 +9,9 @@ import { UpdateMatrimonialAdminDto } from './dto/update-matrimonial-admin.dto.js
 import { UpdateShokSandeshAdminDto } from './dto/update-shoksandesh-admin.dto.js';
 import { UpdateUserAdminDto } from './dto/update-user-admin.dto.js';
 import { UpdateNewsAdminDto } from './dto/update-news-admin.dto.js';
+import { CreateJobAdminDto } from './dto/create-job-admin.dto.js';
+import { CreateNewsAdminDto } from './dto/create-news-admin.dto.js';
+import { BulkCreateUsersDto } from './dto/bulk-create-users.dto.js';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { AdminGuard } from './admin.guard.js';
@@ -39,11 +42,25 @@ export class AdminController {
   // ==========================================
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @Post('users/bulk')
+  @ApiOperation({ summary: 'Bulk upload users via CSV' })
+  async bulkCreateUsers(@Request() req, @Body() dto: BulkCreateUsersDto) {
+    return this.adminService.bulkCreateUsers(req.user.userId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
   @Get('users')
   @ApiQuery({ name: 'status', enum: ProfileStatus, required: false })
   @ApiOperation({ summary: 'Get users' })
-  async getUsers(@Query('status') status?: ProfileStatus) {
-    return this.adminService.getUsers(status);
+  async getUsers(
+    @Query('status') status?: ProfileStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getUsers(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -86,8 +103,14 @@ export class AdminController {
   @Get('businesses')
   @ApiQuery({ name: 'status', enum: ListingStatus, required: false })
   @ApiOperation({ summary: 'Get businesses' })
-  async getBusinesses(@Query('status') status?: ListingStatus) {
-    return this.adminService.getBusinesses(status);
+  async getBusinesses(
+    @Query('status') status?: ListingStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getBusinesses(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -119,11 +142,25 @@ export class AdminController {
   // ==========================================
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @Post('jobs')
+  @ApiOperation({ summary: 'Create a new job as admin' })
+  async createJob(@Request() req, @Body() dto: CreateJobAdminDto) {
+    return this.adminService.createJob(req.user.userId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
   @Get('jobs')
   @ApiQuery({ name: 'status', enum: ListingStatus, required: false })
   @ApiOperation({ summary: 'Get jobs' })
-  async getJobs(@Query('status') status?: ListingStatus) {
-    return this.adminService.getJobs(status);
+  async getJobs(
+    @Query('status') status?: ListingStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getJobs(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -158,8 +195,14 @@ export class AdminController {
   @Get('matrimonials')
   @ApiQuery({ name: 'status', enum: MatrimonialStatus, required: false })
   @ApiOperation({ summary: 'Get matrimonial profiles' })
-  async getMatrimonials(@Query('status') status?: MatrimonialStatus) {
-    return this.adminService.getMatrimonials(status);
+  async getMatrimonials(
+    @Query('status') status?: MatrimonialStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getMatrimonials(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -194,8 +237,14 @@ export class AdminController {
   @Get('events')
   @ApiQuery({ name: 'status', enum: EventStatus, required: false })
   @ApiOperation({ summary: 'Get events' })
-  async getEvents(@Query('status') status?: EventStatus) {
-    return this.adminService.getEvents(status);
+  async getEvents(
+    @Query('status') status?: EventStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getEvents(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -230,8 +279,14 @@ export class AdminController {
   @Get('shok-sandesh')
   @ApiQuery({ name: 'status', enum: DemiseStatus, required: false })
   @ApiOperation({ summary: 'Get shok sandesh entries' })
-  async getShokSandesh(@Query('status') status?: DemiseStatus) {
-    return this.adminService.getShokSandesh(status);
+  async getShokSandesh(
+    @Query('status') status?: DemiseStatus,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getShokSandesh(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -263,11 +318,25 @@ export class AdminController {
   // ==========================================
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @Post('news')
+  @ApiOperation({ summary: 'Create a new news entry as admin' })
+  async createNews(@Request() req, @Body() dto: CreateNewsAdminDto) {
+    return this.adminService.createNews(req.user.userId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
   @Get('news')
   @ApiQuery({ name: 'status', required: false })
   @ApiOperation({ summary: 'Get news entries' })
-  async getNews(@Query('status') status?: string) {
-    return this.adminService.getNews(status);
+  async getNews(
+    @Query('status') status?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
+    return this.adminService.getNews(status, page, limit, search, filters);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)

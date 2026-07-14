@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { ApprovalTable } from "@/components/ApprovalTable";
 import { fetchApi } from "@/lib/api";
+import { CreateNewsModal } from "@/components/CreateNewsModal";
 
 export default function NewsPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [saving, setSaving] = useState(false);
 
@@ -49,7 +51,7 @@ export default function NewsPage() {
           { key: "title", label: "Title" },
           { key: "description", label: "Description" },
           { key: "images", label: "Images", render: (item) => item.images ? item.images.length.toString() : "0" },
-          { key: "status", label: "Status" },
+          { key: "status", label: "Status", type: 'enum', options: [{ label: 'Draft', value: 'DRAFT' }, { label: 'Approved', value: 'APPROVED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
       />
@@ -119,6 +121,23 @@ export default function NewsPage() {
           </div>
         </div>
       )}
+
+      <button
+        onClick={() => setIsCreateModalOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 flex items-center justify-center text-3xl font-light transition-transform hover:scale-105 z-40"
+        title="Create News"
+      >
+        +
+      </button>
+
+      <CreateNewsModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          setIsCreateModalOpen(false);
+          setRefreshTrigger((prev) => prev + 1);
+        }}
+      />
     </>
   );
 }
