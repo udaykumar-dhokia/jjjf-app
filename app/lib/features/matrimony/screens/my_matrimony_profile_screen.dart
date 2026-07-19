@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'biodata_viewer_screen.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../providers/matrimony_provider.dart';
@@ -24,7 +24,7 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -136,7 +136,6 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                       tabs: const [
                         Tab(text: 'Personal'),
                         Tab(text: 'About'),
-                        Tab(text: 'Biodata PDF'),
                       ],
                     ),
                     backgroundColor: Colors.white.withOpacity(0.95),
@@ -183,7 +182,15 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-                                    _tabController.animateTo(2); // Go to PDF tab
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BiodataViewerScreen(
+                                          pdfUrl: profile.biodataPdfUrl!,
+                                          profileName: profile.firstName ?? 'My',
+                                        ),
+                                      ),
+                                    );
                                   },
                                   child: const Text(
                                     'View Biodata Document',
@@ -218,15 +225,6 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                     ],
                   ),
                 ),
-                // Tab 3: PDF
-                if (profile.biodataPdfUrl != null && profile.biodataPdfUrl!.isNotEmpty)
-                  SfPdfViewer.network(
-                    profile.biodataPdfUrl!,
-                    canShowScrollHead: false,
-                    canShowScrollStatus: false,
-                  )
-                else
-                  const Center(child: Text("No PDF uploaded")),
               ],
             ),
           ),

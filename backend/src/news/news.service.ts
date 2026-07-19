@@ -82,15 +82,7 @@ export class NewsService {
     };
 
     if (isShokSandesh !== undefined) {
-      if (isShokSandesh) {
-        where.isShokSandesh = true;
-      } else {
-        where.OR = [
-          ...(where.OR || []),
-          { isShokSandesh: false },
-          { isShokSandesh: { isSet: false } }
-        ];
-      }
+      where.isShokSandesh = isShokSandesh;
     }
 
     if (search) {
@@ -150,15 +142,7 @@ export class NewsService {
     };
 
     if (isShokSandesh !== undefined) {
-      if (isShokSandesh) {
-        where.isShokSandesh = true;
-      } else {
-        where.OR = [
-          ...(where.OR || []),
-          { isShokSandesh: false },
-          { isShokSandesh: { isSet: false } }
-        ];
-      }
+      where.isShokSandesh = isShokSandesh;
     }
 
     if (search) {

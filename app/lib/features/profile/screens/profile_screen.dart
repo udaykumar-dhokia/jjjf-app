@@ -703,12 +703,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   'Head of Family',
                                   user.isHeadOfFamily ? 'Yes' : 'No',
                                 ),
-                                _buildInfoRow(
-                                  HugeIcons.strokeRoundedFingerPrint,
-                                  'Family ID',
-                                  user.familyId,
-                                ),
-                              ]),
+                                ]),
 
                               const SizedBox(height: 32),
 

@@ -381,15 +381,48 @@ class _CreateMatrimonyProfileScreenState
                 val == null || val.isEmpty ? 'Gotra is required' : null,
           ),
           const SizedBox(height: 20),
-          CustomTextField(
-            controller: _heightCtrl,
-            labelText: 'Height (e.g., 5\'8") *',
-            hintText: 'Enter your height',
-            prefixIcon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedArrowUp01,
-              size: 18,
-              color: Colors.black54,
+          DropdownButtonFormField<String>(
+            value: _heightCtrl.text.isEmpty
+                ? null
+                : ([
+                    for (int ft = 4; ft <= 7; ft++)
+                      for (int inch = 0; inch <= 11; inch++)
+                        if (!(ft == 7 && inch > 0)) "$ft'$inch\""
+                  ].contains(_heightCtrl.text)
+                    ? _heightCtrl.text
+                    : null),
+            decoration: InputDecoration(
+              labelText: 'Height *',
+              hintText: 'Select your height',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppTheme.primaryPurple, width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.grey.shade50,
             ),
+            items: [
+              for (int ft = 4; ft <= 7; ft++)
+                for (int inch = 0; inch <= 11; inch++)
+                  if (!(ft == 7 && inch > 0))
+                    DropdownMenuItem(
+                      value: "$ft'$inch\"",
+                      child: Text("$ft'$inch\""),
+                    )
+            ],
+            onChanged: (val) {
+              if (val != null) {
+                _heightCtrl.text = val;
+              }
+            },
             validator: (val) =>
                 val == null || val.isEmpty ? 'Height is required' : null,
           ),

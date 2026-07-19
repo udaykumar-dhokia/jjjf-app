@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'biodata_viewer_screen.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../models/matrimony_model.dart';
@@ -72,10 +72,12 @@ class _MatrimonyProfileDetailScreenState
         final bool accessDenied =
             provider.errorMessage != null &&
             provider.errorMessage!.contains('access');
-            
-        final bool isRequestAlreadySent = provider.sentRequests
-            .any((req) => req.targetId == widget.targetId);
-        final bool showAsRequested = _hasRequestedAccess || isRequestAlreadySent;
+
+        final bool isRequestAlreadySent = provider.sentRequests.any(
+          (req) => req.targetId == widget.targetId,
+        );
+        final bool showAsRequested =
+            _hasRequestedAccess || isRequestAlreadySent;
 
         final String name = widget.partialProfile?.firstName ?? 'Unknown';
         final String? imageUrl =
@@ -257,17 +259,195 @@ class _MatrimonyProfileDetailScreenState
                         ],
                       ),
                     )
-                  : (fullProfile?.biodataPdfUrl != null && fullProfile!.biodataPdfUrl!.isNotEmpty)
-                      ? SfPdfViewer.network(
-                          fullProfile.biodataPdfUrl!,
-                          canShowScrollHead: false,
-                          canShowScrollStatus: false,
-                        )
-                      : const Center(child: Text("No Biodata PDF uploaded.")),
+                  : _buildGrantedView(fullProfile!, imageUrl, name),
             );
           },
         );
       },
+    );
+  }
+
+  Widget _buildGrantedView(
+    MatrimonialProfile profile,
+    String? imageUrl,
+    String name,
+  ) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 300,
+            width: double.infinity,
+            color: Colors.white,
+            child: imageUrl != null
+                ? Image.network(imageUrl, fit: BoxFit.cover)
+                : const Center(
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedUser,
+                      size: 100,
+                      color: Colors.grey,
+                    ),
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  profile.age != null
+                      ? '${profile.firstName} ${profile.gotra ?? profile.subCaste ?? ''}, ${profile.age} yrs'
+                      : profile.firstName!,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textDark,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildInfoCard(
+                  title: 'Personal Details',
+                  children: [
+                    _buildDetailRow(
+                      HugeIcons.strokeRoundedArrowUp01,
+                      'Height',
+                      profile.height ?? 'N/A',
+                    ),
+                    _buildDetailRow(
+                      HugeIcons.strokeRoundedBookOpen01,
+                      'Education',
+                      profile.educationDetails,
+                    ),
+                    _buildDetailRow(
+                      HugeIcons.strokeRoundedMoney04,
+                      'Monthly Income',
+                      profile.monthlyIncome ?? 'N/A',
+                    ),
+                    if (profile.biodataPdfUrl != null &&
+                        profile.biodataPdfUrl!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          children: [
+                            const HugeIcon(
+                              icon: HugeIcons.strokeRoundedLink01,
+                              color: AppTheme.primaryPurple,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BiodataViewerScreen(
+                                        pdfUrl: profile.biodataPdfUrl!,
+                                        profileName: profile.firstName!,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'View Biodata Document',
+                                  style: TextStyle(
+                                    color: AppTheme.primaryPurple,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildInfoCard(
+                  title: 'About Me',
+                  children: [
+                    Text(
+                      profile.aboutMe ?? 'No details provided.',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppTheme.textDark,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryPurple,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(dynamic icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          HugeIcon(icon: icon, color: AppTheme.primaryPurple, size: 24),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -317,5 +497,4 @@ class _MatrimonyProfileDetailScreenState
       ],
     );
   }
-
 }
