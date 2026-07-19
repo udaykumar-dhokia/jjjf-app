@@ -352,19 +352,6 @@ class _MainScreenState extends State<MainScreen> {
                   ListTile(
                     onTap: () {
                       _advancedDrawerController.hideDrawer();
-                      _controller.jumpToTab(1);
-                    },
-                    leading: Image.asset(
-                      'assets/icons/icons8-news-94.png',
-                      width: 24,
-                      height: 24,
-                      // color: Colors.white,
-                    ),
-                    title: const Text('Updates'),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      _advancedDrawerController.hideDrawer();
                       _controller.jumpToTab(2);
                     },
                     leading: Image.asset(
@@ -419,19 +406,15 @@ class _MainScreenState extends State<MainScreen> {
                   ListTile(
                     onTap: () {
                       _advancedDrawerController.hideDrawer();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const MatrimonyHubScreen(),
-                        ),
-                      );
+                      _controller.jumpToTab(1);
                     },
                     leading: Image.asset(
-                      'assets/icons/icons8-couple-96.png',
+                      'assets/icons/icons8-news-94.png',
                       width: 24,
                       height: 24,
                       // color: Colors.white,
                     ),
-                    title: const Text('Matrimony'),
+                    title: const Text('Updates'),
                   ),
 
                   const Spacer(),

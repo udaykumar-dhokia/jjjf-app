@@ -72,22 +72,8 @@ export class AuthService {
           currentState: 'Unknown',
           phoneNumber: `temp_${Date.now()}`,
           isPhoneNumberVisible: false,
-          relationshipToHead: 'SELF',
-          family: {
-            create: {
-              addedByUserId: '000000000000000000000000', 
-            }
-          }
         }
       });
-      
-      const family = await prisma.family.findFirst({ where: { members: { some: { id: user.id } } } });
-      if (family) {
-          await prisma.family.update({
-              where: { id: family.id },
-              data: { headOfFamilyId: user.id, addedByUserId: user.id }
-          });
-      }
     }
 
     const tokens = await this.tokenUtil.generateTokens(user.id, user.email || '', user.role, user.isProfileComplete);

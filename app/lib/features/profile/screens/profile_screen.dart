@@ -181,8 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  Widget _buildInfoRow(dynamic icon, String label, String value) {
-    if (value.isEmpty) return const SizedBox.shrink();
+  Widget _buildInfoRow(dynamic icon, String label, String? value) {
+    if (value == null || value.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(

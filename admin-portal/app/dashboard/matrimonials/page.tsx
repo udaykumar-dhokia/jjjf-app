@@ -12,17 +12,15 @@ export default function MatrimonialsPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const { id, height, weight, subCaste, educationDetails, monthlyIncome, aboutMe, expectations, biodataPdfUrl } = editingItem;
+      const { id, height, subCaste, educationDetails, monthlyIncome, aboutMe, biodataPdfUrl } = editingItem;
       const res = await fetchApi(`/admin/matrimonials/${id}`, {
         method: "PUT",
         body: JSON.stringify({ 
           height, 
-          weight: weight ? parseFloat(weight) : undefined, 
           subCaste, 
           educationDetails, 
           monthlyIncome, 
           aboutMe, 
-          expectations, 
           biodataPdfUrl 
         }),
       });
@@ -49,12 +47,10 @@ export default function MatrimonialsPage() {
         columns={[
           { key: "userName", label: "User", render: (item) => item.user ? `${item.user.firstName} ${item.user.gotra}` : "Unknown" },
           { key: "height", label: "Height" },
-          { key: "weight", label: "Weight" },
           { key: "subCaste", label: "Sub Caste" },
           { key: "educationDetails", label: "Education Details" },
           { key: "monthlyIncome", label: "Monthly Income" },
           { key: "aboutMe", label: "About Me" },
-          { key: "expectations", label: "Expectations" },
           { key: "biodataPdfUrl", label: "Biodata PDF" },
           { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
@@ -78,10 +74,6 @@ export default function MatrimonialsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Height</label>
                     <input type="text" className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={editingItem.height || ""} onChange={(e) => setEditingItem({ ...editingItem, height: e.target.value })} />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Weight (kg)</label>
-                    <input type="number" step="0.1" className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={editingItem.weight || ""} onChange={(e) => setEditingItem({ ...editingItem, weight: e.target.value })} />
-                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -103,15 +95,6 @@ export default function MatrimonialsPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">About Me</label>
                   <textarea rows={3} className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={editingItem.aboutMe || ""} onChange={(e) => setEditingItem({ ...editingItem, aboutMe: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Expectations</label>
-                  <textarea
-                    rows={3}
-                    className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={editingItem.expectations || ""}
-                    onChange={(e) => setEditingItem({ ...editingItem, expectations: e.target.value })}
-                  />
                 </div>
               </form>
             </div>

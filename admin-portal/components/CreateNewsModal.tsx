@@ -13,8 +13,8 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    images: ""
   });
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   if (!isOpen) return null;
 
@@ -28,9 +28,29 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
     setError("");
 
     try {
+      const token = localStorage.getItem("admin_token");
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      
+      const uploadedUrls: string[] = [];
+      for (const file of imageFiles) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch(`${API_URL}/upload/image`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          uploadedUrls.push(data.url);
+        } else {
+          throw new Error("Failed to upload one or more images");
+        }
+      }
+
       const payload = {
         ...formData,
-        images: formData.images.split(",").map(img => img.trim()).filter(Boolean)
+        images: uploadedUrls
       };
 
       const response = await fetchApi("/admin/news", {
@@ -45,6 +65,8 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
 
       onSuccess();
       onClose();
+      setImageFiles([]);
+      setFormData({ title: "", description: "" });
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -75,8 +97,14 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Image URLs (comma separated)</label>
-              <input type="text" name="images" value={formData.images} onChange={handleChange} placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" className="w-full text-sm rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 focus:ring-2 focus:ring-blue-500 dark:text-white" />
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Images</label>
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                onChange={(e) => setImageFiles(Array.from(e.target.files || []))} 
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400" 
+              />
             </div>
           </form>
         </div>

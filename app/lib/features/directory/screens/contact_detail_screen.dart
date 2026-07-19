@@ -36,7 +36,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
       final familyIndex = _hasBusiness ? 3 : 2;
       if (_tabController.index == familyIndex) {
         _tabController.index = _previousTabIndex;
-        if (widget.contact.familyId.isNotEmpty) {
+        if (widget.contact.familyId != null && widget.contact.familyId!.isNotEmpty) {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
               builder: (_) =>
@@ -60,8 +60,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
     super.dispose();
   }
 
-  Widget _buildInfoRow(dynamic icon, String label, String value) {
-    if (value.isEmpty) return const SizedBox.shrink();
+  Widget _buildInfoRow(dynamic icon, String label, String? value) {
+    if (value == null || value.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(

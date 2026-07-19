@@ -37,6 +37,26 @@ export class CloudinaryController {
     }
   }
 
+  @Post('file')
+  @ApiOperation({ summary: 'Upload raw file (e.g. PDF) to Cloudinary' })
+  @ApiResponse({ status: 200, description: 'File uploaded successfully' })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+    
+    try {
+      const result = await this.cloudinaryService.uploadFile(file);
+      return {
+        url: result.secure_url,
+        publicId: result.public_id,
+      };
+    } catch (error) {
+      throw new BadRequestException('File upload failed');
+    }
+  }
+
   @Delete('image')
   @ApiOperation({ summary: 'Delete image from Cloudinary' })
   @ApiResponse({ status: 200, description: 'Image deleted successfully' })

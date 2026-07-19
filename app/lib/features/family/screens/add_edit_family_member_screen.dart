@@ -121,7 +121,7 @@ class _AddEditFamilyMemberScreenState extends State<AddEditFamilyMemberScreen> {
       _gender = m.gender;
       _maritalStatus = m.maritalStatus;
       _occupationType = m.occupationType;
-      _relationshipToHead = m.relationshipToHead;
+      _relationshipToHead = m.relationshipToHead ?? 'OTHER';
       _bloodGroup = m.bloodGroup;
       _dateOfBirth = m.dateOfBirth;
     }

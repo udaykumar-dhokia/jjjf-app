@@ -42,7 +42,7 @@ export function ApprovalTable({ title, endpointPrefix, columns, onEdit, refreshT
     return () => clearTimeout(timer);
   }, [search, filters]);
 
-  const [modalAction, setModalAction] = useState<{ id: string; action: 'approve' | 'reject' } | null>(null);
+  const [modalAction, setModalAction] = useState<{ id: string; action: 'approve' | 'reject' | 'delete' } | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [messageModal, setMessageModal] = useState<{ title: string; message: string } | null>(null);
 
@@ -73,7 +73,7 @@ export function ApprovalTable({ title, endpointPrefix, columns, onEdit, refreshT
     }
   };
 
-  const confirmAction = (id: string, action: 'approve' | 'reject') => {
+  const confirmAction = (id: string, action: 'approve' | 'reject' | 'delete') => {
     setModalAction({ id, action });
   };
 
@@ -81,8 +81,10 @@ export function ApprovalTable({ title, endpointPrefix, columns, onEdit, refreshT
     if (!modalAction) return;
     setActionLoading(true);
     try {
-      const res = await fetchApi(`/admin/${endpointPrefix}/${modalAction.id}/${modalAction.action}`, {
-        method: 'PATCH'
+      const method = modalAction.action === 'delete' ? 'DELETE' : 'PATCH';
+      const endpointSuffix = modalAction.action === 'delete' ? '' : `/${modalAction.action}`;
+      const res = await fetchApi(`/admin/${endpointPrefix}/${modalAction.id}${endpointSuffix}`, {
+        method
       });
       if (res.ok) {
         setModalAction(null);
@@ -203,7 +205,20 @@ export function ApprovalTable({ title, endpointPrefix, columns, onEdit, refreshT
                           </button>
                         </div>
                       )}
-                      {statusFilter !== 'PENDING' && statusFilter !== 'PENDING_APPROVAL' && statusFilter !== 'DRAFT' && (
+                      {statusFilter === 'APPROVED' && (endpointPrefix === 'jobs' || endpointPrefix === 'news') && (
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => confirmAction(item.id, 'delete')}
+                            className="text-xs font-medium px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded transition-colors cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                      {statusFilter !== 'PENDING' && statusFilter !== 'PENDING_APPROVAL' && statusFilter !== 'DRAFT' && statusFilter !== 'APPROVED' && (
+                        <span className="text-slate-500 dark:text-slate-400 text-xs">-</span>
+                      )}
+                      {statusFilter === 'APPROVED' && endpointPrefix !== 'jobs' && endpointPrefix !== 'news' && (
                         <span className="text-slate-500 dark:text-slate-400 text-xs">-</span>
                       )}
                     </td>

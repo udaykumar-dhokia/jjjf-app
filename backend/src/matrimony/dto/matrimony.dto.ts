@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsArray, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsArray, IsEnum, IsBoolean } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -7,11 +7,6 @@ export class CreateMatrimonyProfileDto {
   @IsString()
   @IsOptional()
   height?: string;
-
-  @ApiPropertyOptional({ description: 'Weight in kg' })
-  @IsNumber()
-  @IsOptional()
-  weight?: number;
 
   @ApiProperty({ description: 'Sub Caste / Gotra' })
   @IsString()
@@ -31,21 +26,15 @@ export class CreateMatrimonyProfileDto {
   @IsOptional()
   aboutMe?: string;
 
-  @ApiPropertyOptional({ description: 'Expectations from partner' })
-  @IsString()
-  @IsOptional()
-  expectations?: string;
-
   @ApiPropertyOptional({ description: 'Array of photo URLs', type: [String] })
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   photoGallery?: string[];
 
-  @ApiPropertyOptional({ description: 'URL to bio-data PDF' })
+  @ApiProperty({ description: 'URL to bio-data PDF' })
   @IsString()
-  @IsOptional()
-  biodataPdfUrl?: string;
+  biodataPdfUrl: string;
 }
 
 export class UpdateMatrimonyProfileDto {
@@ -53,11 +42,6 @@ export class UpdateMatrimonyProfileDto {
   @IsString()
   @IsOptional()
   height?: string;
-
-  @ApiPropertyOptional()
-  @IsNumber()
-  @IsOptional()
-  weight?: number;
 
   @ApiPropertyOptional()
   @IsString()
@@ -78,11 +62,6 @@ export class UpdateMatrimonyProfileDto {
   @IsString()
   @IsOptional()
   aboutMe?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsOptional()
-  expectations?: string;
 
   @ApiPropertyOptional({ type: [String] })
   @IsArray()
@@ -160,8 +139,14 @@ export class BrowseMatrimonyQueryDto {
   @Transform(({ value }) => (Array.isArray(value) ? value : value ? [value] : undefined))
   cities?: string[];
 
-  @ApiPropertyOptional({ description: 'Filter by Gender' })
+  @ApiPropertyOptional({ description: 'Filter by gender' })
   @IsString()
   @IsOptional()
   gender?: string;
+
+  @ApiPropertyOptional({ description: 'Gotras to exclude from the results' })
+  @IsOptional()
+  @IsArray()
+  @Transform(({ value }) => (Array.isArray(value) ? value : value ? [value] : undefined))
+  excludeGotras?: string[];
 }

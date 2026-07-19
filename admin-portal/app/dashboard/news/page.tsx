@@ -9,19 +9,40 @@ export default function NewsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const { id, title, description, imagesText } = editingItem;
-      const images = imagesText ? imagesText.split(',').map((u: string) => u.trim()).filter(Boolean) : [];
+      const token = localStorage.getItem("admin_token");
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      
+      const uploadedUrls: string[] = [];
+      for (const file of imageFiles) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const resUpload = await fetch(`${API_URL}/upload/image`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        });
+        if (resUpload.ok) {
+          const data = await resUpload.json();
+          uploadedUrls.push(data.url);
+        }
+      }
+
+      const { id, title, description, existingImages } = editingItem;
+      const finalImages = [...(existingImages || []), ...uploadedUrls];
+
       const res = await fetchApi(`/admin/news/${id}`, {
         method: "PUT",
-        body: JSON.stringify({ title, description, images }),
+        body: JSON.stringify({ title, description, images: finalImages }),
       });
       if (res.ok) {
         setEditingItem(null);
+        setImageFiles([]);
         setRefreshTrigger((prev) => prev + 1);
       } else {
         console.error("Failed to update news");
@@ -36,8 +57,9 @@ export default function NewsPage() {
   const handleEdit = (item: any) => {
     setEditingItem({
       ...item,
-      imagesText: item.images?.join(', ') || ""
+      existingImages: item.images || []
     });
+    setImageFiles([]);
   };
 
   return (
@@ -50,7 +72,17 @@ export default function NewsPage() {
         columns={[
           { key: "title", label: "Title" },
           { key: "description", label: "Description" },
-          { key: "images", label: "Images", render: (item) => item.images ? item.images.length.toString() : "0" },
+          { 
+            key: "images", 
+            label: "Images", 
+            render: (item) => item.images && item.images.length > 0 
+              ? <div className="flex gap-2">
+                  {item.images.map((img: string, i: number) => (
+                    <img key={i} src={img} alt="News" className="h-10 w-10 object-cover rounded" />
+                  ))}
+                </div>
+              : "No images" 
+          },
           { key: "status", label: "Status", type: 'enum', options: [{ label: 'Draft', value: 'DRAFT' }, { label: 'Approved', value: 'APPROVED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
@@ -79,12 +111,37 @@ export default function NewsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Image URLs (comma separated)</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Existing Images</label>
+                  {editingItem.existingImages && editingItem.existingImages.length > 0 ? (
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {editingItem.existingImages.map((img: string, i: number) => (
+                        <div key={i} className="relative group">
+                          <img src={img} alt="Existing" className="h-16 w-16 object-cover rounded border" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newImages = [...editingItem.existingImages];
+                              newImages.splice(i, 1);
+                              setEditingItem({ ...editingItem, existingImages: newImages });
+                            }}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-500 mb-2">No existing images.</p>
+                  )}
+                  
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 mt-4">Upload New Images</label>
                   <input
-                    type="text"
-                    className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={editingItem.imagesText || ""}
-                    onChange={(e) => setEditingItem({ ...editingItem, imagesText: e.target.value })}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
+                    className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400"
                   />
                 </div>
                 <div>

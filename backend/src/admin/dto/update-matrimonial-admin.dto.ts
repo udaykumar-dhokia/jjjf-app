@@ -8,11 +8,6 @@ export class UpdateMatrimonialAdminDto {
   height?: string;
 
   @ApiPropertyOptional()
-  @IsNumber()
-  @IsOptional()
-  weight?: number;
-
-  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   subCaste?: string;
@@ -31,11 +26,6 @@ export class UpdateMatrimonialAdminDto {
   @IsString()
   @IsOptional()
   aboutMe?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsOptional()
-  expectations?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

@@ -89,4 +89,17 @@ class MatrimonyApi {
     );
     return response.data['url'];
   }
+
+  Future<String> uploadMatrimonyFile(File file) async {
+    String fileName = file.uri.pathSegments.last;
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(file.path, filename: fileName),
+    });
+
+    final response = await _client.dio.post(
+      '/upload/file',
+      data: formData,
+    );
+    return response.data['url'];
+  }
 }

@@ -81,9 +81,9 @@ class UserModel {
   final String? whatsappNumber;
   final bool isPhoneNumberVisible;
   final bool isProfileComplete;
-  final String familyId;
+  final String? familyId;
   final bool isHeadOfFamily;
-  final String relationshipToHead;
+  final String? relationshipToHead;
   final String role;
   final String status;
   final List<String> assignedStates;
@@ -119,9 +119,9 @@ class UserModel {
     this.whatsappNumber,
     required this.isPhoneNumberVisible,
     required this.isProfileComplete,
-    required this.familyId,
+    this.familyId,
     required this.isHeadOfFamily,
-    required this.relationshipToHead,
+    this.relationshipToHead,
     required this.role,
     required this.status,
     required this.assignedStates,
@@ -163,9 +163,9 @@ class UserModel {
       whatsappNumber: json['whatsappNumber'],
       isPhoneNumberVisible: json['isPhoneNumberVisible'] ?? false,
       isProfileComplete: json['isProfileComplete'] ?? false,
-      familyId: json['familyId'] ?? '',
+      familyId: json['familyId'],
       isHeadOfFamily: json['isHeadOfFamily'] ?? false,
-      relationshipToHead: json['relationshipToHead'] ?? 'SELF',
+      relationshipToHead: json['relationshipToHead'],
       role: json['role'] ?? 'MEMBER',
       status: json['status'] ?? 'PENDING_APPROVAL',
       assignedStates: json['assignedStates'] != null

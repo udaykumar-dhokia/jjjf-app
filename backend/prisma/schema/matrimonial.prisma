@@ -10,14 +10,12 @@ model MatrimonialProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   height           String?
-  weight           Float?
   subCaste         String
   educationDetails String
   monthlyIncome    String?
   aboutMe          String?
-  expectations     String?
   photoGallery     String[]
-  biodataPdfUrl    String?
+  biodataPdfUrl    String
   status           MatrimonialStatus @default(PENDING)
 
   createdAt DateTime @default(now())

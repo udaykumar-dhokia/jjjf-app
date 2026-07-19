@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Put, Param, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Put, Param, UseGuards, Request, Query, Delete } from '@nestjs/common';
 import { AdminService } from './admin.service.js';
 import { AdminLoginDto } from './dto/admin-login.dto.js';
 import { ApproveRejectDto } from './dto/approve-reject.dto.js';
@@ -187,6 +187,14 @@ export class AdminController {
     return this.adminService.rejectJob(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
+  @Delete('jobs/:id')
+  @ApiOperation({ summary: 'Delete a job' })
+  async deleteJob(@Param('id') id: string) {
+    return this.adminService.deleteJob(id);
+  }
+
   // ==========================================
   // MATRIMONIAL APPROVALS
   // ==========================================
@@ -361,5 +369,13 @@ export class AdminController {
   @ApiOperation({ summary: 'Reject a news entry' })
   async rejectNews(@Param('id') id: string) {
     return this.adminService.rejectNews(id);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
+  @Delete('news/:id')
+  @ApiOperation({ summary: 'Delete a news entry' })
+  async deleteNews(@Param('id') id: string) {
+    return this.adminService.deleteNews(id);
   }
 }

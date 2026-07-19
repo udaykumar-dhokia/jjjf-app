@@ -307,6 +307,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                                 final success = await familyProvider
                                     .createFamily();
                                 if (success && mounted) {
+                                  context.read<UserProvider>().fetchMyProfile();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
@@ -405,7 +406,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                             child: Text(
                               userModel.relationshipToHead == 'SELF'
                                   ? 'HEAD OF FAMILY'
-                                  : userModel.relationshipToHead.replaceAll(
+                                  : (userModel.relationshipToHead ?? 'UNKNOWN').replaceAll(
                                       '_',
                                       ' ',
                                     ),

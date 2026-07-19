@@ -364,6 +364,24 @@ class _MatrimonyFilterSheetState extends State<MatrimonyFilterSheet> {
                             gotras: newSet,
                           ),
                         );
+                        _buildDropdownFilterGroup(
+                          'Exclude Gotra',
+                          _availableGotras,
+                          _currentFilter.excludeGotras,
+                          (val) {
+                            final newSet = Set<String>.from(
+                              _currentFilter.excludeGotras,
+                            );
+                            newSet.contains(val)
+                                ? newSet.remove(val)
+                                : newSet.add(val);
+                            setState(
+                              () => _currentFilter = _currentFilter.copyWith(
+                                excludeGotras: newSet,
+                              ),
+                            );
+                          },
+                        );
                       },
                     ),
                   ],

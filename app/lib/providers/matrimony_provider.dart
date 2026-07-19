@@ -14,6 +14,7 @@ class MatrimonyFilter {
   final int? minAge;
   final int? maxAge;
   final String? gender;
+  final Set<String> excludeGotras;
 
   MatrimonyFilter({
     this.gotras = const {},
@@ -23,6 +24,7 @@ class MatrimonyFilter {
     this.minAge,
     this.maxAge,
     this.gender,
+    this.excludeGotras = const {},
   });
 
   bool get isEmpty =>
@@ -45,6 +47,7 @@ class MatrimonyFilter {
     bool clearMinAge = false,
     bool clearMaxAge = false,
     bool clearGender = false,
+    Set<String>? excludeGotras,
   }) {
     return MatrimonyFilter(
       gotras: gotras ?? this.gotras,
@@ -54,6 +57,7 @@ class MatrimonyFilter {
       minAge: clearMinAge ? null : (minAge ?? this.minAge),
       maxAge: clearMaxAge ? null : (maxAge ?? this.maxAge),
       gender: clearGender ? null : (gender ?? this.gender),
+      excludeGotras: excludeGotras ?? this.excludeGotras,
     );
   }
 }
@@ -200,6 +204,7 @@ class MatrimonyProvider with ChangeNotifier {
         if (_activeFilter.minAge != null) queryParams['minAge'] = _activeFilter.minAge;
         if (_activeFilter.maxAge != null) queryParams['maxAge'] = _activeFilter.maxAge;
         if (_activeFilter.gender != null) queryParams['gender'] = _activeFilter.gender;
+        if (_activeFilter.excludeGotras.isNotEmpty) queryParams['excludeGotras'] = _activeFilter.excludeGotras.toList();
       }
 
       _browseList = await _api.browseProfiles(queryParams);
@@ -288,6 +293,25 @@ class MatrimonyProvider with ChangeNotifier {
         _setError('Upload failed: $errorMsg');
       } else {
         _setError('Upload failed: $e');
+      }
+      _setLoading(false);
+      return null;
+    }
+  }
+
+  Future<String?> uploadFile(File file) async {
+    _setLoading(true);
+    _setError(null);
+    try {
+      String url = await _api.uploadMatrimonyFile(file);
+      _setLoading(false);
+      return url;
+    } catch (e) {
+      if (e is DioException) {
+        final errorMsg = e.response?.data?['message'] ?? e.message;
+        _setError('File upload failed: $errorMsg');
+      } else {
+        _setError('File upload failed: $e');
       }
       _setLoading(false);
       return null;

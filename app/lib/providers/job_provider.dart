@@ -5,14 +5,16 @@ import '../services/job_api.dart';
 class JobFilter {
   Set<String> cities = {};
   Set<String> industries = {};
+  Set<String> jobRoles = {};
   String? search;
 
-  JobFilter({Set<String>? cities, Set<String>? industries, this.search}) {
+  JobFilter({Set<String>? cities, Set<String>? industries, Set<String>? jobRoles, this.search}) {
     if (cities != null) this.cities = cities;
     if (industries != null) this.industries = industries;
+    if (jobRoles != null) this.jobRoles = jobRoles;
   }
 
-  bool get isEmpty => cities.isEmpty && industries.isEmpty && search == null;
+  bool get isEmpty => cities.isEmpty && industries.isEmpty && jobRoles.isEmpty && search == null;
 }
 
 class JobProvider with ChangeNotifier {
@@ -30,6 +32,7 @@ class JobProvider with ChangeNotifier {
   // Dynamic Metadata
   List<String> _availableCities = [];
   List<String> _availableIndustries = [];
+  List<String> _availableJobRoles = [];
 
   List<JobModel> get vacancies => _vacancies;
   List<JobModel> get jobRequests => _jobRequests;
@@ -38,12 +41,14 @@ class JobProvider with ChangeNotifier {
   JobFilter get activeFilter => _filter;
   List<String> get availableCities => _availableCities;
   List<String> get availableIndustries => _availableIndustries;
+  List<String> get availableJobRoles => _availableJobRoles;
 
   Future<void> loadMetadata() async {
     try {
       final metadata = await _api.getMetadata();
       _availableCities = metadata['cities'] ?? [];
       _availableIndustries = metadata['industries'] ?? [];
+      _availableJobRoles = metadata['jobRoles'] ?? [];
       notifyListeners();
     } catch (e) {
       debugPrint('Failed to load job metadata: $e');
@@ -66,6 +71,7 @@ class JobProvider with ChangeNotifier {
       final allJobs = await _api.getJobs(
         cities: _filter.cities,
         industries: _filter.industries,
+        jobRoles: _filter.jobRoles,
         search: _filter.search,
       );
 

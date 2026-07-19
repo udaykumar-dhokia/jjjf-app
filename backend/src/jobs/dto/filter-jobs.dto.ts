@@ -18,6 +18,11 @@ export class FilterJobsDto {
   @IsOptional()
   city?: string;
 
+  @ApiPropertyOptional({ description: 'Filter by job role' })
+  @IsString()
+  @IsOptional()
+  jobRole?: string;
+
   @ApiPropertyOptional({ enum: ListingStatus, description: 'Filter by approval status (default is APPROVED)' })
   @IsEnum(ListingStatus)
   @IsOptional()

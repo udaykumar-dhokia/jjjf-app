@@ -16,6 +16,7 @@ import { BusinessModule } from './business/business.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
 import { MatrimonyModule } from './matrimony/matrimony.module.js';
 import { AdminModule } from './admin/admin.module.js';
+import { BannerModule } from './banner/banner.module.js';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AdminModule } from './admin/admin.module.js';
     JobsModule,
     MatrimonyModule,
     AdminModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

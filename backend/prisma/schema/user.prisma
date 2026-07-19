@@ -88,10 +88,10 @@ model User {
   isPhoneNumberVisible   Boolean
   isProfileComplete      Boolean            @default(false)
 
-  familyId           String           @db.ObjectId
-  family             Family           @relation("FamilyMembers", fields: [familyId], references: [id])
+  familyId           String?          @db.ObjectId
+  family             Family?          @relation("FamilyMembers", fields: [familyId], references: [id])
   isHeadOfFamily     Boolean          @default(false)
-  relationshipToHead RelationshipType
+  relationshipToHead RelationshipType?
 
   role           Role          @default(MEMBER)
   status         ProfileStatus @default(PENDING_APPROVAL)

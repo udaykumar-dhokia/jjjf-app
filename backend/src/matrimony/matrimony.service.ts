@@ -183,6 +183,13 @@ export class MatrimonyService {
         });
       }
 
+      if (query.excludeGotras && query.excludeGotras.length > 0) {
+        whereClause.AND.push({
+          subCaste: { notIn: query.excludeGotras },
+          user: { gotra: { notIn: query.excludeGotras } },
+        });
+      }
+
       // Search functionality
       if (query.search) {
         const search = query.search;

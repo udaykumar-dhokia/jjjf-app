@@ -75,6 +75,7 @@ class _JobsScreenState extends State<JobsScreen>
                             JobFilter(
                               cities: provider.activeFilter.cities,
                               industries: provider.activeFilter.industries,
+                              jobRoles: provider.activeFilter.jobRoles,
                               search: null,
                             ),
                           );
@@ -91,7 +92,8 @@ class _JobsScreenState extends State<JobsScreen>
                         icon: HugeIcons.strokeRoundedFilterHorizontal,
                         color:
                             provider.activeFilter.cities.isEmpty &&
-                                provider.activeFilter.industries.isEmpty
+                                provider.activeFilter.industries.isEmpty &&
+                                provider.activeFilter.jobRoles.isEmpty
                             ? Colors.black87
                             : AppTheme.primaryPurple,
                         size: 24,
@@ -111,7 +113,8 @@ class _JobsScreenState extends State<JobsScreen>
                       },
                     ),
                     if (provider.activeFilter.cities.isNotEmpty ||
-                        provider.activeFilter.industries.isNotEmpty)
+                        provider.activeFilter.industries.isNotEmpty ||
+                        provider.activeFilter.jobRoles.isNotEmpty)
                       Positioned(
                         top: 12,
                         right: 12,
@@ -163,6 +166,7 @@ class _JobsScreenState extends State<JobsScreen>
                                 JobFilter(
                                   cities: p.activeFilter.cities,
                                   industries: p.activeFilter.industries,
+                                  jobRoles: p.activeFilter.jobRoles,
                                   search: val,
                                 ),
                               );
@@ -204,6 +208,7 @@ class _JobsScreenState extends State<JobsScreen>
                                   JobFilter(
                                     cities: p.activeFilter.cities,
                                     industries: {},
+                                    jobRoles: p.activeFilter.jobRoles,
                                     search: p.activeFilter.search,
                                   ),
                                 );
@@ -247,6 +252,7 @@ class _JobsScreenState extends State<JobsScreen>
                                   JobFilter(
                                     cities: p.activeFilter.cities,
                                     industries: selected ? {ind} : {},
+                                    jobRoles: p.activeFilter.jobRoles,
                                     search: p.activeFilter.search,
                                   ),
                                 );

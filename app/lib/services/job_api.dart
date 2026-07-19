@@ -9,12 +9,14 @@ class JobApi {
     String? type,
     Set<String>? cities,
     Set<String>? industries,
+    Set<String>? jobRoles,
     String? search,
   }) async {
     final queryParams = <String, String>{};
     if (type != null && type.isNotEmpty) queryParams['type'] = type;
     if (cities != null && cities.isNotEmpty) queryParams['city'] = cities.join(',');
     if (industries != null && industries.isNotEmpty) queryParams['industry'] = industries.join(',');
+    if (jobRoles != null && jobRoles.isNotEmpty) queryParams['jobRole'] = jobRoles.join(',');
     if (search != null && search.isNotEmpty) queryParams['search'] = search;
 
     final uri = Uri(path: '/jobs', queryParameters: queryParams);
@@ -24,12 +26,12 @@ class JobApi {
     return data.map((json) => JobModel.fromJson(json)).toList();
   }
 
-  /// Fetches metadata for filter dropdowns (cities and industries)
   Future<Map<String, List<String>>> getMetadata() async {
     final response = await _client.dio.get('/jobs/metadata');
     return {
       'cities': List<String>.from(response.data['cities'] ?? []),
       'industries': List<String>.from(response.data['industries'] ?? []),
+      'jobRoles': List<String>.from(response.data['jobRoles'] ?? []),
     };
   }
 

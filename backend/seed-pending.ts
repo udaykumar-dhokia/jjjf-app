@@ -71,8 +71,9 @@ async function main() {
     data: {
       userId: user.id,
       subCaste: 'Bisa',
-      educationDetails: 'B.Tech',
-      monthlyIncome: '10 LPA',
+      educationDetails: "Bachelor's Degree",
+      monthlyIncome: "50,000",
+      biodataPdfUrl: "https://example.com/dummy-biodata.pdf",
       status: MatrimonialStatus.PENDING,
     },
   });

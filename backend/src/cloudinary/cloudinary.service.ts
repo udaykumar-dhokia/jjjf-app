@@ -35,6 +35,28 @@ export class CloudinaryService {
   }
 
   /**
+   * Uploads any file (e.g. PDF) to Cloudinary.
+   *
+   * @param file - The file to be uploaded, provided by Multer.
+   * @returns A promise that resolves with the Cloudinary upload response
+   */
+  uploadFile(
+    file: Express.Multer.File,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { resource_type: 'auto' },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Upload result is undefined'));
+          resolve(result);
+        },
+      );
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+  }
+
+  /**
    * Deletes an image from Cloudinary.
    *
    * @param publicId - The public identifier of the image to delete.

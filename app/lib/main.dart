@@ -6,6 +6,7 @@ import 'package:app/providers/business_provider.dart';
 import 'package:app/providers/job_provider.dart';
 import 'package:app/providers/create_job_provider.dart';
 import 'package:app/providers/matrimony_provider.dart';
+import 'package:app/providers/banner_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -60,6 +61,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => JobProvider()),
         ChangeNotifierProvider(create: (_) => CreateJobProvider()),
         ChangeNotifierProvider(create: (_) => MatrimonyProvider()),
+        ChangeNotifierProvider(create: (_) => BannerProvider()),
       ],
       child: JaloreJainSanghApp(
         showOnboarding: showOnboarding,

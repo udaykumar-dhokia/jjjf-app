@@ -36,5 +36,9 @@ export const siteConfig = {
       label: "News",
       href: "/dashboard/news",
     },
+    {
+      label: "Banners",
+      href: "/dashboard/banners",
+    },
   ]
 };

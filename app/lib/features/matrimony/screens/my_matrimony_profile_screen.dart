@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../providers/matrimony_provider.dart';
@@ -135,7 +136,7 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                       tabs: const [
                         Tab(text: 'Personal'),
                         Tab(text: 'About'),
-                        Tab(text: 'Expectations'),
+                        Tab(text: 'Biodata PDF'),
                       ],
                     ),
                     backgroundColor: Colors.white.withOpacity(0.95),
@@ -156,11 +157,6 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                         HugeIcons.strokeRoundedArrowUp01,
                         'Height',
                         profile.height ?? 'N/A',
-                      ),
-                      _buildDetailRow(
-                        HugeIcons.strokeRoundedTapeMeasure,
-                        'Weight',
-                        '${profile.weight ?? 'N/A'} kg',
                       ),
                       _buildDetailRow(
                         HugeIcons.strokeRoundedBookOpen01,
@@ -185,12 +181,17 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                               ),
                               const SizedBox(width: 16),
                               Expanded(
-                                child: Text(
-                                  'View Biodata Document',
-                                  style: TextStyle(
-                                    color: AppTheme.primaryPurple,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
+                                child: InkWell(
+                                  onTap: () {
+                                    _tabController.animateTo(2); // Go to PDF tab
+                                  },
+                                  child: const Text(
+                                    'View Biodata Document',
+                                    style: TextStyle(
+                                      color: AppTheme.primaryPurple,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -217,23 +218,15 @@ class _MyMatrimonyProfileScreenState extends State<MyMatrimonyProfileScreen>
                     ],
                   ),
                 ),
-                // Tab 3: Expectations
-                SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: _buildInfoCard(
-                    title: 'Partner Expectations',
-                    children: [
-                      Text(
-                        profile.expectations ?? 'No details provided.',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: AppTheme.textDark,
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Tab 3: PDF
+                if (profile.biodataPdfUrl != null && profile.biodataPdfUrl!.isNotEmpty)
+                  SfPdfViewer.network(
+                    profile.biodataPdfUrl!,
+                    canShowScrollHead: false,
+                    canShowScrollStatus: false,
+                  )
+                else
+                  const Center(child: Text("No PDF uploaded")),
               ],
             ),
           ),

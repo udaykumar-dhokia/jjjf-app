@@ -54,6 +54,13 @@ export class JobsService {
       }
     }
 
+    if (filters.jobRole) {
+      const roles = filters.jobRole.split(',').map(s => s.trim()).filter(Boolean);
+      if (roles.length > 0) {
+        whereClause.roleTitle = { in: roles };
+      }
+    }
+
     if (filters.search) {
       whereClause.OR = [
         { roleTitle: { contains: filters.search, mode: 'insensitive' } },
@@ -85,13 +92,14 @@ export class JobsService {
   async getMetadata() {
     const jobs = await prisma.jobBoard.findMany({
       where: { status: ListingStatus.APPROVED },
-      select: { city: true, industry: true },
+      select: { city: true, industry: true, roleTitle: true },
     });
 
     const cities = [...new Set(jobs.map(j => j.city))].filter(Boolean).sort();
     const industries = [...new Set(jobs.map(j => j.industry))].filter(Boolean).sort();
+    const jobRoles = [...new Set(jobs.map(j => j.roleTitle))].filter(Boolean).sort();
 
-    return { cities, industries };
+    return { cities, industries, jobRoles };
   }
 
   /**

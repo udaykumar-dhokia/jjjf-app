@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../providers/banner_provider.dart';
 
 class HeroCarousel extends StatefulWidget {
   const HeroCarousel({super.key});
@@ -25,13 +27,20 @@ class _HeroCarouselState extends State<HeroCarousel> {
     super.initState();
     _pageController = PageController(initialPage: 0);
     _startTimer();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BannerProvider>().fetchBanners();
+    });
   }
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_pageController.hasClients) {
+        final provider = context.read<BannerProvider>();
+        final images = provider.banners.isEmpty ? _dummyImages : provider.banners.map((b) => b.imageUrl).toList();
+        
         int nextPage = _currentPage + 1;
-        if (nextPage >= _dummyImages.length) {
+        if (nextPage >= images.length) {
           nextPage = 0;
         }
         _pageController.animateToPage(
@@ -52,6 +61,18 @@ class _HeroCarouselState extends State<HeroCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    final bannerProvider = context.watch<BannerProvider>();
+    final images = bannerProvider.banners.isEmpty 
+        ? _dummyImages 
+        : bannerProvider.banners.map((b) => b.imageUrl).toList();
+
+    if (bannerProvider.isLoading && bannerProvider.banners.isEmpty) {
+      return const SizedBox(
+        height: 200,
+        child: Center(child: CircularProgressIndicator(color: AppTheme.primaryPurple)),
+      );
+    }
+
     return Column(
       children: [
         SizedBox(
@@ -64,7 +85,7 @@ class _HeroCarouselState extends State<HeroCarousel> {
                 _currentPage = index;
               });
             },
-            itemCount: _dummyImages.length,
+            itemCount: images.length,
             itemBuilder: (context, index) {
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -78,7 +99,7 @@ class _HeroCarouselState extends State<HeroCarousel> {
                     ),
                   ],
                   image: DecorationImage(
-                    image: NetworkImage(_dummyImages[index]),
+                    image: NetworkImage(images[index]),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -90,7 +111,7 @@ class _HeroCarouselState extends State<HeroCarousel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            _dummyImages.length,
+            images.length,
             (index) => _buildDot(index),
           ),
         ),

@@ -107,7 +107,7 @@ export class FamilyService {
       where: { id: userId },
     });
 
-    if (!user || !user.isHeadOfFamily) {
+    if (!user || !user.isHeadOfFamily || !user.familyId) {
       throw new ForbiddenException('Only the Head of Family can add members');
     }
 
@@ -149,7 +149,7 @@ export class FamilyService {
       where: { id: userId },
     });
 
-    if (!user || !user.isHeadOfFamily) {
+    if (!user || !user.isHeadOfFamily || !user.familyId) {
       throw new ForbiddenException('Only the Head of Family can update members');
     }
 
@@ -187,7 +187,7 @@ export class FamilyService {
       where: { id: userId },
     });
 
-    if (!user || !user.isHeadOfFamily) {
+    if (!user || !user.isHeadOfFamily || !user.familyId) {
       throw new ForbiddenException('Only the Head of Family can remove members');
     }
 

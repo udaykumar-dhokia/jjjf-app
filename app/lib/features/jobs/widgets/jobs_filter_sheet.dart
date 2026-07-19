@@ -14,9 +14,9 @@ class JobsFilterSheet extends StatefulWidget {
 class _JobsFilterSheetState extends State<JobsFilterSheet> {
   late JobFilter _currentFilter;
 
-  // Dynamic Fields from Backend Metadata
   List<String> _availableCities = [];
   List<String> _availableIndustries = [];
+  List<String> _availableJobRoles = [];
 
   @override
   void initState() {
@@ -25,11 +25,13 @@ class _JobsFilterSheetState extends State<JobsFilterSheet> {
     _currentFilter = JobFilter(
       cities: Set.from(provider.activeFilter.cities),
       industries: Set.from(provider.activeFilter.industries),
+      jobRoles: Set.from(provider.activeFilter.jobRoles),
       search: provider.activeFilter.search,
     );
 
     _availableCities = provider.availableCities;
     _availableIndustries = provider.availableIndustries;
+    _availableJobRoles = provider.availableJobRoles;
   }
 
   void _toggleSetSelection(Set<String> set, String value) {
@@ -65,6 +67,7 @@ class _JobsFilterSheetState extends State<JobsFilterSheet> {
         ),
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
+          isExpanded: true,
           dropdownColor: AppTheme.backgroundLight,
           decoration: InputDecoration(
             fillColor: AppTheme.backgroundLight,
@@ -93,7 +96,7 @@ class _JobsFilterSheetState extends State<JobsFilterSheet> {
           items: options
               .map(
                 (option) =>
-                    DropdownMenuItem(value: option, child: Text(option)),
+                    DropdownMenuItem(value: option, child: Text(option, overflow: TextOverflow.ellipsis)),
               )
               .toList(),
           onChanged: (value) {
@@ -172,7 +175,8 @@ class _JobsFilterSheetState extends State<JobsFilterSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (_availableCities.isEmpty &&
-                        _availableIndustries.isEmpty)
+                        _availableIndustries.isEmpty &&
+                        _availableJobRoles.isEmpty)
                       const Center(
                         child: Text(
                           "No filters available yet.",
@@ -188,6 +192,11 @@ class _JobsFilterSheetState extends State<JobsFilterSheet> {
                       'Industry',
                       _availableIndustries,
                       _currentFilter.industries,
+                    ),
+                    _buildDropdownFilterGroup(
+                      'Job Role',
+                      _availableJobRoles,
+                      _currentFilter.jobRoles,
                     ),
                   ],
                 ),

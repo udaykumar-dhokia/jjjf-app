@@ -2,12 +2,10 @@ class MatrimonialProfile {
   final String id;
   final String userId;
   final String? height;
-  final num? weight;
   final String subCaste;
   final String educationDetails;
   final String? monthlyIncome;
   final String? aboutMe;
-  final String? expectations;
   final List<String> photoGallery;
   final String? biodataPdfUrl;
   final String status;
@@ -27,12 +25,10 @@ class MatrimonialProfile {
     required this.id,
     required this.userId,
     this.height,
-    this.weight,
     required this.subCaste,
     required this.educationDetails,
     this.monthlyIncome,
     this.aboutMe,
-    this.expectations,
     required this.photoGallery,
     this.biodataPdfUrl,
     required this.status,
@@ -58,12 +54,10 @@ class MatrimonialProfile {
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
       height: json['height'],
-      weight: json['weight'],
       subCaste: json['subCaste'] ?? '',
       educationDetails: json['educationDetails'] ?? '',
       monthlyIncome: json['monthlyIncome'],
       aboutMe: json['aboutMe'],
-      expectations: json['expectations'],
       photoGallery: json['photoGallery'] != null 
           ? List<String>.from(json['photoGallery']) 
           : [],
@@ -95,12 +89,10 @@ class MatrimonialProfile {
       'id': id,
       'userId': userId,
       'height': height,
-      'weight': weight,
       'subCaste': subCaste,
       'educationDetails': educationDetails,
       'monthlyIncome': monthlyIncome,
       'aboutMe': aboutMe,
-      'expectations': expectations,
       'photoGallery': photoGallery,
       'biodataPdfUrl': biodataPdfUrl,
       'status': status,

@@ -342,13 +342,21 @@ export class AdminService {
     });
   }
 
+  async deleteJob(id: string) {
+    const job = await prisma.jobBoard.findUnique({ where: { id } });
+    if (!job) throw new NotFoundException('Job not found');
+    return prisma.jobBoard.delete({
+      where: { id }
+    });
+  }
+
   // ==========================================
   // MATRIMONIAL APPROVALS
   // ==========================================
 
   async getMatrimonials(status?: MatrimonialStatus, pageStr?: string, limitStr?: string, search?: string, filtersStr?: string) {
     const { skip, take, page, limit } = getPagination(pageStr, limitStr);
-    const searchFields = ['subCaste', 'educationDetails', 'aboutMe', 'expectations'];
+    const searchFields = ['subCaste', 'educationDetails', 'aboutMe'];
     const where = buildWhereClause(status, search, filtersStr, searchFields);
 
     const { data, total } = await fetchPaginatedData(prisma.matrimonialProfile, where, skip, take, { user: { select: { firstName: true, gotra: true, memberId: true, gender: true } } });
@@ -528,6 +536,14 @@ export class AdminService {
     // For now, we will leave it as DRAFT but could also delete.
     // Or if they change the schema, it will set to REJECTED.
     // Given the constraints, let's delete it if rejected.
+    return prisma.news.delete({
+      where: { id }
+    });
+  }
+
+  async deleteNews(id: string) {
+    const news = await prisma.news.findUnique({ where: { id } });
+    if (!news) throw new NotFoundException('News not found');
     return prisma.news.delete({
       where: { id }
     });

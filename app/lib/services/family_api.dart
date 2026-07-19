@@ -4,14 +4,16 @@ import 'core/api_client.dart';
 class FamilyApi {
   final ApiClient _client = ApiClient();
 
-  Future<Map<String, dynamic>> getMyFamily() async {
+  Future<Map<String, dynamic>?> getMyFamily() async {
     final response = await _client.dio.get('/family/me');
-    return response.data;
+    if (response.data == null || response.data == '') return null;
+    return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> getFamilyById(String familyId) async {
+  Future<Map<String, dynamic>?> getFamilyById(String familyId) async {
     final response = await _client.dio.get('/family/$familyId');
-    return response.data;
+    if (response.data == null || response.data == '') return null;
+    return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> createFamily() async {

@@ -34,6 +34,8 @@ class FamilyProvider with ChangeNotifier {
     } catch (e) {
       if (e.toString().contains('404') ||
           e.toString().contains('null') ||
+          e.toString().contains('Null') ||
+          e.toString().contains('String') ||
           e.toString().contains('Family not found')) {
         _myFamily = null;
         _error = null; // Just an empty state, not an error
@@ -71,6 +73,8 @@ class FamilyProvider with ChangeNotifier {
     } catch (e) {
       if (e.toString().contains('404') ||
           e.toString().contains('null') ||
+          e.toString().contains('Null') ||
+          e.toString().contains('String') ||
           e.toString().contains('Family not found')) {
         _viewingFamily = null;
         _error = null;

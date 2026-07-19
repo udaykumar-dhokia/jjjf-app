@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_text_field.dart';
@@ -32,16 +33,15 @@ class _CreateMatrimonyProfileScreenState
   ];
 
   final _heightCtrl = TextEditingController();
-  final _weightCtrl = TextEditingController();
   final _subCasteCtrl = TextEditingController();
   final _educationCtrl = TextEditingController();
   final _incomeCtrl = TextEditingController();
   final _aboutCtrl = TextEditingController();
-  final _expectationsCtrl = TextEditingController();
-  final _biodataCtrl = TextEditingController();
 
   File? _selectedImage;
   String? _existingImageUrl;
+  File? _selectedPdfFile;
+  String? _existingBiodataUrl;
   bool _isLoading = false;
 
   @override
@@ -58,13 +58,11 @@ class _CreateMatrimonyProfileScreenState
     final profile = context.read<MatrimonyProvider>().myProfile;
     if (profile != null) {
       _heightCtrl.text = profile.height ?? '';
-      _weightCtrl.text = profile.weight?.toString() ?? '';
       _subCasteCtrl.text = profile.subCaste;
       _educationCtrl.text = profile.educationDetails;
       _incomeCtrl.text = profile.monthlyIncome ?? '';
       _aboutCtrl.text = profile.aboutMe ?? '';
-      _expectationsCtrl.text = profile.expectations ?? '';
-      _biodataCtrl.text = profile.biodataPdfUrl ?? '';
+      _existingBiodataUrl = profile.biodataPdfUrl;
       if (profile.photoGallery.isNotEmpty) {
         setState(() {
           _existingImageUrl = profile.photoGallery.first;
@@ -77,13 +75,10 @@ class _CreateMatrimonyProfileScreenState
   void dispose() {
     _pageController.dispose();
     _heightCtrl.dispose();
-    _weightCtrl.dispose();
     _subCasteCtrl.dispose();
     _educationCtrl.dispose();
     _incomeCtrl.dispose();
     _aboutCtrl.dispose();
-    _expectationsCtrl.dispose();
-    _biodataCtrl.dispose();
     super.dispose();
   }
 
@@ -135,11 +130,39 @@ class _CreateMatrimonyProfileScreenState
     }
   }
 
+  Future<void> _pickPdf() async {
+    FilePickerResult? result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _selectedPdfFile = File(result.files.single.path!);
+        _existingBiodataUrl = null;
+      });
+    }
+  }
+
   Future<void> _submitProfile() async {
     setState(() => _isLoading = true);
 
     final provider = context.read<MatrimonyProvider>();
+
+    // Validate Biodata PDF is present
+    if (_selectedPdfFile == null && _existingBiodataUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please upload your biodata PDF.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      setState(() => _isLoading = false);
+      return;
+    }
+
     String? imageUrl = _existingImageUrl;
+    String? biodataUrl = _existingBiodataUrl;
 
     if (_selectedImage != null) {
       imageUrl = await provider.uploadImage(_selectedImage!);
@@ -147,7 +170,31 @@ class _CreateMatrimonyProfileScreenState
         if (!mounted) return;
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(provider.errorMessage ?? 'Failed to upload image. Please try again.'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(
+              provider.errorMessage ??
+                  'Failed to upload image. Please try again.',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
+    if (_selectedPdfFile != null) {
+      biodataUrl = await provider.uploadFile(_selectedPdfFile!);
+      if (biodataUrl == null) {
+        if (!mounted) return;
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              provider.errorMessage ??
+                  'Failed to upload PDF. Please try again.',
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
@@ -155,13 +202,11 @@ class _CreateMatrimonyProfileScreenState
 
     final data = {
       'height': _heightCtrl.text,
-      'weight': double.tryParse(_weightCtrl.text),
       'subCaste': _subCasteCtrl.text,
       'educationDetails': _educationCtrl.text,
       'monthlyIncome': _incomeCtrl.text,
       'aboutMe': _aboutCtrl.text,
-      'expectations': _expectationsCtrl.text,
-      'biodataPdfUrl': _biodataCtrl.text,
+      'biodataPdfUrl': biodataUrl,
       'photoGallery': imageUrl != null ? [imageUrl] : [],
     };
 
@@ -254,7 +299,7 @@ class _CreateMatrimonyProfileScreenState
                     : _currentPage == 1
                     ? "Step 2: Education & Career"
                     : _currentPage == 2
-                    ? "Step 3: Expectations"
+                    ? "Step 3: About Me"
                     : "Step 4: Photo",
                 style: const TextStyle(
                   color: AppTheme.primaryPurple,
@@ -276,7 +321,7 @@ class _CreateMatrimonyProfileScreenState
                 children: [
                   _buildStepPersonal(),
                   _buildStepEducation(),
-                  _buildStepExpectations(),
+                  _buildStepAboutMe(),
                   _buildStepPhoto(),
                 ],
               ),
@@ -349,28 +394,55 @@ class _CreateMatrimonyProfileScreenState
                 val == null || val.isEmpty ? 'Height is required' : null,
           ),
           const SizedBox(height: 20),
-          CustomTextField(
-            controller: _weightCtrl,
-            labelText: 'Weight (kg) *',
-            hintText: 'Enter your weight',
-            prefixIcon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedTapeMeasure,
-              size: 18,
-              color: Colors.black54,
+          const Text(
+            'Upload Biodata (PDF) *',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryPurple,
             ),
-            keyboardType: TextInputType.number,
-            validator: (val) =>
-                val == null || val.isEmpty ? 'Weight is required' : null,
           ),
-          const SizedBox(height: 20),
-          CustomTextField(
-            controller: _biodataCtrl,
-            labelText: 'Bio Data Link (Optional)',
-            hintText: 'e.g. Google Drive Link to PDF',
-            prefixIcon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedLink01,
-              size: 18,
-              color: Colors.black54,
+          const SizedBox(height: 8),
+          InkWell(
+            onTap: _pickPdf,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey.shade50,
+              ),
+              child: Row(
+                children: [
+                  const HugeIcon(
+                    icon: HugeIcons.strokeRoundedFile01,
+                    color: AppTheme.primaryPurple,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      _selectedPdfFile != null
+                          ? _selectedPdfFile!.path
+                                .split(Platform.pathSeparator)
+                                .last
+                          : (_existingBiodataUrl != null
+                                ? 'Existing PDF uploaded. Tap to change.'
+                                : 'Select PDF File'),
+                      style: TextStyle(
+                        color:
+                            _selectedPdfFile != null ||
+                                _existingBiodataUrl != null
+                            ? Colors.black87
+                            : Colors.grey.shade600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -415,7 +487,7 @@ class _CreateMatrimonyProfileScreenState
     );
   }
 
-  Widget _buildStepExpectations() {
+  Widget _buildStepAboutMe() {
     return Form(
       key: _formKeys[2],
       child: ListView(
@@ -433,21 +505,6 @@ class _CreateMatrimonyProfileScreenState
             maxLines: 4,
             validator: (val) =>
                 val == null || val.isEmpty ? 'About Me is required' : null,
-          ),
-          const SizedBox(height: 20),
-          CustomTextField(
-            controller: _expectationsCtrl,
-            labelText: 'Partner Expectations *',
-            hintText: 'What are you looking for?',
-            prefixIcon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedFavourite,
-              size: 18,
-              color: Colors.black54,
-            ),
-            maxLines: 4,
-            validator: (val) => val == null || val.isEmpty
-                ? 'Partner Expectations are required'
-                : null,
           ),
         ],
       ),
