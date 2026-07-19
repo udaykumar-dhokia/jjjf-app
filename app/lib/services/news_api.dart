@@ -10,6 +10,7 @@ class NewsApi {
     int limit = 10,
     int offset = 0,
     String search = '',
+    bool? isShokSandesh,
   }) async {
     final response = await _client.dio.get(
       '/news',
@@ -17,6 +18,7 @@ class NewsApi {
         'limit': limit,
         'offset': offset,
         if (search.isNotEmpty) 'search': search,
+        if (isShokSandesh != null) 'isShokSandesh': isShokSandesh,
       },
     );
 
@@ -34,6 +36,7 @@ class NewsApi {
     int limit = 10,
     int offset = 0,
     String search = '',
+    bool? isShokSandesh,
   }) async {
     final response = await _client.dio.get(
       '/news/user/$userId',
@@ -41,6 +44,7 @@ class NewsApi {
         'limit': limit,
         'offset': offset,
         if (search.isNotEmpty) 'search': search,
+        if (isShokSandesh != null) 'isShokSandesh': isShokSandesh,
       },
     );
 
@@ -64,12 +68,14 @@ class NewsApi {
     String userId,
     String userName,
     List<File> images,
+    bool isShokSandesh,
   ) async {
     FormData formData = FormData.fromMap({
       'title': title,
       'description': description,
       'userId': userId,
       'userName': userName,
+      'isShokSandesh': isShokSandesh,
     });
 
     for (var i = 0; i < images.length; i++) {

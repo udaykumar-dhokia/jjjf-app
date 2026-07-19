@@ -1,5 +1,5 @@
-import { IsOptional, IsInt, Min, IsString, IsEnum } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsInt, Min, IsString, IsEnum, IsBoolean } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum NewsSortBy {
@@ -41,4 +41,10 @@ export class NewsFilterDto {
   @IsOptional()
   @IsEnum(SortOrder)
   sortOrder?: SortOrder = SortOrder.DESC;
+
+  @ApiPropertyOptional({ description: 'Filter by Shok Sandesh' })
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  isShokSandesh?: boolean;
 }

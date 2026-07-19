@@ -83,6 +83,15 @@ export default function NewsPage() {
                 </div>
               : "No images" 
           },
+          {
+            key: "isShokSandesh",
+            label: "Type",
+            render: (item) => item.isShokSandesh ? (
+              <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">Shok Sandesh</span>
+            ) : (
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">Update</span>
+            )
+          },
           { key: "status", label: "Status", type: 'enum', options: [{ label: 'Draft', value: 'DRAFT' }, { label: 'Approved', value: 'APPROVED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}
@@ -109,6 +118,18 @@ export default function NewsPage() {
                     value={editingItem.title || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                   />
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="editIsShokSandesh"
+                    checked={editingItem.isShokSandesh || false}
+                    onChange={(e) => setEditingItem({ ...editingItem, isShokSandesh: e.target.checked })}
+                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800"
+                  />
+                  <label htmlFor="editIsShokSandesh" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Is this a Shok Sandesh update?
+                  </label>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Existing Images</label>

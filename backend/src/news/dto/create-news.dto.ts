@@ -1,5 +1,5 @@
-import { IsString, IsArray, ArrayMaxSize, IsOptional, IsMongoId } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsArray, ArrayMaxSize, IsOptional, IsMongoId, IsBoolean } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateNewsDto {
   @ApiProperty({ example: 'Community Event' })
@@ -24,4 +24,9 @@ export class CreateNewsDto {
   @ApiProperty({ example: 'Udaykumar' })
   @IsString()
   userName!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isShokSandesh?: boolean;
 }

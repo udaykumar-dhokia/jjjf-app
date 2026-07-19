@@ -39,7 +39,8 @@ class _MainScreenState extends State<MainScreen> {
     _controller = PersistentTabController(initialIndex: 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().fetchMyProfile();
-      context.read<NewsProvider>().fetchNews();
+      context.read<NewsProvider>().fetchUpdates();
+      context.read<NewsProvider>().fetchShokSandesh();
       context.read<JobProvider>().fetchJobs();
     });
     _initPackageInfo();

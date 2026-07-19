@@ -16,7 +16,7 @@ class HomeLatestNews extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<NewsProvider>(
       builder: (context, newsProvider, child) {
-        if (newsProvider.isLoading && newsProvider.newsList.isEmpty) {
+        if (newsProvider.isLoadingUpdates && newsProvider.updatesList.isEmpty) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: SkeletonLoadingWrapper(
@@ -40,11 +40,11 @@ class HomeLatestNews extends StatelessWidget {
           );
         }
 
-        if (newsProvider.newsList.isEmpty) {
+        if (newsProvider.updatesList.isEmpty) {
           return const SizedBox.shrink();
         }
 
-        final latestNews = newsProvider.newsList.take(3).toList();
+        final latestNews = newsProvider.updatesList.take(3).toList();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

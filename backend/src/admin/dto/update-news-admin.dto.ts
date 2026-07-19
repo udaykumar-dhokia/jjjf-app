@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsArray, IsEnum, IsBoolean } from 'class-validator';
 import { NewsStatus } from '@prisma/client';
 
 export class UpdateNewsAdminDto {
@@ -23,4 +23,9 @@ export class UpdateNewsAdminDto {
   @IsEnum(NewsStatus)
   @IsOptional()
   status?: NewsStatus;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isShokSandesh?: boolean;
 }

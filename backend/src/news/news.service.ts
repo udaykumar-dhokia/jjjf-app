@@ -75,11 +75,15 @@ export class NewsService {
    * @returns An object containing the news data array and pagination metadata.
    */
   async findAll(filterDto: NewsFilterDto) {
-    const { limit = 10, offset = 0, search, sortBy, sortOrder } = filterDto;
+    const { limit = 10, offset = 0, search, sortBy, sortOrder, isShokSandesh } = filterDto;
 
     const where: Prisma.NewsWhereInput = {
       status: 'APPROVED',
     };
+
+    if (isShokSandesh !== undefined) {
+      where.isShokSandesh = isShokSandesh;
+    }
 
     if (search) {
       where.OR = [
@@ -130,12 +134,16 @@ export class NewsService {
    * @returns An object containing the news data array and pagination metadata.
    */
   async findAllByUser(userId: string, filterDto: NewsFilterDto) {
-    const { limit = 10, offset = 0, search, sortBy, sortOrder } = filterDto;
+    const { limit = 10, offset = 0, search, sortBy, sortOrder, isShokSandesh } = filterDto;
 
     const where: Prisma.NewsWhereInput = {
       userId,
       status: 'APPROVED',
     };
+
+    if (isShokSandesh !== undefined) {
+      where.isShokSandesh = isShokSandesh;
+    }
 
     if (search) {
       where.OR = [

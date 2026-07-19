@@ -20,6 +20,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  bool _isShokSandesh = false;
 
   final List<File> _selectedImages = [];
   final ImagePicker _picker = ImagePicker();
@@ -87,6 +88,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
       user.id,
       userName.trim(),
       _selectedImages,
+      _isShokSandesh,
     );
 
     if (success && mounted) {
@@ -222,6 +224,18 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                                 value == null || value.trim().isEmpty
                                 ? 'Required'
                                 : null,
+                          ),
+                          const SizedBox(height: 16),
+                          SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Is this a Shok Sandesh update?', style: TextStyle(fontWeight: FontWeight.w600)),
+                            value: _isShokSandesh,
+                            onChanged: (val) {
+                              setState(() {
+                                _isShokSandesh = val;
+                              });
+                            },
+                            activeColor: AppTheme.primaryPurple,
                           ),
                           if (_selectedImages.isNotEmpty) ...[
                             const SizedBox(height: 16),

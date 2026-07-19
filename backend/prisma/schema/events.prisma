@@ -60,6 +60,7 @@ model News {
   user        User       @relation(fields: [userId], references: [id])
   userName    String
   status      NewsStatus @default(DRAFT)
+  isShokSandesh Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

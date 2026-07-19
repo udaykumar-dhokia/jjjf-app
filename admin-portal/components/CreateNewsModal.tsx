@@ -13,13 +13,20 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    isShokSandesh: false,
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,7 +73,7 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
       onSuccess();
       onClose();
       setImageFiles([]);
-      setFormData({ title: "", description: "" });
+      setFormData({ title: "", description: "", isShokSandesh: false });
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -94,6 +101,20 @@ export function CreateNewsModal({ isOpen, onClose, onSuccess }: CreateNewsModalP
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description *</label>
               <textarea name="description" required rows={6} value={formData.description} onChange={handleChange} className="w-full text-sm rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 focus:ring-2 focus:ring-blue-500 dark:text-white" />
+            </div>
+
+            <div className="flex items-center gap-2 mt-4">
+              <input 
+                type="checkbox" 
+                name="isShokSandesh" 
+                id="isShokSandesh"
+                checked={formData.isShokSandesh} 
+                onChange={handleChange} 
+                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800"
+              />
+              <label htmlFor="isShokSandesh" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Is this a Shok Sandesh update?
+              </label>
             </div>
 
             <div>
