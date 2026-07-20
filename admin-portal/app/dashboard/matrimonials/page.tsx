@@ -46,8 +46,8 @@ export default function MatrimonialsPage() {
         onEdit={(item) => setEditingItem(item)}
         columns={[
           { key: "userName", label: "User", render: (item) => item.user ? `${item.user.firstName} ${item.user.gotra}` : "Unknown" },
-          { key: "height", label: "Height" },
-          { key: "subCaste", label: "Sub Caste" },
+          { key: "height", label: "Height", type: 'dropdown' },
+          { key: "subCaste", label: "Sub Caste", type: 'dropdown' },
           { key: "educationDetails", label: "Education Details" },
           { key: "monthlyIncome", label: "Monthly Income" },
           { key: "aboutMe", label: "About Me" },

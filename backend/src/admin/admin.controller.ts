@@ -47,7 +47,22 @@ export class AdminController {
   async bulkCreateUsers(@Request() req, @Body() dto: BulkCreateUsersDto) {
     return this.adminService.bulkCreateUsers(req.user.userId, dto);
   }
+  // ==========================================
+  // DISTINCT VALUES (DYNAMIC DROPDOWNS)
+  // ==========================================
+  
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
+  @Get(':entity/distinct/:field')
+  @ApiOperation({ summary: 'Get distinct values for a field in an entity' })
+  async getDistinctValues(
+    @Param('entity') entity: string,
+    @Param('field') field: string,
+  ) {
+    return this.adminService.getDistinctValues(entity, field);
+  }
 
+  // ==========================================
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
   @Get('users')
@@ -377,5 +392,25 @@ export class AdminController {
   @ApiOperation({ summary: 'Delete a news entry' })
   async deleteNews(@Param('id') id: string) {
     return this.adminService.deleteNews(id);
+  }
+
+  // ==========================================
+  // STATE ADMINS
+  // ==========================================
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
+  @Get('state-admins')
+  @ApiOperation({ summary: 'Get all state admins' })
+  async getStateAdmins() {
+    return this.adminService.getStateAdmins();
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @ApiBearerAuth()
+  @Put('state-admins/:id/assign')
+  @ApiOperation({ summary: 'Assign a state admin' })
+  async assignStateAdmin(@Param('id') id: string, @Body() body: { userId: string }) {
+    return this.adminService.assignStateAdmin(id, body.userId);
   }
 }

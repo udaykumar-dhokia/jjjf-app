@@ -10,7 +10,7 @@ interface ApprovalTableProps {
     key: string; 
     label: string; 
     render?: (item: any) => React.ReactNode;
-    type?: 'text' | 'enum';
+    type?: 'text' | 'enum' | 'dropdown';
     options?: { label: string; value: string }[];
   }[];
   onEdit?: (item: any) => void;
@@ -45,6 +45,24 @@ export function ApprovalTable({ title, endpointPrefix, columns, onEdit, refreshT
   const [modalAction, setModalAction] = useState<{ id: string; action: 'approve' | 'reject' | 'delete' } | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [messageModal, setMessageModal] = useState<{ title: string; message: string } | null>(null);
+  const [dynamicOptions, setDynamicOptions] = useState<Record<string, string[]>>({});
+
+  useEffect(() => {
+    if (isFilterSheetOpen) {
+      columns.forEach(col => {
+        if (col.type === 'dropdown' && !dynamicOptions[col.key]) {
+          fetchApi(`/admin/${endpointPrefix}/distinct/${col.key}`)
+            .then(res => res.json())
+            .then(data => {
+              if (Array.isArray(data)) {
+                setDynamicOptions(prev => ({ ...prev, [col.key]: data }));
+              }
+            })
+            .catch(err => console.error(err));
+        }
+      });
+    }
+  }, [isFilterSheetOpen, columns, endpointPrefix, dynamicOptions]);
 
   useEffect(() => {
     loadData();
@@ -336,6 +354,24 @@ export function ApprovalTable({ title, endpointPrefix, columns, onEdit, refreshT
                       <option value="">All</option>
                       {col.options.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  ) : col.type === 'dropdown' ? (
+                    <select
+                      value={filters[col.key] || ''}
+                      onChange={(e) => {
+                        setFilters(prev => {
+                          const newFilters = { ...prev, [col.key]: e.target.value };
+                          if (!e.target.value) delete newFilters[col.key];
+                          return newFilters;
+                        });
+                        setPage(1);
+                      }}
+                      className="w-full text-sm rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-white"
+                    >
+                      <option value="">All</option>
+                      {(dynamicOptions[col.key] || []).map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
                   ) : (

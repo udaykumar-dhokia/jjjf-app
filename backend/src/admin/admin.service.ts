@@ -100,26 +100,78 @@ export class AdminService {
   // ==========================================
 
   async getDashboardStats() {
-    const [pendingUsers, pendingBusinesses, pendingJobs, pendingEvents, pendingMatrimonials, pendingShokSandesh, pendingNews] = await Promise.all([
+    const [
+      totalUsers, pendingUsers,
+      totalBusinesses, pendingBusinesses,
+      totalJobs, pendingJobs,
+      totalMatrimonials, pendingMatrimonials,
+      totalNews, pendingNews
+    ] = await Promise.all([
+      prisma.user.count(),
       prisma.user.count({ where: { status: ProfileStatus.PENDING_APPROVAL } }),
+      
+      prisma.businessListing.count(),
       prisma.businessListing.count({ where: { status: ListingStatus.PENDING } }),
+      
+      prisma.jobBoard.count(),
       prisma.jobBoard.count({ where: { status: ListingStatus.PENDING } }),
-      prisma.event.count({ where: { status: EventStatus.PENDING } }),
+      
+      prisma.matrimonialProfile.count(),
       prisma.matrimonialProfile.count({ where: { status: MatrimonialStatus.PENDING } }),
-      prisma.shokSandesh.count({ where: { status: DemiseStatus.PENDING } }),
+      
+      prisma.news.count(),
       prisma.news.count({ where: { status: 'DRAFT' } }),
     ]);
 
     return {
-      pendingUsers,
-      pendingBusinesses,
-      pendingJobs,
-      pendingEvents,
-      pendingMatrimonials,
-      pendingShokSandesh,
-      pendingNews,
-      totalPending: pendingUsers + pendingBusinesses + pendingJobs + pendingEvents + pendingMatrimonials + pendingShokSandesh + pendingNews,
+      users: { total: totalUsers, pending: pendingUsers },
+      businesses: { total: totalBusinesses, pending: pendingBusinesses },
+      jobs: { total: totalJobs, pending: pendingJobs },
+      matrimonials: { total: totalMatrimonials, pending: pendingMatrimonials },
+      news: { total: totalNews, pending: pendingNews },
+      totalPending: pendingUsers + pendingBusinesses + pendingJobs + pendingMatrimonials + pendingNews,
     };
+  }
+
+  // ==========================================
+  // DISTINCT VALUES
+  // ==========================================
+
+  async getDistinctValues(entity: string, field: string) {
+    const modelMap: Record<string, any> = {
+      'users': prisma.user,
+      'businesses': prisma.businessListing,
+      'jobs': prisma.jobBoard,
+      'events': prisma.event,
+      'matrimonials': prisma.matrimonialProfile,
+      'shok-sandesh': prisma.shokSandesh,
+      'news': prisma.news,
+      'banners': prisma.banner,
+    };
+
+    const delegate = modelMap[entity];
+    if (!delegate) {
+      throw new Error('Invalid entity');
+    }
+
+    try {
+      const distinct = await delegate.findMany({
+        distinct: [field],
+        select: { [field]: true }
+      });
+      const values = distinct
+        .map((d: any) => d[field])
+        .filter((val: any) => val !== '' && val !== null && val !== undefined);
+      
+      // Sort strings
+      if (values.length > 0 && typeof values[0] === 'string') {
+        values.sort();
+      }
+      return values;
+    } catch (e) {
+      // Return empty array if field is invalid or some error occurs
+      return [];
+    }
   }
 
   // ==========================================
@@ -546,6 +598,58 @@ export class AdminService {
     if (!news) throw new NotFoundException('News not found');
     return prisma.news.delete({
       where: { id }
+    });
+  }
+
+  // ==========================================
+  // STATE ADMINS
+  // ==========================================
+
+  async getStateAdmins() {
+    return prisma.stateAdmin.findMany({
+      include: {
+        admin: {
+          select: {
+            id: true,
+            firstName: true,
+            email: true,
+            phoneNumber: true,
+          }
+        }
+      },
+      orderBy: { stateName: 'asc' }
+    });
+  }
+
+  async assignStateAdmin(stateAdminId: string, userId: string | null) {
+    const stateAdmin = await prisma.stateAdmin.findUnique({ where: { id: stateAdminId } });
+    if (!stateAdmin) throw new NotFoundException('State not found');
+
+    if (userId) {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) throw new NotFoundException('User not found');
+      
+      // Update the user's role to STATE_ADMIN if they aren't already
+      if (user.role === Role.MEMBER) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { role: Role.STATE_ADMIN }
+        });
+      }
+    }
+
+    return prisma.stateAdmin.update({
+      where: { id: stateAdminId },
+      data: { adminId: userId },
+      include: {
+        admin: {
+          select: {
+            id: true,
+            firstName: true,
+            email: true,
+          }
+        }
+      }
     });
   }
 }

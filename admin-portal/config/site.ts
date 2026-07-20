@@ -28,10 +28,6 @@ export const siteConfig = {
     //   label: "Events",
     //   href: "/dashboard/events",
     // },
-    // {
-    //   label: "Shok Sandesh",
-    //   href: "/dashboard/shok-sandesh",
-    // },
     {
       label: "News",
       href: "/dashboard/news",
@@ -39,6 +35,10 @@ export const siteConfig = {
     {
       label: "Banners",
       href: "/dashboard/banners",
+    },
+    {
+      label: "State Admins",
+      href: "/dashboard/state-admins",
     },
   ]
 };

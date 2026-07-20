@@ -32,24 +32,34 @@ export default function DashboardOverview() {
 
   const statCards = [
     {
-      title: "Pending Users",
-      value: stats?.pendingUsers || 0,
+      title: "Users",
+      total: stats?.users?.total || 0,
+      pending: stats?.users?.pending || 0,
       href: "/dashboard/users",
     },
     {
-      title: "Pending Businesses",
-      value: stats?.pendingBusinesses || 0,
+      title: "Businesses",
+      total: stats?.businesses?.total || 0,
+      pending: stats?.businesses?.pending || 0,
       href: "/dashboard/businesses",
     },
     {
-      title: "Pending Jobs",
-      value: stats?.pendingJobs || 0,
+      title: "Jobs",
+      total: stats?.jobs?.total || 0,
+      pending: stats?.jobs?.pending || 0,
       href: "/dashboard/jobs",
     },
     {
-      title: "Pending Matrimonials",
-      value: stats?.pendingMatrimonials || 0,
+      title: "Matrimonials",
+      total: stats?.matrimonials?.total || 0,
+      pending: stats?.matrimonials?.pending || 0,
       href: "/dashboard/matrimonials",
+    },
+    {
+      title: "News",
+      total: stats?.news?.total || 0,
+      pending: stats?.news?.pending || 0,
+      href: "/dashboard/news",
     },
   ];
 
@@ -68,7 +78,7 @@ export default function DashboardOverview() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {statCards.map((card, i) => (
           <Link
             key={i}
@@ -77,15 +87,19 @@ export default function DashboardOverview() {
           >
             <Card className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm h-full flex flex-col justify-between">
               <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                {card.title}
+                Total {card.title}
               </h3>
-              <div className="mt-2 flex items-baseline gap-2">
+              <div className="mt-2 flex flex-col items-start gap-2">
                 <span className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  {card.value}
+                  {card.total}
                 </span>
-                {card.value > 0 && (
-                  <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-800 dark:text-slate-200">
-                    Action needed
+                {card.pending > 0 ? (
+                  <span className="inline-flex items-center rounded-full bg-orange-100 dark:bg-orange-900/30 px-2.5 py-0.5 text-xs font-medium text-orange-800 dark:text-orange-300">
+                    {card.pending} Pending Action
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+                    All clear
                   </span>
                 )}
               </div>

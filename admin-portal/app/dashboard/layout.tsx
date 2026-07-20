@@ -49,7 +49,9 @@ export default function DashboardLayout({
         
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {siteConfig.navItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive = item.href === '/dashboard' 
+              ? pathname === item.href 
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}

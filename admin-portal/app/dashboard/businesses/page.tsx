@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { ApprovalTable } from "@/components/ApprovalTable";
 import { fetchApi } from "@/lib/api";
+import { ImagePreview } from "@/components/ImagePreview";
 
 export default function BusinessesPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -54,9 +55,9 @@ export default function BusinessesPage() {
           { key: "whatsappNumber", label: "WhatsApp" },
           { key: "website", label: "Website" },
           { key: "address", label: "Address" },
-          { key: "city", label: "City" },
-          { key: "state", label: "State" },
-          { key: "logoUrl", label: "Logo URL" },
+          { key: "city", label: "City", type: 'dropdown' },
+          { key: "state", label: "State", type: 'dropdown' },
+          { key: "logoUrl", label: "Logo URL", render: (item) => <ImagePreview src={item.logoUrl} /> },
           { key: "status", label: "Status", type: 'enum', options: [{ label: 'Pending', value: 'PENDING' }, { label: 'Approved', value: 'APPROVED' }, { label: 'Rejected', value: 'REJECTED' }] },
           { key: "date", label: "Date Created", render: (item) => new Date(item.createdAt).toLocaleDateString() },
         ]}

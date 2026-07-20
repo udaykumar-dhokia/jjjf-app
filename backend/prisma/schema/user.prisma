@@ -114,6 +114,7 @@ model User {
   galleryUploaded             Gallery[]
   familiesHeaded              Family[]                   @relation("FamilyHead")
   refreshTokens               RefreshToken[]
+  stateAdmins                 StateAdmin[]
 }
 
 type OccupationDetails {
@@ -141,6 +142,15 @@ model Family {
 
   members User[] @relation("FamilyMembers")
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StateAdmin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  stateName String   @unique
+  adminId   String?  @db.ObjectId
+  admin     User?    @relation(fields: [adminId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

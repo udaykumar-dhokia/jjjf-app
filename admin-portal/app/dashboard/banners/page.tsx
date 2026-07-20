@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/api";
-
+import { ImagePreview } from "@/components/ImagePreview";
 interface Banner {
   id: string;
   imageUrl: string;
@@ -174,7 +174,7 @@ export default function BannersPage() {
                 banners.map((banner) => (
                   <tr key={banner.id} className="border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td className="px-6 py-4">
-                      <img src={banner.imageUrl} alt="Banner" className="h-16 w-32 object-cover rounded shadow-sm" />
+                      <ImagePreview src={banner.imageUrl} alt="Banner" className="h-16 w-32 object-cover rounded shadow-sm" />
                     </td>
                     <td className="px-6 py-4 text-slate-900 dark:text-white">{banner.order}</td>
                     <td className="px-6 py-4">

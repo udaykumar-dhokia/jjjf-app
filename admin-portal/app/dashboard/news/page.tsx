@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ApprovalTable } from "@/components/ApprovalTable";
 import { fetchApi } from "@/lib/api";
 import { CreateNewsModal } from "@/components/CreateNewsModal";
-
+import { ImagePreview } from "@/components/ImagePreview";
 export default function NewsPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -78,7 +78,7 @@ export default function NewsPage() {
             render: (item) => item.images && item.images.length > 0 
               ? <div className="flex gap-2">
                   {item.images.map((img: string, i: number) => (
-                    <img key={i} src={img} alt="News" className="h-10 w-10 object-cover rounded" />
+                    <ImagePreview key={i} src={img} alt="News" className="h-10 w-10 object-cover rounded" />
                   ))}
                 </div>
               : "No images" 
@@ -137,7 +137,7 @@ export default function NewsPage() {
                     <div className="flex flex-wrap gap-2 mb-2">
                       {editingItem.existingImages.map((img: string, i: number) => (
                         <div key={i} className="relative group">
-                          <img src={img} alt="Existing" className="h-16 w-16 object-cover rounded border" />
+                          <ImagePreview src={img} alt="Existing" className="h-16 w-16 object-cover rounded border border-slate-300 dark:border-slate-700" />
                           <button
                             type="button"
                             onClick={() => {

@@ -42,9 +42,9 @@ export default function JobsPage() {
         columns={[
           { key: "roleTitle", label: "Role" },
           { key: "type", label: "Type", type: 'enum', options: [{ label: 'Vacancy Available', value: 'VACANCY_AVAILABLE' }, { label: 'Job Required', value: 'JOB_REQUIRED' }], render: (item) => item.type === "JOB_REQUIRED" ? "Job Required" : "Vacancy Available" },
-          { key: "industry", label: "Industry" },
+          { key: "industry", label: "Industry", type: 'dropdown' },
           { key: "salaryRange", label: "Salary Range" },
-          { key: "city", label: "City" },
+          { key: "city", label: "City", type: 'dropdown' },
           { key: "description", label: "Description" },
           { key: "contactName", label: "Contact Name" },
           { key: "contactPhone", label: "Contact Phone" },
